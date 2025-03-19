@@ -54,7 +54,6 @@ namespace zy_cutPicture
         private CheckBox tog_isDebug;
         private Panel panel1_menu;
         private Panel panel2_content;
-        private MenuStrip menuStrip1;
         private bool isStartCut = false;
 
 
@@ -64,6 +63,10 @@ namespace zy_cutPicture
             InitializeComponent();
             InitializeWorker();
             InitDefautImage();
+
+            InitializeListView();
+            InitializeContextMenu();
+            GenerateMenuItems();
         }
 
         private void InitializeComponent()
@@ -90,14 +93,12 @@ namespace zy_cutPicture
             this.panel_image = new System.Windows.Forms.Panel();
             this.panel1_menu = new System.Windows.Forms.Panel();
             this.panel2_content = new System.Windows.Forms.Panel();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSpacing)).BeginInit();
             this.controlPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel_image.SuspendLayout();
-            this.panel1_menu.SuspendLayout();
             this.panel2_content.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -326,7 +327,6 @@ namespace zy_cutPicture
             // panel1_menu
             // 
             this.panel1_menu.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.panel1_menu.Controls.Add(this.menuStrip1);
             this.panel1_menu.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1_menu.Location = new System.Drawing.Point(0, 0);
             this.panel1_menu.Name = "panel1_menu";
@@ -347,14 +347,6 @@ namespace zy_cutPicture
             this.panel2_content.Size = new System.Drawing.Size(503, 581);
             this.panel2_content.TabIndex = 13;
             // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(100, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(602, 651);
@@ -362,7 +354,6 @@ namespace zy_cutPicture
             this.Controls.Add(this.panel_image);
             this.Controls.Add(this.controlPanel);
             this.DoubleBuffered = true;
-            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "拆分图集器 v1.2";
@@ -373,8 +364,6 @@ namespace zy_cutPicture
             this.controlPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.panel_image.ResumeLayout(false);
-            this.panel1_menu.ResumeLayout(false);
-            this.panel1_menu.PerformLayout();
             this.panel2_content.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1027,6 +1016,101 @@ namespace zy_cutPicture
                 this.btnExport.PerformClick();
             }
         }
+
+        #region 左菜单
+        private ListView listView;
+        private ContextMenuStrip contextMenuStrip;
+        private Point lastMousePosition;
+        private bool isDraggingMenu;
+
+        private void InitializeListView()
+        {
+            listView = new ListView();
+            listView.Dock = DockStyle.Left;
+            listView.View = View.List;
+            listView.CheckBoxes = true;
+            listView.Scrollable = false; // 禁用滚动条
+            listView.Width = 200;
+            listView.MouseDown += ListView_MouseDown;
+            listView.MouseMove += ListView_MouseMove;
+            listView.MouseUp += ListView_MouseUp;
+            this.panel1_menu.Controls.Add(listView);
+        }
+
+        private void InitializeContextMenu()
+        {
+            contextMenuStrip = new ContextMenuStrip();
+            ToolStripMenuItem mergeSelectedMenuItem = new ToolStripMenuItem("合并选中");
+            mergeSelectedMenuItem.Click += MergeSelectedMenuItem_Click;
+            contextMenuStrip.Items.Add(mergeSelectedMenuItem);
+
+            ToolStripMenuItem arrangeSelectedMenuItem = new ToolStripMenuItem("手动排列选中");
+            arrangeSelectedMenuItem.Click += ArrangeSelectedMenuItem_Click;
+            contextMenuStrip.Items.Add(arrangeSelectedMenuItem);
+
+            ToolStripMenuItem arrangeAllMenuItem = new ToolStripMenuItem("手动排列全部");
+            arrangeAllMenuItem.Click += ArrangeAllMenuItem_Click;
+            contextMenuStrip.Items.Add(arrangeAllMenuItem);
+
+            listView.ContextMenuStrip = contextMenuStrip;
+        }
+
+        private void GenerateMenuItems()
+        {
+            Random random = new Random();
+            int itemCount = random.Next(10, 30);
+            for (int i = 1; i <= itemCount; i++)
+            {
+                ListViewItem item = new ListViewItem($"Dynamic Item {i}");
+                item.Checked = false;
+                listView.Items.Add(item);
+            }
+        }
+
+        private void MergeSelectedMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("合并选中项");
+        }
+
+        private void ArrangeSelectedMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("手动排列选中项");
+        }
+
+        private void ArrangeAllMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("手动排列全部项");
+        }
+
+        private void ListView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isDraggingMenu = true;
+                lastMousePosition = e.Location;
+            }
+        }
+
+        private void ListView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                int deltaY = e.Y - lastMousePosition.Y;
+                listView.Top += deltaY;
+                lastMousePosition = e.Location;
+            }
+        }
+
+        private void ListView_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isDraggingMenu = false;
+            }
+        }
+        #endregion
+
+
     }
     public class VisitItem
     {
