@@ -65,7 +65,7 @@ namespace zy_cutPicture
             InitDefautImage();
 
             InitializeListView();
-            GenerateMenuItems();
+            InitResizing();
         }
 
         private void InitializeComponent()
@@ -760,6 +760,7 @@ namespace zy_cutPicture
             {
                 this.ShowDebug_texture();
             }
+            GenerateMenuItems();
         }
 
         private void ExportSubImages()
@@ -1017,7 +1018,7 @@ namespace zy_cutPicture
         }
 
         #region 左菜单
-        private MenuItemPanel MenuItemPanel;
+        private MenuListView MenuItemPanel;
         private ContextMenuStrip contextMenuStrip;
         private Point lastMousePosition;
         private bool isDraggingMenu;
@@ -1025,26 +1026,63 @@ namespace zy_cutPicture
 
         private void InitializeListView()
         {
-            MenuItemPanel = new MenuItemPanel();
-            MenuItemPanel.Anchor = AnchorStyles.Left |AnchorStyles.Top;
-            //listView.Dock = DockStyle.Left;
+            MenuItemPanel = new MenuListView();
+            MenuItemPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
             MenuItemPanel.Height = this.panel1_menu.Height;
-           
             this.panel1_menu.Controls.Add(MenuItemPanel);
-        }        
+        }
 
         private void GenerateMenuItems()
         {
-            Random random = new Random();
-            int itemCount = random.Next(100, 300);
-            for (int i = 1; i <= itemCount; i++)
-            {              
-                MenuItemPanel.AddItem($"Dynamic Item {i}");
+            if (this.subRegions == null || this.subRegions.Count == 0) 
+                return;
+            for (int i = 1; i < this.subRegions.Count; i++)
+            {
+                var r= this.subRegions[i];
+                MenuItemPanel.AddMenuItem($"{i}|{r.X}|{r.Y}|{r.Width}|{r.Height}");
             }
-        }       
+        }
         #endregion
 
+        #region ResizingMenuPanel
+        private bool isResizing = false;
+        private Point lastMousePositionResizing;
 
+        private void InitResizing() 
+        {
+            // 订阅鼠标事件
+            this.panel1_menu.MouseDown += Panel_MouseDown;
+            this.panel1_menu.MouseMove += Panel_MouseMove;
+            this.panel1_menu.MouseUp += Panel_MouseUp;
+        }
+        private void Panel_MouseDown(object sender, MouseEventArgs e)
+        {
+            // 检查是否点击了右边线
+            if (e.Location.X >= ((Panel)sender).Width - 5)
+            {
+                isResizing = true;
+                lastMousePosition = e.Location;
+            }
+        }
+
+        private void Panel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isResizing)
+            {
+                // 计算宽度变化
+                int widthChange = e.Location.X - lastMousePosition.X;
+                ((Panel)sender).Width += widthChange;
+
+                // 更新鼠标位置
+                lastMousePosition = e.Location;
+            }
+        }
+
+        private void Panel_MouseUp(object sender, MouseEventArgs e)
+        {
+            isResizing = false;
+        }
+        #endregion
     }
     public class VisitItem
     {
