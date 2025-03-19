@@ -65,7 +65,6 @@ namespace zy_cutPicture
             InitDefautImage();
 
             InitializeListView();
-            InitializeContextMenu();
             GenerateMenuItems();
         }
 
@@ -1018,106 +1017,31 @@ namespace zy_cutPicture
         }
 
         #region 左菜单
-        private ListView listView;
+        private MenuItemPanel MenuItemPanel;
         private ContextMenuStrip contextMenuStrip;
         private Point lastMousePosition;
         private bool isDraggingMenu;
 
+
         private void InitializeListView()
         {
-            listView = new ListView();
-            listView.Anchor = AnchorStyles.Left |AnchorStyles.Top;
+            MenuItemPanel = new MenuItemPanel();
+            MenuItemPanel.Anchor = AnchorStyles.Left |AnchorStyles.Top;
             //listView.Dock = DockStyle.Left;
-            listView.Height = this.panel1_menu.Height;
-            listView.View = View.List;
-            listView.CheckBoxes = true;
-            listView.Scrollable = true;
-            listView.Width = 100;
-            listView.MouseDown += ListView_MouseDown;
-            listView.MouseMove += ListView_MouseMove;
-            listView.MouseUp += ListView_MouseUp;
-            this.panel1_menu.Controls.Add(listView);
-        }
-
-        private void InitializeContextMenu()
-        {
-            contextMenuStrip = new ContextMenuStrip();
-            ToolStripMenuItem mergeSelectedMenuItem = new ToolStripMenuItem("合并选中");
-            mergeSelectedMenuItem.Click += MergeSelectedMenuItem_Click;
-            contextMenuStrip.Items.Add(mergeSelectedMenuItem);
-
-            ToolStripMenuItem arrangeSelectedMenuItem = new ToolStripMenuItem("手动排列选中");
-            arrangeSelectedMenuItem.Click += ArrangeSelectedMenuItem_Click;
-            contextMenuStrip.Items.Add(arrangeSelectedMenuItem);
-
-            ToolStripMenuItem arrangeAllMenuItem = new ToolStripMenuItem("手动排列全部");
-            arrangeAllMenuItem.Click += ArrangeAllMenuItem_Click;
-            contextMenuStrip.Items.Add(arrangeAllMenuItem);
-
-            listView.ContextMenuStrip = contextMenuStrip;
-        }
+            MenuItemPanel.Height = this.panel1_menu.Height;
+           
+            this.panel1_menu.Controls.Add(MenuItemPanel);
+        }        
 
         private void GenerateMenuItems()
         {
             Random random = new Random();
             int itemCount = random.Next(100, 300);
             for (int i = 1; i <= itemCount; i++)
-            {
-                ListViewItem item = new ListViewItem($"Dynamic Item {i}");
-                item.Checked = false;
-                listView.Items.Add(item);
+            {              
+                MenuItemPanel.AddItem($"Dynamic Item {i}");
             }
-        }
-
-        private void MergeSelectedMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("合并选中项");
-        }
-
-        private void ArrangeSelectedMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("手动排列选中项");
-        }
-
-        private void ArrangeAllMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("手动排列全部项");
-        }
-
-        private void ListView_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                isDraggingMenu = true;
-                lastMousePosition = e.Location;
-            }
-        }
-
-        private void ListView_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                int deltaY = e.Y - lastMousePosition.Y;
-                int itemsToScroll = (int)(deltaY / listView.Items[0].Bounds.Height);
-
-                if (itemsToScroll != 0)
-                {
-                    int newIndex = listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] + itemsToScroll : 0;
-                    newIndex = Math.Max(0, Math.Min(newIndex, listView.Items.Count - 1));
-                    listView.EnsureVisible(newIndex);
-                }
-
-                lastMousePosition = e.Location;
-            }
-        }
-
-        private void ListView_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                isDraggingMenu = false;
-            }
-        }
+        }       
         #endregion
 
 
