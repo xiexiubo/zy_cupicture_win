@@ -1061,7 +1061,7 @@ namespace zy_cutPicture
             if (e.Location.X >= ((Panel)sender).Width - 5)
             {
                 isResizing = true;
-                lastMousePosition = e.Location;
+                lastMousePositionResizing = e.Location;
             }
         }
 
@@ -1070,11 +1070,11 @@ namespace zy_cutPicture
             if (isResizing)
             {
                 // 计算宽度变化
-                int widthChange = e.Location.X - lastMousePosition.X;
+                int widthChange = e.Location.X - lastMousePositionResizing.X;
                 ((Panel)sender).Width += widthChange;
 
                 // 更新鼠标位置
-                lastMousePosition = e.Location;
+                lastMousePositionResizing = e.Location;
             }
         }
 

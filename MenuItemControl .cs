@@ -27,6 +27,7 @@ namespace zy_cutPicture
             this.BackColor = Color.White;
             this.DoubleBuffered = true; // 减少闪烁
             this.CheckBoxes = true; // 启用复选框
+            this.OwnerDraw = true; // 启用自定义绘制
 
             // 添加列
             this.Columns.Add("MenuColumn", this.Width - SystemInformation.VerticalScrollBarWidth);
@@ -35,6 +36,9 @@ namespace zy_cutPicture
             contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[]
             {
+            new ToolStripMenuItem("全选", null, (s, e) => SelectAllItems()),
+            new ToolStripMenuItem("清空选择", null, (s, e) => ClearSelection()),
+            new ToolStripSeparator(),
             new ToolStripMenuItem("合并选中", null, (s, e) => MergeSelectedItems()),
             new ToolStripMenuItem("手动排列选中", null, (s, e) => ArrangeSelected()),
             new ToolStripMenuItem("手动排列全部", null, (s, e) => ArrangeAll())
@@ -48,6 +52,10 @@ namespace zy_cutPicture
             this.MouseDown += MenuListView_MouseDown;
             this.MouseMove += MenuListView_MouseMove;
             this.MouseUp += MenuListView_MouseUp;
+
+            // 启用自定义绘制事件
+            this.DrawItem += MenuListView_DrawItem;
+            this.DrawColumnHeader += MenuListView_DrawColumnHeader;
         }
 
         // 添加菜单项
@@ -58,6 +66,24 @@ namespace zy_cutPicture
                 Checked = false // 默认未选中
             };
             this.Items.Add(item);
+        }
+
+        // 全选
+        private void SelectAllItems()
+        {
+            foreach (ListViewItem item in this.Items)
+            {
+                item.Checked = true;
+            }
+        }
+
+        // 清空选择
+        private void ClearSelection()
+        {
+            foreach (ListViewItem item in this.Items)
+            {
+                item.Checked = false;
+            }
         }
 
         // 合并选中项
@@ -101,6 +127,28 @@ namespace zy_cutPicture
             var items = this.Items.Cast<ListViewItem>().OrderBy(x => x.Text).ToList();
             this.Items.Clear();
             this.Items.AddRange(items.ToArray());
+        }
+
+        // 自定义绘制菜单项
+        private void MenuListView_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true; // 使用默认绘制
+
+            // 高亮选中项
+            if (e.Item.Checked)
+            {
+                e.Item.BackColor = Color.LightBlue; // 设置选中项背景色
+            }
+            else
+            {
+                e.Item.BackColor = Color.White; // 恢复未选中项背景色
+            }
+        }
+
+        // 自定义绘制列头（隐藏列头）
+        private void MenuListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.DrawDefault = false; // 不绘制列头
         }
 
         // 鼠标滚轮滚动
