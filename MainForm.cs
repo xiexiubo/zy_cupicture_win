@@ -1026,11 +1026,13 @@ namespace zy_cutPicture
         private void InitializeListView()
         {
             listView = new ListView();
-            listView.Dock = DockStyle.Left;
+            listView.Anchor = AnchorStyles.Left |AnchorStyles.Top;
+            //listView.Dock = DockStyle.Left;
+            listView.Height = this.panel1_menu.Height;
             listView.View = View.List;
             listView.CheckBoxes = true;
-            listView.Scrollable = false; // 禁用滚动条
-            listView.Width = 200;
+            listView.Scrollable = true;
+            listView.Width = 100;
             listView.MouseDown += ListView_MouseDown;
             listView.MouseMove += ListView_MouseMove;
             listView.MouseUp += ListView_MouseUp;
@@ -1058,7 +1060,7 @@ namespace zy_cutPicture
         private void GenerateMenuItems()
         {
             Random random = new Random();
-            int itemCount = random.Next(10, 30);
+            int itemCount = random.Next(100, 300);
             for (int i = 1; i <= itemCount; i++)
             {
                 ListViewItem item = new ListViewItem($"Dynamic Item {i}");
@@ -1096,7 +1098,15 @@ namespace zy_cutPicture
             if (isDragging)
             {
                 int deltaY = e.Y - lastMousePosition.Y;
-                listView.Top += deltaY;
+                int itemsToScroll = (int)(deltaY / listView.Items[0].Bounds.Height);
+
+                if (itemsToScroll != 0)
+                {
+                    int newIndex = listView.SelectedIndices.Count > 0 ? listView.SelectedIndices[0] + itemsToScroll : 0;
+                    newIndex = Math.Max(0, Math.Min(newIndex, listView.Items.Count - 1));
+                    listView.EnsureVisible(newIndex);
+                }
+
                 lastMousePosition = e.Location;
             }
         }
