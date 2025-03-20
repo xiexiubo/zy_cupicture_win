@@ -14,15 +14,16 @@ namespace zy_cutPicture
         private int dragStartY;
         private int scrollStartValue;
         private readonly ContextMenuStrip contextMenu;
-
-        public MenuListView()
+        private MainForm mainForm;
+        public MenuListView(MainForm mainForm)
         {
+            this.mainForm = mainForm;
             // 初始化 ListView 设置
             this.View = View.Details;
             this.FullRowSelect = true;
             this.MultiSelect = true;
             this.HeaderStyle = ColumnHeaderStyle.None; // 隐藏表头
-            this.Scrollable = true;
+            this.Scrollable = true; // 禁用默认滚动条
             this.BorderStyle = BorderStyle.None;
             this.BackColor = Color.White;
             this.DoubleBuffered = true; // 减少闪烁
@@ -31,17 +32,22 @@ namespace zy_cutPicture
 
             // 添加列
             this.Columns.Add("MenuColumn", this.Width - SystemInformation.VerticalScrollBarWidth);
-
+            
             // 初始化右键菜单
             contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[]
             {
-            new ToolStripMenuItem("全选", null, (s, e) => SelectAllItems()),
-            new ToolStripMenuItem("清空选择", null, (s, e) => ClearSelection()),
-            new ToolStripSeparator(),
-            new ToolStripMenuItem("合并选中", null, (s, e) => MergeSelectedItems()),
-            new ToolStripMenuItem("手动排列选中", null, (s, e) => ArrangeSelected()),
-            new ToolStripMenuItem("手动排列全部", null, (s, e) => ArrangeAll())
+                new ToolStripMenuItem("复制", null, (s, e) => CopyMenuItem_Click(s,e)),
+                new ToolStripMenuItem("选择", null, (s, e) => SelectCurr(s,e)),
+                new ToolStripMenuItem("全选", null, (s, e) => SelectAllItems()),
+                new ToolStripMenuItem("清空选择", null, (s, e) => ClearSelection()),
+                new ToolStripSeparator(),
+              
+                new ToolStripMenuItem("合并选中", null, (s, e) => MergeSelectedItems()),
+                  new ToolStripMenuItem("导出选中", null, (s, e) => ExportSelectedItems(false)),
+                  new ToolStripMenuItem("导出选中(合并的)", null, (s, e) => ExportSelectedItems(true)),
+                new ToolStripMenuItem("手动排列选中", null, (s, e) => ArrangeSelected()),
+                new ToolStripMenuItem("手动排列全部", null, (s, e) => ArrangeAll())
             });
 
             // 绑定右键菜单
@@ -56,8 +62,16 @@ namespace zy_cutPicture
             // 启用自定义绘制事件
             this.DrawItem += MenuListView_DrawItem;
             this.DrawColumnHeader += MenuListView_DrawColumnHeader;
+
+            // 隐藏滚动条
+            NativeMethods.ShowScrollBar(this.Handle, NativeMethods.SB_VERT, false);
         }
 
+        public void SetWidth(int width) 
+        {
+            this.Width = width;
+            this.Columns.Add("MenuColumn", this.Width - SystemInformation.VerticalScrollBarWidth);
+        }
         // 添加菜单项
         public void AddMenuItem(string text)
         {
@@ -65,9 +79,45 @@ namespace zy_cutPicture
             {
                 Checked = false // 默认未选中
             };
+
+
             this.Items.Add(item);
         }
 
+        // copyName
+        private void CopyMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.SelectedItems.Count > 0)
+            {
+                string selectedText = this.SelectedItems[0].Text;
+                Clipboard.SetText(selectedText);
+                MessageBox.Show($"已复制: {selectedText}");
+            }
+            else
+            {
+                MessageBox.Show("请先选择一个项目。");
+            }
+        } 
+        // 全选当前
+        private void SelectCurr(object sender, EventArgs e)
+        {   bool selected = true;
+            foreach (ListViewItem item in this.SelectedItems) 
+            {
+                if (!item.Checked) 
+                {
+                    selected = false;
+                    break;
+                }
+                
+            }
+            foreach (ListViewItem item in this.SelectedItems)
+            {
+                if (!selected)
+                    item.Checked = true;
+                else
+                    item.Checked = !item.Checked;
+            }
+        }  
         // 全选
         private void SelectAllItems()
         {
@@ -86,6 +136,23 @@ namespace zy_cutPicture
             }
         }
 
+        // 导出选中项
+        private void ExportSelectedItems(bool isComb)
+        {
+            var selectedItems = this.CheckedItems;
+            if (selectedItems.Count > 0)
+            {
+                string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
+                
+                this.mainForm.ExportSelectedItems(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList(),isComb);
+
+                //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("没有选中任何项", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        } 
         // 合并选中项
         private void MergeSelectedItems()
         {
@@ -93,7 +160,8 @@ namespace zy_cutPicture
             if (selectedItems.Count > 0)
             {
                 string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
-                MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.mainForm.MergeRectanglesOneName(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
+                //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -221,8 +289,13 @@ namespace zy_cutPicture
         // 用于调用 Windows API 的辅助类
         private static class NativeMethods
         {
+            public const int SB_VERT = 1;
+
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern bool ShowScrollBar(IntPtr hWnd, int wBar, bool bShow);
         }
     }
 }

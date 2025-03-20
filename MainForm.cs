@@ -65,7 +65,6 @@ namespace zy_cutPicture
             InitDefautImage();
 
             InitializeListView();
-            InitResizing();
         }
 
         private void InitializeComponent()
@@ -108,7 +107,7 @@ namespace zy_cutPicture
             this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(503, 581);
+            this.pictureBox.Size = new System.Drawing.Size(500, 581);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 10;
             this.pictureBox.TabStop = false;
@@ -119,7 +118,7 @@ namespace zy_cutPicture
             this.pictureBox_debug.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox_debug.Location = new System.Drawing.Point(0, 0);
             this.pictureBox_debug.Name = "pictureBox_debug";
-            this.pictureBox_debug.Size = new System.Drawing.Size(503, 581);
+            this.pictureBox_debug.Size = new System.Drawing.Size(500, 581);
             this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox_debug.TabIndex = 10;
             this.pictureBox_debug.TabStop = false;
@@ -341,9 +340,9 @@ namespace zy_cutPicture
             this.panel2_content.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
             this.panel2_content.Controls.Add(this.pictureBox_debug);
             this.panel2_content.Controls.Add(this.pictureBox);
-            this.panel2_content.Location = new System.Drawing.Point(99, 0);
+            this.panel2_content.Location = new System.Drawing.Point(100, 0);
             this.panel2_content.Name = "panel2_content";
-            this.panel2_content.Size = new System.Drawing.Size(503, 581);
+            this.panel2_content.Size = new System.Drawing.Size(500, 581);
             this.panel2_content.TabIndex = 13;
             // 
             // MainForm
@@ -425,65 +424,74 @@ namespace zy_cutPicture
             }
         }
 
-        public static Color BlendColors(Color source, Color destination)
+        public static Color BlendColors(Color destination, params Color[] sources)
         {
-            // 将颜色分量转换为0-1范围的浮点数
-            float srcA = source.A / 255f;
-            float srcR = source.R / 255f;
-            float srcG = source.G / 255f;
-            float srcB = source.B / 255f;
+            foreach (Color source in sources)
+            {
+                // 将颜色分量转换为0 - 1范围的浮点数
+                float srcA = source.A / 255f;
+                float srcR = source.R / 255f;
+                float srcG = source.G / 255f;
+                float srcB = source.B / 255f;
 
-            float dstA = destination.A / 255f;
-            float dstR = destination.R / 255f;
-            float dstG = destination.G / 255f;
-            float dstB = destination.B / 255f;
+                float dstA = destination.A / 255f;
+                float dstR = destination.R / 255f;
+                float dstG = destination.G / 255f;
+                float dstB = destination.B / 255f;
 
-            // 计算混合后的Alpha值
-            float outA = srcA + dstA * (1 - srcA);
+                // 计算混合后的Alpha值
+                float outA = srcA + dstA * (1 - srcA);
 
-            // 如果完全透明则返回透明黑
-            if (outA <= 0) return Color.FromArgb(0, 0, 0, 0);
+                // 如果完全透明则返回透明黑
+                if (outA <= 0) return Color.FromArgb(0, 0, 0, 0);
 
-            // 计算各颜色通道（未预乘Alpha的混合公式）
-            float outR = (srcR * srcA + dstR * dstA * (1 - srcA)) / outA;
-            float outG = (srcG * srcA + dstG * dstA * (1 - srcA)) / outA;
-            float outB = (srcB * srcA + dstB * dstA * (1 - srcA)) / outA;
+                // 计算各颜色通道（未预乘Alpha的混合公式）
+                float outR = (srcR * srcA + dstR * dstA * (1 - srcA)) / outA;
+                float outG = (srcG * srcA + dstG * dstA * (1 - srcA)) / outA;
+                float outB = (srcB * srcA + dstB * dstA * (1 - srcA)) / outA;
 
-            // 转换回字节并四舍五入
-            int a = (int)(outA * 255 + 0.5f);
-            int r = (int)(outR * 255 + 0.5f);
-            int g = (int)(outG * 255 + 0.5f);
-            int b = (int)(outB * 255 + 0.5f);
+                // 转换回字节并四舍五入
+                int a = (int)(outA * 255 + 0.5f);
+                int r = (int)(outR * 255 + 0.5f);
+                int g = (int)(outG * 255 + 0.5f);
+                int b = (int)(outB * 255 + 0.5f);
 
-            // 确保数值在0-255范围内
-            a = Math.Min(255, Math.Max(0, a));
-            r = Math.Min(255, Math.Max(0, r));
-            g = Math.Min(255, Math.Max(0, g));
-            b = Math.Min(255, Math.Max(0, b));
+                // 确保数值在0 - 255范围内
+                a = Math.Min(255, Math.Max(0, a));
+                r = Math.Min(255, Math.Max(0, r));
+                g = Math.Min(255, Math.Max(0, g));
+                b = Math.Min(255, Math.Max(0, b));
 
-            return Color.FromArgb(a, r, g, b);
+                destination = Color.FromArgb(a, r, g, b);
+            }
+
+            return destination;
         }
 
         private Bitmap GenerateImage_debug(Bitmap source)
         {
-
             int width = source.Width;
             int height = source.Height;
-            Random random = new Random();
             Bitmap bitmap = new Bitmap(width, height);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
-                {
-                    int a = random.Next(0, 256); // 随机透明度
-                    int r = random.Next(0, 256); // 随机红色值
-                    int g = random.Next(0, 256); // 随机绿色值
-                    int b = random.Next(0, 256); // 随机蓝色值
+                {                   
+                    Color c = Color.FromArgb(0, 0, 0, 0);
+                    Color c2 = Color.FromArgb(0, 0, 0, 0);
 
-                    Color c = this.visited[x, y].color;
+                    if (this.visited != null) 
+                    {
+                         c = this.visited[x, y].color;
+                         c2 = this.visited[x, y].isSelected ? Color.FromArgb(200, 0, 255, 255) : Color.FromArgb(0, 0, 0, 0);
+
+                    }
                     // c = Color.FromArgb(a,r,g,b);
-                    bitmap.SetPixel(x, y, BlendColors(c, source.GetPixel(x, y)));
+
+                    //if(this.visited[x, y].isSelected)
+                    //Console.WriteLine($"{c}-----{c2}");
+                    bitmap.SetPixel(x, y, BlendColors(source.GetPixel(x, y),c,c2));
                 }
             }
             return bitmap;
@@ -683,31 +691,35 @@ namespace zy_cutPicture
         {
             return position.X >= rect.X && position.Y >= rect.Y && position.X <= (rect.X + rect.Width) && position.Y <= (rect.Y + rect.Height);
         }
-
+        /// <summary>
+        /// 矩形坐标点
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
         static List<Point> GetRectangleEdgeCoordinates(Rectangle rect)
         {
             List<Point> points = new List<Point>();
 
             // 上边界
-            for (int x = rect.X; x < rect.X + rect.Width; x++)
+            for (int x = rect.X; x <= rect.X + rect.Width; x++)
             {
                 points.Add(new Point(x, rect.Y));
             }
 
             // 下边界
-            for (int x = rect.X; x < rect.X + rect.Width; x++)
+            for (int x = rect.X; x <= rect.X + rect.Width; x++)
             {
                 points.Add(new Point(x, rect.Y + rect.Height));
             }
 
             // 左边界（排除上下边界已添加的点）
-            for (int y = rect.Y + 1; y < rect.Y + rect.Height - 1; y++)
+            for (int y = rect.Y + 1; y <= rect.Y + rect.Height; y++)
             {
                 points.Add(new Point(rect.X, y));
             }
 
             // 右边界（排除上下边界已添加的点）
-            for (int y = rect.Y + 1; y < rect.Y + rect.Height - 1; y++)
+            for (int y = rect.Y + 1; y <= rect.Y + rect.Height; y++)
             {
                 points.Add(new Point(rect.X + rect.Width, y));
             }
@@ -763,7 +775,7 @@ namespace zy_cutPicture
             GenerateMenuItems();
         }
 
-        private void ExportSubImages()
+        private void ExportSubImages(List<Rectangle> rects=null)
         {
             var path = this.text_output.Text;
             if (!Directory.Exists(path))
@@ -782,7 +794,23 @@ namespace zy_cutPicture
             {
                 Console.WriteLine($"目录 {path} 已存在。");
             }
-            foreach (var rect in subRegions)
+
+
+            var listOut = new List<Rectangle>();
+            if (rects != null) { listOut.AddRange(rects); }
+            else
+            {
+                listOut.AddRange(this.subRegions);
+                listOut.AddRange(this.newRects);
+                foreach (var r in this.removeRects)
+                {
+                    listOut.Remove(r);
+                }
+            }
+
+
+
+            foreach (var rect in listOut)
             {
                 if (rect.Width == 0 || rect.Height == 0)
                 {
@@ -790,9 +818,10 @@ namespace zy_cutPicture
                     Console.WriteLine($"跳过0宽高{rect}");
                     continue;
                 }
-                using (var subImage = CropImage(sourceImage, rect))
-                {
-                    var rectOut = ExpandBounds(rect);
+
+                var rectOut = ExpandBounds(rect);
+                using (var subImage = CropImage(sourceImage, rectOut))
+                {                   
                     subImage.Save(
                         Path.Combine(path,
                             $"{rectOut.X}_{rectOut.Y}_{rectOut.Width}_{rectOut.Height}.png"),
@@ -809,6 +838,33 @@ namespace zy_cutPicture
             }
         }
 
+        /// <summary>
+        /// 多个合成一个
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static Rectangle MergeRectanglesOne(List<Rectangle> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return Rectangle.Empty;
+            }
+
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            int maxRight = int.MinValue;
+            int maxBottom = int.MinValue;
+
+            foreach (Rectangle rect in list)
+            {
+                minX = Math.Min(minX, rect.X);
+                minY = Math.Min(minY, rect.Y);
+                maxRight = Math.Max(maxRight, rect.Right);
+                maxBottom = Math.Max(maxBottom, rect.Bottom);
+            }
+
+            return new Rectangle(minX, minY, maxRight - minX, maxBottom - minY);
+        }
         static Rectangle? ProcessRectangleIntersection(Rectangle rect, List<Rectangle> list, out int index)
         {
             index = -1;
@@ -830,6 +886,11 @@ namespace zy_cutPicture
             }
             return null;
         }
+        /// <summary>
+        /// 有相交的部分合成 返回变化的部分 并移除
+        /// </summary>
+        /// <param name="result"> </param>
+        /// <returns></returns>
         static List<Rectangle> MergeRectangles(List<Rectangle> result)
         {
             List<Rectangle> changeList = new List<Rectangle>();
@@ -969,11 +1030,12 @@ namespace zy_cutPicture
 
         private Rectangle ExpandBounds(Rectangle bounds)
         {
+            int p = Math.Max(1, spacing / 2);
             return new Rectangle(
-                Math.Max(0, bounds.X - spacing),
-                Math.Max(0, bounds.Y - spacing),
-                Math.Min(sourceImage.Width - bounds.X, bounds.Width + 1 + 2 * spacing),
-                Math.Min(sourceImage.Height - bounds.Y, bounds.Height + 1 + 2 * spacing));
+                Math.Max(0, bounds.X - p),
+                Math.Max(0, bounds.Y - p),
+                Math.Min(sourceImage.Width - bounds.X, bounds.Width + 1 + 2 * p),
+                Math.Min(sourceImage.Height - bounds.Y, bounds.Height + 1 + 2 * p));
         }
 
         private void btn_outPath_Click(object sender, EventArgs e)
@@ -993,11 +1055,12 @@ namespace zy_cutPicture
         }
         private void ShowDebug_texture()
         {
-            if (this.visited == null)
+            if (this.visited == null || sourceImage==null)
             {
                 Console.WriteLine("");
                 return;
             }
+
             this.pictureBox_debug.Image = GenerateImage_debug(sourceImage);
         }
 
@@ -1019,59 +1082,79 @@ namespace zy_cutPicture
 
         #region 左菜单
         private MenuListView MenuItemPanel;
-        private ContextMenuStrip contextMenuStrip;
-        private Point lastMousePosition;
-        private bool isDraggingMenu;
-
-
+       
         private void InitializeListView()
         {
-            MenuItemPanel = new MenuListView();
+            MenuItemPanel = new MenuListView(this);
             MenuItemPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
             MenuItemPanel.Height = this.panel1_menu.Height;
             this.panel1_menu.Controls.Add(MenuItemPanel);
+            this.InitResizing();
+            MenuItemPanel.ItemChecked += ListView1_ItemChecked;
         }
 
         private void GenerateMenuItems()
         {
             if (this.subRegions == null || this.subRegions.Count == 0) 
                 return;
+            MenuItemPanel.ItemChecked -= ListView1_ItemChecked;
             for (int i = 1; i < this.subRegions.Count; i++)
             {
                 var r= this.subRegions[i];
                 MenuItemPanel.AddMenuItem($"{i}|{r.X}|{r.Y}|{r.Width}|{r.Height}");
             }
+            MenuItemPanel.ItemChecked += ListView1_ItemChecked;
+            this.removeRects.Clear();
+            this.newRects.Clear();
         }
         #endregion
 
         #region ResizingMenuPanel
         private bool isResizing = false;
         private Point lastMousePositionResizing;
+        private const int ResizeMargin = 5; // 可拖动区域的边距
 
         private void InitResizing() 
         {
             // 订阅鼠标事件
-            this.panel1_menu.MouseDown += Panel_MouseDown;
-            this.panel1_menu.MouseMove += Panel_MouseMove;
-            this.panel1_menu.MouseUp += Panel_MouseUp;
+            this.MenuItemPanel.MouseDown += Panel_MouseDown;
+            this.MenuItemPanel.MouseMove += Panel_MouseMove;
+            this.MenuItemPanel.MouseUp += Panel_MouseUp;
+            //this.MenuItemPanel.Width = this.panel1_menu.Width+50;
+            this.MenuItemPanel.SetWidth(this.panel1_menu.Width);
         }
         private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
             // 检查是否点击了右边线
-            if (e.Location.X >= ((Panel)sender).Width - 5)
+            if (e.Location.X >= ((MenuListView)sender).Width - ResizeMargin)
             {
                 isResizing = true;
                 lastMousePositionResizing = e.Location;
+                Cursor.Current = Cursors.SizeWE; // 设置光标为双向箭头
             }
         }
 
         private void Panel_MouseMove(object sender, MouseEventArgs e)
         {
+            var panel = (MenuListView)sender;
+
+            // 如果鼠标在右边线附近，改变光标为双向箭头
+            if (e.Location.X >= panel.Width - ResizeMargin)
+            {
+                Cursor.Current = Cursors.SizeWE; // 设置光标为双向箭头
+            }
+            else
+            {
+                Cursor.Current = Cursors.Default; // 恢复默认光标
+            }
+
+            // 如果正在调整大小
             if (isResizing)
             {
                 // 计算宽度变化
                 int widthChange = e.Location.X - lastMousePositionResizing.X;
-                ((Panel)sender).Width += widthChange;
+                panel.Width += widthChange;
+                 this.panel1_menu.Width= this.MenuItemPanel.Width;
 
                 // 更新鼠标位置
                 lastMousePositionResizing = e.Location;
@@ -1081,12 +1164,125 @@ namespace zy_cutPicture
         private void Panel_MouseUp(object sender, MouseEventArgs e)
         {
             isResizing = false;
+            Cursor.Current = Cursors.Default; // 恢复默认光标
+        }
+        #endregion
+
+        #region 绘制选中 右键功能
+        List<Rectangle> removeRects= new List<Rectangle>();
+        List<Rectangle> newRects= new List<Rectangle>();
+        
+        public void MergeRectanglesOneName(List<string> rects)
+        {
+            List<Rectangle> list = new List<Rectangle>();
+            foreach (var v in rects)
+            {
+                var aary = v.Split('|');
+                var r = new Rectangle();
+                r.X = int.Parse(aary[1]);
+                r.Y = int.Parse(aary[2]);
+                r.Width = int.Parse(aary[3]);
+                r.Height = int.Parse(aary[4]);
+                list.Add(r);
+                removeRects.Add(r);
+            }
+            this.newRects.Add(MergeRectanglesOne(list));
+        }
+        public void ExportSelectedItems(List<string> rects,bool isComb)
+        {
+            List<Rectangle> list = new List<Rectangle>();
+            foreach (var v in rects)
+            {
+                var aary = v.Split('|');
+                var r = new Rectangle();
+                r.X = int.Parse(aary[1]);
+                r.Y = int.Parse(aary[2]);
+                r.Width = int.Parse(aary[3]);
+                r.Height = int.Parse(aary[4]);
+                list.Add(r);
+                removeRects.Add(r);
+            }
+            if (isComb)
+            {
+                var r = MergeRectanglesOne(list);
+                list.Clear();
+                list.Add(r);
+                this.ExportSubImages(list);
+            }
+            else 
+            {
+                this.ExportSubImages(list);
+            }            
+           // this.newRects.Add(MergeRectanglesOne(list));
+        }
+        private void ListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            // 当 CheckBox 状态改变时，此方法会被调用
+            ListViewItem item = e.Item;
+            if (item.Checked)
+            {
+                //MessageBox.Show($"Item '{item.Text}' 已被选中。");
+                SetVisitedSelectedName(true, item.Text);
+            }
+            else
+            {
+                //MessageBox.Show($"Item '{item.Text}' 已被取消选中。");
+                SetVisitedSelectedName(false, item.Text);
+            }
+        }
+        public void SetVisitedSelectedName(bool isCheck, params string[] rects) 
+        {
+            List<Rectangle> list = new List<Rectangle>();
+            foreach (var v in rects)
+            {
+                var aary = v.Split('|');
+                var r = new Rectangle();
+                r.X = int.Parse(aary[1]);
+                r.Y = int.Parse(aary[2]);
+                r.Width = int.Parse(aary[3]);
+                r.Height = int.Parse(aary[4]);
+                list.Add(r);
+            }
+            SetVisitedSelected(isCheck, list.ToArray());
+        }
+        private void SetVisitedSelected(bool isCheck,params Rectangle[] rects) 
+        {
+            if (this.visited == null || rects == null || rects.Length == 0) return;
+
+            //foreach (var v in this.visited)
+            //{
+            //    v.isSelected = false;
+            //}
+            foreach (var rect in rects) 
+            {
+                var list = GetPointsInRectangle(rect);
+
+                foreach (var p in list)
+                {
+                    this.visited[p.X, p.Y].isSelected = isCheck;
+                }
+            }
+            if(this.sourceImage != null)
+                this.pictureBox_debug.Image =  GenerateImage_debug(this.sourceImage);
+        }
+        public static List<Point> GetPointsInRectangle(Rectangle rect)
+        {
+            List<Point> points = new List<Point>();
+            for (int x = rect.Left; x < rect.Right; x++)
+            {
+                for (int y = rect.Top; y < rect.Bottom; y++)
+                {
+                    points.Add(new Point(x, y));
+                }
+            }
+            return points;
         }
         #endregion
     }
     public class VisitItem
     {
         public bool isVisit = false;
+        public bool isSelected =false;
         public Color color = Color.FromArgb(0, 255, 255, 255);
         public VisitItem()
         {
