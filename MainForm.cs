@@ -484,7 +484,7 @@ namespace zy_cutPicture
                     if (this.visited != null) 
                     {
                          c = this.visited[x, y].color;
-                         c2 = this.visited[x, y].isSelected ? Color.FromArgb(200, 0, 255, 255) : Color.FromArgb(0, 0, 0, 0);
+                         c2 = this.visited[x, y].isSelected ? Color.FromArgb(200, 0, 0, 255) : Color.FromArgb(0, 0, 0, 0);
 
                     }
                     // c = Color.FromArgb(a,r,g,b);
@@ -571,7 +571,7 @@ namespace zy_cutPicture
                         if (r.Contains(new Point(x, y)))
                         {
                             this.visited[x, y].isVisit = true;
-                            this.visited[x, y].color = Color.FromArgb(125, 0, 0, 255);
+                            this.visited[x, y].color = Color.FromArgb(125, 0, 255, 255);
                             hasRect = true;
                             break;
                         }
