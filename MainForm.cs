@@ -358,7 +358,7 @@ namespace zy_cutPicture
             this.DoubleBuffered = true;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "拆分图集器 v1.2";
+            this.Text = "拆分图集器 v1.5";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSpacing)).EndInit();
