@@ -1118,6 +1118,10 @@ namespace zy_cutPicture
         {
             if (this.subRegions == null || this.subRegions.Count == 0) 
                 return;
+            MenuItemPanel.Clear();
+            MenuItemPanel.Dispose();
+            MenuItemPanel = null;
+            InitializeListView();
             MenuItemPanel.ItemChecked -= ListView1_ItemChecked;
             MenuItemPanel.ItemSelectionChanged -= ListView1_ItemSelected;
             for (int i = 0; i < this.subRegions.Count; i++)
@@ -1127,6 +1131,7 @@ namespace zy_cutPicture
             }
             MenuItemPanel.ItemChecked += ListView1_ItemChecked;
             MenuItemPanel.ItemSelectionChanged += ListView1_ItemSelected;
+            MenuItemPanel.Refresh();
             this.removeRects.Clear();
             this.newRects.Clear();
         }
@@ -1350,36 +1355,46 @@ namespace zy_cutPicture
 
             // 创建上下文菜单
             contextMenuStrip_pictureBox_debug = new ContextMenuStrip();
-            ToolStripMenuItem mergeMenuItem = new ToolStripMenuItem("合并");
-            mergeMenuItem.Click += MergeMenuItem_Click;
-            ToolStripMenuItem exportMenuItem = new ToolStripMenuItem("导出");
-            exportMenuItem.Click += ExportMenuItem_Click;
-            ToolStripMenuItem mergeExportMenuItem = new ToolStripMenuItem("合并导出");
-            mergeExportMenuItem.Click += MergeExportMenuItem_Click;
+            contextMenuStrip_pictureBox_debug.Items.AddRange(new ToolStripItem[]
+          {
+                new ToolStripMenuItem("复制", null, (s, e) => this.MenuItemPanel.CopyMenuItem_Click()),
+                new ToolStripMenuItem("勾选", null, (s, e) => this.MenuItemPanel.SelectCurr()),
+                new ToolStripMenuItem("全勾选", null, (s, e) => this.MenuItemPanel.SelectAllItems()),
+                new ToolStripMenuItem("清空勾选", null, (s, e) => this.MenuItemPanel.ClearSelection()),
+                new ToolStripSeparator(),
 
-            contextMenuStrip_pictureBox_debug.Items.Add(mergeMenuItem);
-            contextMenuStrip_pictureBox_debug.Items.Add(exportMenuItem);
-            contextMenuStrip_pictureBox_debug.Items.Add(mergeExportMenuItem);
+                new ToolStripMenuItem("合并选中", null, (s, e) => this.MenuItemPanel.MergeSelectedItems()),
+                  new ToolStripMenuItem("导出选中", null, (s, e) => this.MenuItemPanel.ExportSelectedItems(false)),
+                  new ToolStripMenuItem("导出选中(合并的)", null, (s, e) => this.MenuItemPanel.ExportSelectedItems(true)),
+                new ToolStripMenuItem("手动排列选中", null, (s, e) => this.MenuItemPanel.ArrangeSelected()),
+                new ToolStripMenuItem("手动排列全部", null, (s, e) => this.MenuItemPanel.ArrangeAll())
+          });
 
             this.pictureBox_debug.ContextMenuStrip = contextMenuStrip_pictureBox_debug;
         }
-        private void MergeMenuItem_Click(object sender, EventArgs e)
+        private void CheckedMenuItem_Click()
         {
             // 这里添加合并操作的代码
-            MessageBox.Show("你点击了合并");
+            //MessageBox.Show("你点击了打勾");
+
+            foreach (ListViewItem item in this.MenuItemPanel.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Checked = true;
+                    this.MenuItemPanel.EnsureVisible(item.Index);
+                }
+            }
+            this.MenuItemPanel.Focus();
+        }   
+        private void MergeMenuItem_Click()
+        {
+            // 这里添加合并操作的代码
+            //MessageBox.Show("你点击了合并");
+            this.MenuItemPanel.MergeSelectedItems();
+            this.MenuItemPanel.Focus();
         }
 
-        private void ExportMenuItem_Click(object sender, EventArgs e)
-        {
-            // 这里添加导出操作的代码
-            MessageBox.Show("你点击了导出");
-        }
-
-        private void MergeExportMenuItem_Click(object sender, EventArgs e)
-        {
-            // 这里添加合并导出操作的代码
-            MessageBox.Show("你点击了合并导出");
-        }
         private void pictureBox_debug_MouseClick(object sender, MouseEventArgs e)
         {
             Point pixelPoint = ConvertToBitmapCoordinates(this.pictureBox_debug, e.Location);
@@ -1449,6 +1464,13 @@ namespace zy_cutPicture
                 }
                 this.SelectListViewItem(this.MenuItemPanel, lines);
 
+                if (Control.ModifierKeys == Keys.Alt)
+                {
+
+                    this.MenuItemPanel.MergeSelectedItems();
+                    // 这里可以添加 Ctrl 键抬起后要执行的逻辑代码，也就是判断用户此时没按 Ctrl 键了
+                    Console.WriteLine("Ctrl 键已经抬起，当前没按 Ctrl 键");
+                }
                 // 可以在这里使用最终的矩形坐标，例如输出到控制台
                 Console.WriteLine($"Bitmap Rectangle: {finalRect.X}, {finalRect.Y}, {finalRect.Width}, {finalRect.Height}");
                 this.pictureBox_debug.Invalidate(); // 触发 Paint 事件
@@ -1537,7 +1559,7 @@ namespace zy_cutPicture
             return new Point(pixelX, pixelY);
         }
 
-        private void SelectListViewItem(ListView listView, List<string> itemTexts)
+        private void SelectListViewItem(MenuListView listView, List<string> itemTexts)
         {
             if (Control.ModifierKeys != Keys.Control&& Control.ModifierKeys != Keys.Shift)
             {

@@ -37,10 +37,10 @@ namespace zy_cutPicture
             contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem("复制", null, (s, e) => CopyMenuItem_Click(s,e)),
-                new ToolStripMenuItem("选择", null, (s, e) => SelectCurr(s,e)),
-                new ToolStripMenuItem("全选", null, (s, e) => SelectAllItems()),
-                new ToolStripMenuItem("清空选择", null, (s, e) => ClearSelection()),
+                new ToolStripMenuItem("复制", null, (s, e) => CopyMenuItem_Click()),
+                new ToolStripMenuItem("勾选", null, (s, e) => SelectCurr()),
+                new ToolStripMenuItem("全勾选", null, (s, e) => SelectAllItems()),
+                new ToolStripMenuItem("清空勾选", null, (s, e) => ClearSelection()),
                 new ToolStripSeparator(),
               
                 new ToolStripMenuItem("合并选中", null, (s, e) => MergeSelectedItems()),
@@ -85,7 +85,7 @@ namespace zy_cutPicture
         }
 
         // copyName
-        private void CopyMenuItem_Click(object sender, EventArgs e)
+        public void CopyMenuItem_Click()
         {
             if (this.SelectedItems.Count > 0)
             {
@@ -95,11 +95,11 @@ namespace zy_cutPicture
             }
             else
             {
-                MessageBox.Show("请先选择一个项目。");
+               MessageDisplayer.ShowMessage("请先选择一个项目", 1);
             }
-        } 
-        // 全选当前
-        private void SelectCurr(object sender, EventArgs e)
+        }
+        // 勾选当前
+        public void SelectCurr()
         {   bool selected = true;
             foreach (ListViewItem item in this.SelectedItems) 
             {
@@ -117,9 +117,9 @@ namespace zy_cutPicture
                 else
                     item.Checked = !item.Checked;
             }
-        }  
-        // 全选
-        private void SelectAllItems()
+        }
+        // 全勾选
+        public void SelectAllItems()
         {
             foreach (ListViewItem item in this.Items)
             {
@@ -127,8 +127,8 @@ namespace zy_cutPicture
             }
         }
 
-        // 清空选择
-        private void ClearSelection()
+        // 清空勾选
+        public void ClearSelection()
         {
             foreach (ListViewItem item in this.Items)
             {
@@ -137,7 +137,7 @@ namespace zy_cutPicture
         }
 
         // 导出选中项
-        private void ExportSelectedItems(bool isComb)
+        public void ExportSelectedItems(bool isComb)
         {
             var selectedItems = this.CheckedItems;
             if (selectedItems.Count > 0)
@@ -153,12 +153,14 @@ namespace zy_cutPicture
                 this.mainForm.ExportSelectedItems(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList(), isComb);
             }
             else
-            {
-                MessageBox.Show("没有选中任何项", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            {               
+                MessageDisplayer.ShowMessage("没有选中任何项", 1);
             }
-        } 
-        // 合并选中项
-        private void MergeSelectedItems()
+        }
+        /// <summary>
+        /// 合并选中项
+        /// </summary>
+        public void MergeSelectedItems()
         {
             var selectedItems = this.CheckedItems;
             //if (selectedItems.Count > 0)
@@ -173,7 +175,7 @@ namespace zy_cutPicture
             //    }
             //}
             //else 
-            if (this.SelectedItems.Count > 0)
+            if (this.SelectedItems.Count > 1)
             {                
                 this.mainForm.MergeRectanglesOneName(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
                 for (int i = 0; i < this.SelectedItems.Count; i++)
@@ -184,12 +186,12 @@ namespace zy_cutPicture
             }
             else
             {
-                MessageBox.Show("没有选中任何项", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageDisplayer.ShowMessage("没有选中任何项", 1);
             }
         }
 
         // 手动排列选中项
-        private void ArrangeSelected()
+        public void ArrangeSelected()
         {
             var selectedItems = this.CheckedItems;
             if (selectedItems.Count > 0)
@@ -203,12 +205,12 @@ namespace zy_cutPicture
             }
             else
             {
-                MessageBox.Show("没有选中任何项", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageDisplayer.ShowMessage("没有选中任何项", 1);
             }
         }
 
         // 手动排列全部项
-        private void ArrangeAll()
+        public void ArrangeAll()
         {
             // 示例：按文本排序
             var items = this.Items.Cast<ListViewItem>().OrderBy(x => x.Text).ToList();
