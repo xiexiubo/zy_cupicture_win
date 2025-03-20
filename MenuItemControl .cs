@@ -143,10 +143,14 @@ namespace zy_cutPicture
             if (selectedItems.Count > 0)
             {
                 string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
-                
-                this.mainForm.ExportSelectedItems(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList(),isComb);
+
+                this.mainForm.ExportSelectedItems(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList(), isComb);
 
                 //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (this.SelectedItems.Count > 0) 
+            {
+                this.mainForm.ExportSelectedItems(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList(), isComb);
             }
             else
             {
@@ -162,6 +166,20 @@ namespace zy_cutPicture
                 string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
                 this.mainForm.MergeRectanglesOneName(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
                 //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                for (int i = 0; i < selectedItems.Count; i++) 
+                {
+                    var item = selectedItems[i] as ListViewItem;
+                    if (item != null) item.ForeColor = Color.White;
+                }
+            }
+            else if (this.SelectedItems.Count > 0)
+            {                
+                this.mainForm.MergeRectanglesOneName(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
+                for (int i = 0; i < this.SelectedItems.Count; i++)
+                {
+                    var item = this.SelectedItems[i];
+                    if (item != null) item.ForeColor = Color.White;
+                }
             }
             else
             {
