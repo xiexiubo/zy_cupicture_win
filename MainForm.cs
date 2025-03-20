@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Configuration;
 using zy_cutPicture.Properties;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 
 namespace zy_cutPicture
 {
@@ -67,6 +68,7 @@ namespace zy_cutPicture
             InitDefautImage();
 
             InitializeListView();
+            InitPictureEvent();
         }
 
         private void InitializeComponent()
@@ -121,7 +123,7 @@ namespace zy_cutPicture
             this.pictureBox_debug.Location = new System.Drawing.Point(0, 0);
             this.pictureBox_debug.Name = "pictureBox_debug";
             this.pictureBox_debug.Size = new System.Drawing.Size(500, 581);
-            this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_debug.TabIndex = 10;
             this.pictureBox_debug.TabStop = false;
             // 
@@ -399,6 +401,15 @@ namespace zy_cutPicture
         private void LoadImage(string path)
         {
             this.sourceImage?.Dispose();
+            this.sourceImage = null ;
+            this.image_debug?.Dispose();
+            this.image_debug = null;
+            this.visited = null;
+            this.subRegions.Clear();
+            this.removeRects.Clear();
+            this.newRects.Clear();
+            //this.
+
             this.text_input.Text = path;
             this.text_output.Text = path.Replace(Path.GetExtension(path), "\\");
             this.sourceImage = new Bitmap(path);
@@ -408,7 +419,6 @@ namespace zy_cutPicture
             this.pictureBox_debug.Image = sourceImage;
             //this.pictureBox_debug.BackColor = Color.Transparent; 
             zoomFactor = 1.0f;
-            UpdateImageDisplay();
         }
         private void btnOpen_Click(object sender, EventArgs e)
         {
@@ -1019,82 +1029,7 @@ namespace zy_cutPicture
             return bmp;
         }
 
-        private void UpdateImageDisplay()
-        {
-            //if (sourceImage == null) return;
-
-            //var zoomedImage = new Bitmap(
-            //    (int)(sourceImage.Width * zoomFactor),
-            //    (int)(sourceImage.Height * zoomFactor));
-
-            //using (var g = Graphics.FromImage(zoomedImage))
-            //{
-            //    g.InterpolationMode = InterpolationMode.NearestNeighbor;
-            //    g.DrawImage(sourceImage,
-            //        new Rectangle(0, 0, zoomedImage.Width, zoomedImage.Height),
-            //        new Rectangle(0, 0, sourceImage.Width, sourceImage.Height),
-            //        GraphicsUnit.Pixel);
-            //}
-
-            //pictureBox.Image = zoomedImage;
-            //pictureBox.Invalidate();
-
-            //if (image_debug == null) return;
-
-            //var zoomedImage_debug = new Bitmap(
-            //    (int)(image_debug.Width * zoomFactor),
-            //    (int)(image_debug.Height * zoomFactor));
-
-            //using (var g = Graphics.FromImage(zoomedImage_debug))
-            //{
-            //    g.InterpolationMode = InterpolationMode.NearestNeighbor;
-            //    g.DrawImage(image_debug,
-            //        new Rectangle(0, 0, zoomedImage_debug.Width, zoomedImage_debug.Height),
-            //        new Rectangle(0, 0, image_debug.Width, image_debug.Height),
-            //        GraphicsUnit.Pixel);
-            //}
-
-            //pictureBox_debug.Image = zoomedImage_debug;
-            //pictureBox_debug.Invalidate();
-        }
-
-
-
-        private void PictureBox_MouseWheel(object sender, MouseEventArgs e)
-        {
-            zoomFactor *= e.Delta > 0 ? 1.1f : 0.9f;
-            zoomFactor = Math.Max(0.1f, Math.Min(5f, zoomFactor));
-            UpdateImageDisplay();
-        }
-
-        private void PictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                isDragging = true;
-                dragStart = e.Location;
-                dragOffset = new Point(0, 0);
-            }
-        }
-
-        private void PictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                // 实现平移逻辑
-                dragOffset = new Point(e.X - dragStart.X, e.Y - dragStart.Y);
-                if (pictureBox.Image != null)
-                {
-                    pictureBox.Invalidate();
-                }
-            }
-        }
-
-        private void PictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            isDragging = false;
-        }
-
+        
         private bool IsTransparent(Color color)
         {
             return color.A <= this.cutAlpha;
@@ -1397,6 +1332,241 @@ namespace zy_cutPicture
             return points;
         }
         #endregion
+
+        #region 对Picture点击选中操作
+
+        private Point startPoint_pictureBox_debug;
+        private bool isDragging_pictureBox_debug = false;
+        private Rectangle currentDragRect_pictureBox_debug = Rectangle.Empty;
+        private ContextMenuStrip contextMenuStrip_pictureBox_debug;
+        private void InitPictureEvent() 
+        {
+            this.pictureBox_debug.MouseClick += pictureBox_debug_MouseClick;
+            this.pictureBox_debug.MouseDown += pictureBox_debug_MouseDown;
+            this.pictureBox_debug.MouseMove += pictureBox_debug_MouseMove;
+            this.pictureBox_debug.MouseUp += pictureBox_debug_MouseUp;
+            this.pictureBox_debug.Paint += pictureBox_debug_Paint;
+
+
+            // 创建上下文菜单
+            contextMenuStrip_pictureBox_debug = new ContextMenuStrip();
+            ToolStripMenuItem mergeMenuItem = new ToolStripMenuItem("合并");
+            mergeMenuItem.Click += MergeMenuItem_Click;
+            ToolStripMenuItem exportMenuItem = new ToolStripMenuItem("导出");
+            exportMenuItem.Click += ExportMenuItem_Click;
+            ToolStripMenuItem mergeExportMenuItem = new ToolStripMenuItem("合并导出");
+            mergeExportMenuItem.Click += MergeExportMenuItem_Click;
+
+            contextMenuStrip_pictureBox_debug.Items.Add(mergeMenuItem);
+            contextMenuStrip_pictureBox_debug.Items.Add(exportMenuItem);
+            contextMenuStrip_pictureBox_debug.Items.Add(mergeExportMenuItem);
+
+            this.pictureBox_debug.ContextMenuStrip = contextMenuStrip_pictureBox_debug;
+        }
+        private void MergeMenuItem_Click(object sender, EventArgs e)
+        {
+            // 这里添加合并操作的代码
+            MessageBox.Show("你点击了合并");
+        }
+
+        private void ExportMenuItem_Click(object sender, EventArgs e)
+        {
+            // 这里添加导出操作的代码
+            MessageBox.Show("你点击了导出");
+        }
+
+        private void MergeExportMenuItem_Click(object sender, EventArgs e)
+        {
+            // 这里添加合并导出操作的代码
+            MessageBox.Show("你点击了合并导出");
+        }
+        private void pictureBox_debug_MouseClick(object sender, MouseEventArgs e)
+        {
+            Point pixelPoint = ConvertToBitmapCoordinates(this.pictureBox_debug, e.Location);
+            for (int i = 0; i < this.subRegions.Count; i++) 
+            {
+                if (this.subRegions[i].Contains(pixelPoint))
+                {
+                    var r = this.subRegions[i];
+                    var text = $"|{r.X}|{r.Y}|{r.Width}|{r.Height}";
+                    List<string> lines = new List<string>();
+                    lines.Add(text);
+                    this.SelectListViewItem(this.MenuItemPanel, lines);
+                    break;
+                }
+            }
+            // 可以在这里使用转换后的坐标
+            Console.WriteLine($"Bitmap Pixel Coordinates: {pixelPoint.X}, {pixelPoint.Y}");
+        }
+        private void pictureBox_debug_Paint(object sender, PaintEventArgs e)
+        {
+            if (isDragging_pictureBox_debug && !currentDragRect_pictureBox_debug.IsEmpty)
+            {
+                // 计算在 PictureBox 上显示的矩形位置
+                Rectangle displayRect = GetDisplayRectangle(this.pictureBox_debug, currentDragRect_pictureBox_debug);
+                e.Graphics.DrawRectangle(Pens.Red, displayRect);
+            }
+        }
+        private void pictureBox_debug_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                startPoint_pictureBox_debug = e.Location;
+                isDragging_pictureBox_debug = true;
+            }
+        }
+
+        private void pictureBox_debug_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging_pictureBox_debug)
+            {
+                Rectangle dragRect = GetBitmapRectangle(pictureBox_debug, startPoint_pictureBox_debug, e.Location);
+                // 这里可以进行绘制矩形等操作，例如在 PictureBox 上绘制拖动的矩形
+                // 你可以根据需要更新 UI 显示
+                currentDragRect_pictureBox_debug = GetBitmapRectangle(this.pictureBox_debug, startPoint_pictureBox_debug, e.Location);
+                this.pictureBox_debug.Invalidate(); // 触发 Paint 事件
+            }
+        }
+
+        private void pictureBox_debug_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (isDragging_pictureBox_debug)
+            {
+               
+                Rectangle finalRect = GetBitmapRectangle(pictureBox_debug, startPoint_pictureBox_debug, e.Location);
+                List<string> lines = new List<string>();
+                if (e.Button == MouseButtons.Left) 
+                {
+                    for (int i = 0; i < this.subRegions.Count; i++)
+                    {
+                        if (this.subRegions[i].IntersectsWith(finalRect))
+                        {
+                            var r = this.subRegions[i];
+                            var text = $"|{r.X}|{r.Y}|{r.Width}|{r.Height}";
+                            lines.Add(text);
+                        }
+                    }
+                }
+                this.SelectListViewItem(this.MenuItemPanel, lines);
+
+                // 可以在这里使用最终的矩形坐标，例如输出到控制台
+                Console.WriteLine($"Bitmap Rectangle: {finalRect.X}, {finalRect.Y}, {finalRect.Width}, {finalRect.Height}");
+                this.pictureBox_debug.Invalidate(); // 触发 Paint 事件
+                isDragging_pictureBox_debug = false;
+            }
+        }
+
+        private Rectangle GetBitmapRectangle(PictureBox pictureBox, Point start, Point end)
+        {
+            if (pictureBox.Image == null)
+            {
+                return Rectangle.Empty;
+            }
+
+            // 获取 PictureBox 的显示区域
+            Rectangle displayRectangle = pictureBox.ClientRectangle;
+
+            // 获取图像的原始尺寸
+            Size imageSize = pictureBox.Image.Size;
+
+            // 计算图像在 PictureBox 中的缩放比例
+            float scaleX = (float)imageSize.Width / displayRectangle.Width;
+            float scaleY = (float)imageSize.Height / displayRectangle.Height;
+
+            // 根据缩放比例计算起始点和结束点在位图中的像素坐标
+            int startX = (int)(start.X * scaleX);
+            int startY = (int)(start.Y * scaleY);
+            int endX = (int)(end.X * scaleX);
+            int endY = (int)(end.Y * scaleY);
+
+            // 确保矩形的坐标和尺寸为正值
+            int x = Math.Min(startX, endX);
+            int y = Math.Min(startY, endY);
+            int width = Math.Abs(endX - startX);
+            int height = Math.Abs(endY - startY);
+
+            return new Rectangle(x, y, width, height);
+        }
+        private Rectangle GetDisplayRectangle(PictureBox pictureBox, Rectangle bitmapRect)
+        {
+            if (pictureBox.Image == null)
+            {
+                return Rectangle.Empty;
+            }
+
+            // 获取 PictureBox 的显示区域
+            Rectangle displayRectangle = pictureBox.ClientRectangle;
+
+            // 获取图像的原始尺寸
+            Size imageSize = pictureBox.Image.Size;
+
+            // 计算图像在 PictureBox 中的缩放比例
+            float scaleX = (float)displayRectangle.Width / imageSize.Width;
+            float scaleY = (float)displayRectangle.Height / imageSize.Height;
+
+            // 根据缩放比例计算在 PictureBox 上显示的矩形位置
+            int x = (int)(bitmapRect.X * scaleX);
+            int y = (int)(bitmapRect.Y * scaleY);
+            int width = (int)(bitmapRect.Width * scaleX);
+            int height = (int)(bitmapRect.Height * scaleY);
+
+            return new Rectangle(x, y, width, height);
+        }
+
+        private Point ConvertToBitmapCoordinates(PictureBox pictureBox, Point clickPoint)
+        {
+            if (pictureBox.Image == null)
+            {
+                return Point.Empty;
+            }
+
+            // 获取 PictureBox 的显示区域
+            Rectangle displayRectangle = pictureBox.ClientRectangle;
+
+            // 获取图像的原始尺寸
+            Size imageSize = pictureBox.Image.Size;
+
+            // 计算图像在 PictureBox 中的缩放比例
+            float scaleX = (float)imageSize.Width / displayRectangle.Width;
+            float scaleY = (float)imageSize.Height / displayRectangle.Height;
+
+            // 根据缩放比例计算位图中的像素坐标
+            int pixelX = (int)(clickPoint.X * scaleX);
+            int pixelY = (int)(clickPoint.Y * scaleY);
+
+            return new Point(pixelX, pixelY);
+        }
+
+        private void SelectListViewItem(ListView listView, List<string> itemTexts)
+        {
+            if (Control.ModifierKeys != Keys.Control&& Control.ModifierKeys != Keys.Shift)
+            {
+                foreach (ListViewItem item in listView.Items)
+                {
+                    item.Selected = false;
+                }
+                // 这里可以添加 Ctrl 键抬起后要执行的逻辑代码，也就是判断用户此时没按 Ctrl 键了
+                Console.WriteLine("Ctrl 键已经抬起，当前没按 Ctrl 键");
+            }
+          
+            foreach (string text in itemTexts)
+            {
+                foreach (ListViewItem item in listView.Items)
+                {
+                    if (item.Text.Contains(text))
+                    {
+                        item.Selected = true;
+                        listView.EnsureVisible(item.Index);
+                        break;
+                    }
+                }
+
+            }
+            listView.Focus();
+        }
+        #endregion
+
+
     }
     public class VisitItem
     {

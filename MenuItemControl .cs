@@ -161,18 +161,19 @@ namespace zy_cutPicture
         private void MergeSelectedItems()
         {
             var selectedItems = this.CheckedItems;
-            if (selectedItems.Count > 0)
-            {
-                string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
-                this.mainForm.MergeRectanglesOneName(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
-                //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                for (int i = 0; i < selectedItems.Count; i++) 
-                {
-                    var item = selectedItems[i] as ListViewItem;
-                    if (item != null) item.ForeColor = Color.White;
-                }
-            }
-            else if (this.SelectedItems.Count > 0)
+            //if (selectedItems.Count > 0)
+            //{
+            //    string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
+            //    this.mainForm.MergeRectanglesOneName(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
+            //    //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    for (int i = 0; i < selectedItems.Count; i++) 
+            //    {
+            //        var item = selectedItems[i] as ListViewItem;
+            //        if (item != null) item.ForeColor = Color.White;
+            //    }
+            //}
+            //else 
+            if (this.SelectedItems.Count > 0)
             {                
                 this.mainForm.MergeRectanglesOneName(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
                 for (int i = 0; i < this.SelectedItems.Count; i++)
