@@ -46,5 +46,53 @@ namespace zy_cutPicture.Properties {
                 this["WindowSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool isDebug {
+            get {
+                return ((bool)(this["isDebug"]));
+            }
+            set {
+                this["isDebug"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public decimal spacing {
+            get {
+                return ((decimal)(this["spacing"]));
+            }
+            set {
+                this["spacing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal cutAlpha {
+            get {
+                return ((decimal)(this["cutAlpha"]));
+            }
+            set {
+                this["cutAlpha"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal expand {
+            get {
+                return ((decimal)(this["expand"]));
+            }
+            set {
+                this["expand"] = value;
+            }
+        }
     }
 }

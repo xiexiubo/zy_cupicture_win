@@ -41,8 +41,12 @@ namespace zy_cutPicture
         private BackgroundWorker worker;
         private bool isProcessing = false;
         private bool cancelRequested = false;
-        private int spacing = 2;
-        private int cutAlpha = 0;
+
+        private int spacing;
+        private int cutAlpha;
+        private int expand;
+        private bool isDebug;
+        
         private float zoomFactor = 1.0f;
         private Point dragStart;
         private Point dragOffset;
@@ -55,11 +59,11 @@ namespace zy_cutPicture
         private Panel panel_image;
         private bool isDragging = false;
         private Label label3;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown numCutAlpha;
         private Button btn_cut;
-        private CheckBox tog_isDebug;
         private Panel panel1_menu;
         private Panel panel2_content;
+        private Button btnSetting;
         private bool isStartCut = false;
 
 
@@ -72,21 +76,19 @@ namespace zy_cutPicture
 
             InitializeListView();
             InitPictureEvent();
+            UpdateProperty();
         }
 
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.pictureBox_debug = new System.Windows.Forms.PictureBox();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.numSpacing = new System.Windows.Forms.NumericUpDown();
             this.controlPanel = new System.Windows.Forms.Panel();
             this.btn_cut = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.tog_isDebug = new System.Windows.Forms.CheckBox();
+            this.numCutAlpha = new System.Windows.Forms.NumericUpDown();
             this.btn_outPath = new System.Windows.Forms.Button();
             this.text_output = new System.Windows.Forms.TextBox();
             this.text_input = new System.Windows.Forms.TextBox();
@@ -94,41 +96,21 @@ namespace zy_cutPicture
             this.label_pading = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.panel_image = new System.Windows.Forms.Panel();
             this.panel1_menu = new System.Windows.Forms.Panel();
             this.panel2_content = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).BeginInit();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.pictureBox_debug = new System.Windows.Forms.PictureBox();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.btnSetting = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSpacing)).BeginInit();
             this.controlPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCutAlpha)).BeginInit();
             this.panel_image.SuspendLayout();
             this.panel2_content.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(500, 581);
-            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox.TabIndex = 10;
-            this.pictureBox.TabStop = false;
-            // 
-            // pictureBox_debug
-            // 
-            this.pictureBox_debug.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_debug.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_debug.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox_debug.Name = "pictureBox_debug";
-            this.pictureBox_debug.Size = new System.Drawing.Size(500, 581);
-            this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox_debug.TabIndex = 10;
-            this.pictureBox_debug.TabStop = false;
             // 
             // btnOpen
             // 
@@ -162,15 +144,15 @@ namespace zy_cutPicture
             // 
             // numSpacing
             // 
-            this.numSpacing.Dock = System.Windows.Forms.DockStyle.Right;
-            this.numSpacing.Location = new System.Drawing.Point(523, 5);
+            this.numSpacing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numSpacing.Location = new System.Drawing.Point(503, 5);
             this.numSpacing.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
             this.numSpacing.Name = "numSpacing";
-            this.numSpacing.Size = new System.Drawing.Size(74, 21);
+            this.numSpacing.Size = new System.Drawing.Size(34, 21);
             this.numSpacing.TabIndex = 4;
             this.numSpacing.Value = new decimal(new int[] {
             2,
@@ -182,9 +164,9 @@ namespace zy_cutPicture
             // controlPanel
             // 
             this.controlPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.controlPanel.Controls.Add(this.btnSetting);
             this.controlPanel.Controls.Add(this.btn_cut);
-            this.controlPanel.Controls.Add(this.numericUpDown1);
-            this.controlPanel.Controls.Add(this.tog_isDebug);
+            this.controlPanel.Controls.Add(this.numCutAlpha);
             this.controlPanel.Controls.Add(this.btn_outPath);
             this.controlPanel.Controls.Add(this.text_output);
             this.controlPanel.Controls.Add(this.text_input);
@@ -214,31 +196,19 @@ namespace zy_cutPicture
             this.btn_cut.UseVisualStyleBackColor = false;
             this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
             // 
-            // numericUpDown1
+            // numCutAlpha
             // 
-            this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown1.Location = new System.Drawing.Point(333, 5);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numCutAlpha.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numCutAlpha.Location = new System.Drawing.Point(333, 5);
+            this.numCutAlpha.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(69, 21);
-            this.numericUpDown1.TabIndex = 19;
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
-            // 
-            // tog_isDebug
-            // 
-            this.tog_isDebug.AutoSize = true;
-            this.tog_isDebug.Checked = true;
-            this.tog_isDebug.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tog_isDebug.Location = new System.Drawing.Point(260, 8);
-            this.tog_isDebug.Name = "tog_isDebug";
-            this.tog_isDebug.Size = new System.Drawing.Size(66, 16);
-            this.tog_isDebug.TabIndex = 17;
-            this.tog_isDebug.Text = "IsDebug";
-            this.tog_isDebug.UseVisualStyleBackColor = true;
+            this.numCutAlpha.Name = "numCutAlpha";
+            this.numCutAlpha.Size = new System.Drawing.Size(52, 21);
+            this.numCutAlpha.TabIndex = 19;
+            this.numCutAlpha.ValueChanged += new System.EventHandler(this.numCutAlpha_ValueChanged);
             // 
             // btn_outPath
             // 
@@ -282,7 +252,7 @@ namespace zy_cutPicture
             // 
             this.label_pading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_pading.AutoSize = true;
-            this.label_pading.Location = new System.Drawing.Point(434, 9);
+            this.label_pading.Location = new System.Drawing.Point(413, 9);
             this.label_pading.Name = "label_pading";
             this.label_pading.Size = new System.Drawing.Size(89, 12);
             this.label_pading.TabIndex = 10;
@@ -307,16 +277,6 @@ namespace zy_cutPicture
             this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 11;
             this.label1.Text = "输出路径：";
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(6, 561);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(59, 12);
-            this.lblStatus.TabIndex = 6;
-            this.lblStatus.Text = "lblStatus";
             // 
             // panel_image
             // 
@@ -353,6 +313,51 @@ namespace zy_cutPicture
             this.panel2_content.Size = new System.Drawing.Size(500, 581);
             this.panel2_content.TabIndex = 13;
             // 
+            // lblStatus
+            // 
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(6, 561);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(59, 12);
+            this.lblStatus.TabIndex = 6;
+            this.lblStatus.Text = "lblStatus";
+            // 
+            // pictureBox_debug
+            // 
+            this.pictureBox_debug.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_debug.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_debug.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox_debug.Name = "pictureBox_debug";
+            this.pictureBox_debug.Size = new System.Drawing.Size(500, 581);
+            this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox_debug.TabIndex = 10;
+            this.pictureBox_debug.TabStop = false;
+            // 
+            // pictureBox
+            // 
+            this.pictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+            this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(500, 581);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox.TabIndex = 10;
+            this.pictureBox.TabStop = false;
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetting.BackgroundImage = global::zy_cutPicture.Properties.Resources.shezhi;
+            this.btnSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnSetting.Location = new System.Drawing.Point(569, 3);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(30, 30);
+            this.btnSetting.TabIndex = 21;
+            this.btnSetting.UseVisualStyleBackColor = true;
+            this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(602, 651);
@@ -362,15 +367,15 @@ namespace zy_cutPicture
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "拆分图集器 v1.5";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSpacing)).EndInit();
             this.controlPanel.ResumeLayout(false);
             this.controlPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCutAlpha)).EndInit();
             this.panel_image.ResumeLayout(false);
             this.panel2_content.ResumeLayout(false);
             this.panel2_content.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_debug)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -573,7 +578,7 @@ namespace zy_cutPicture
 
         private void NumSpacing_ValueChanged(object sender, EventArgs e)
         {
-            spacing = (int)numSpacing.Value;
+            this.spacing = (int)numSpacing.Value;
         }
        
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
@@ -859,10 +864,9 @@ namespace zy_cutPicture
                 this.isStartCut = false;
             }
             lblStatus.Text = "完成计算";
-            if (this.tog_isDebug.Checked)
-            {
-                this.ShowDebug_texture();
-            }
+
+            this.ShowDebug_texture();
+
             GenerateMenuItems();
         }
 
@@ -1045,13 +1049,12 @@ namespace zy_cutPicture
         }
 
         private Rectangle ExpandBounds(Rectangle bounds)
-        {
-            int p = Math.Max(1, spacing / 2);
+        {            
             return new Rectangle(
-                Math.Max(0, bounds.X - p),
-                Math.Max(0, bounds.Y - p),
-                Math.Min(sourceImage_Width - bounds.X, bounds.Width + 1 + 2 * p),
-                Math.Min(sourceImage_Height - bounds.Y, bounds.Height + 1 + 2 * p));
+                Math.Max(0, bounds.X - this.expand),
+                Math.Max(0, bounds.Y - this.expand),
+                Math.Min(sourceImage_Width - bounds.X, bounds.Width + 1 + 2 * this.expand),
+                Math.Min(sourceImage_Height - bounds.Y, bounds.Height + 1 + 2 * this.expand));
         }
 
         private void btn_outPath_Click(object sender, EventArgs e)
@@ -1080,9 +1083,9 @@ namespace zy_cutPicture
             this.GenerateImage_debug(sourceImage);
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void numCutAlpha_ValueChanged(object sender, EventArgs e)
         {
-            this.cutAlpha = (int)numericUpDown1.Value;
+           this.cutAlpha = (int)numCutAlpha.Value;
         }
 
         private void btn_cut_Click(object sender, EventArgs e)
@@ -1584,7 +1587,29 @@ namespace zy_cutPicture
         }
         #endregion
 
+        #region 子界面Setting
+        private SettingForm settingForm;
+        private void  OpenSettingForm() 
+        {
+            settingForm = new SettingForm(this);
+            settingForm.ShowDialog();
+        }
+        public void UpdateProperty() 
+        {
+            //Console.WriteLine($"{Properties.Settings.Default.spacing}    {Properties.Settings.Default.cutAlpha}   {Properties.Settings.Default.expand}");
+            this.isDebug = Properties.Settings.Default.isDebug;
+            this.numSpacing.Value = Properties.Settings.Default.spacing;
+            this.spacing = (int)this.numSpacing.Value;
+            this.numCutAlpha.Value = Properties.Settings.Default.cutAlpha;
+            this.cutAlpha = (int)this.numCutAlpha.Value;
+            this.expand = (int)Properties.Settings.Default.expand;
+        }
+        #endregion
 
+        private void btnSetting_Click(object sender, EventArgs e)
+        {
+            OpenSettingForm();
+        }
     }
     public class VisitItem
     {
@@ -1626,6 +1651,7 @@ namespace zy_cutPicture
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
+            //Application.Run(new SettingForm());
         }
     }
 }
