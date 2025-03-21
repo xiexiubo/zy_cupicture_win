@@ -9,8 +9,8 @@ namespace zy_cutPicture
         {
             InitializeComponent();
             this.isDebug.Checked = Properties.Settings.Default.isDebug;
-            this.cutAlpha.Value = Properties.Settings.Default.spacing;
-            this.spacing.Value = Properties.Settings.Default.cutAlpha;
+            this.cutAlpha.Value = Properties.Settings.Default.cutAlpha;
+            this.spacing.Value = Properties.Settings.Default.spacing;
             this.expand.Value = Properties.Settings.Default.expand;
             mainForm = main;
         }        
@@ -24,6 +24,7 @@ namespace zy_cutPicture
             Properties.Settings.Default.Save(); // 必须调用Save()
             if (mainForm != null)
                 mainForm.UpdateProperty();
+            this.Close();
         }
     }
 }

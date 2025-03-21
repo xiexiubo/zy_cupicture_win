@@ -82,7 +82,7 @@
             this.panel1.Controls.Add(this.cutAlpha);
             this.panel1.Location = new System.Drawing.Point(3, 25);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(181, 27);
+            this.panel1.Size = new System.Drawing.Size(253, 27);
             this.panel1.TabIndex = 2;
             // 
             // label1
@@ -90,9 +90,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(47, 7);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 12);
+            this.label1.Size = new System.Drawing.Size(203, 12);
             this.label1.TabIndex = 3;
-            this.label1.Text = "丢弃透明像素（0-255）";
+            this.label1.Text = "切割透明度，丢弃透明像素（0-255）";
             // 
             // cutAlpha
             // 

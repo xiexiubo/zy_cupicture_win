@@ -87,6 +87,7 @@ namespace zy_cutPicture
             this.btnCancel = new System.Windows.Forms.Button();
             this.numSpacing = new System.Windows.Forms.NumericUpDown();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.btnSetting = new System.Windows.Forms.Button();
             this.btn_cut = new System.Windows.Forms.Button();
             this.numCutAlpha = new System.Windows.Forms.NumericUpDown();
             this.btn_outPath = new System.Windows.Forms.Button();
@@ -102,7 +103,6 @@ namespace zy_cutPicture
             this.lblStatus = new System.Windows.Forms.Label();
             this.pictureBox_debug = new System.Windows.Forms.PictureBox();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.btnSetting = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSpacing)).BeginInit();
             this.controlPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCutAlpha)).BeginInit();
@@ -184,6 +184,18 @@ namespace zy_cutPicture
             this.controlPanel.Padding = new System.Windows.Forms.Padding(5);
             this.controlPanel.Size = new System.Drawing.Size(602, 78);
             this.controlPanel.TabIndex = 5;
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetting.BackgroundImage = global::zy_cutPicture.Properties.Resources.shezhi;
+            this.btnSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnSetting.Location = new System.Drawing.Point(569, 3);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(30, 30);
+            this.btnSetting.TabIndex = 21;
+            this.btnSetting.UseVisualStyleBackColor = true;
+            this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
             // 
             // btn_cut
             // 
@@ -315,7 +327,7 @@ namespace zy_cutPicture
             // 
             // lblStatus
             // 
-            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblStatus.AutoSize = true;
             this.lblStatus.Location = new System.Drawing.Point(6, 561);
             this.lblStatus.Name = "lblStatus";
@@ -345,18 +357,6 @@ namespace zy_cutPicture
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 10;
             this.pictureBox.TabStop = false;
-            // 
-            // btnSetting
-            // 
-            this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetting.BackgroundImage = global::zy_cutPicture.Properties.Resources.shezhi;
-            this.btnSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnSetting.Location = new System.Drawing.Point(569, 3);
-            this.btnSetting.Name = "btnSetting";
-            this.btnSetting.Size = new System.Drawing.Size(30, 30);
-            this.btnSetting.TabIndex = 21;
-            this.btnSetting.UseVisualStyleBackColor = true;
-            this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
             // 
             // MainForm
             // 
@@ -505,7 +505,7 @@ namespace zy_cutPicture
                 if (!this.IsTransparent(this.sourceImage.GetPixel(pos.X, pos.Y)) && this.visited[pos.X, pos.Y].isCheck)
                     c_selected = Color.FromArgb(200, 0, 255, 255);
                 if (this.visited[pos.X, pos.Y].isSelected)
-                    c_selected_pre = Color.FromArgb(200, 0, 0, 255);
+                    c_selected_pre = Color.FromArgb(128, 0, 0, 255);
                 img.SetPixel(pos.X, pos.Y, BlendColors(this.sourceImage.GetPixel(pos.X, pos.Y), c_debug, c_combina, c_selected, c_selected_pre));
                // img.SetPixel(pos.X, pos.Y, BlendColors(this.sourceImage.GetPixel(pos.X, pos.Y), c_debug, c_combina));
             }
@@ -619,6 +619,7 @@ namespace zy_cutPicture
                     worker.ReportProgress(0, bounds);
                 }
             }
+            Console.WriteLine("像素遍历完成！"); //Worker_RunWorkerCompleted
 
         }
 
@@ -721,10 +722,7 @@ namespace zy_cutPicture
             }
             return bounds;
         }
-        public bool Contains(Rectangle rect, Point position)
-        {
-            return position.X >= rect.X && position.Y >= rect.Y && position.X <= (rect.X + rect.Width) && position.Y <= (rect.Y + rect.Height);
-        }
+      
         /// <summary>
         /// 矩形坐标点
         /// </summary>
@@ -845,10 +843,9 @@ namespace zy_cutPicture
             //Console.WriteLine($"Worker_ProgressChanged {e.UserState} ,{e.UserState is Rectangle}");
             if (e.UserState is Rectangle rect)
             {
-                subRegions.Add(rect);
-                //MergeRectangles(subRegions);
+                subRegions.Add(rect);              
                 this.DebugCount++;
-                lblStatus.Text = $"{this.DebugCount}_{rect.X}_{rect.Y}_{rect.Width}_{rect.Height}";
+                lblStatus.Text = $"处理好第{this.DebugCount}个_{rect.X}_{rect.Y}_{rect.Width}_{rect.Height}";
 
                 pictureBox.Invalidate();
             }
@@ -856,6 +853,11 @@ namespace zy_cutPicture
         int DebugCount = 0;
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            Console.WriteLine("Worker_RunWorkerCompleted 完成后回调！");
+
+            //最后再合并一次  会卡
+            MergeRectangles(subRegions);
+            
             isProcessing = false;
             DebugCount = 0;
             if (!cancelRequested && this.isStartCut)
@@ -981,39 +983,36 @@ namespace zy_cutPicture
             }
             return null;
         }
-        /// <summary>
-        /// 有相交的部分合成 返回变化的部分 并移除
-        /// </summary>
-        /// <param name="result"> </param>
-        /// <returns></returns>
-        static List<Rectangle> MergeRectangles(List<Rectangle> result)
+      
+        static void MergeRectangles(List<Rectangle> list)
         {
-            List<Rectangle> changeList = new List<Rectangle>();
             bool merged;
             do
             {
                 merged = false;
-                for (int i = 0; i < result.Count; i++)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    for (int j = i + 1; j < result.Count; j++)
+                    for (int j = i + 1; j < list.Count; j++)
                     {
-                        if (result[i].IntersectsWith(result[j]))
+                        if (list[i].IntersectsWith(list[j]))
                         {
-                            result[i] = Rectangle.Union(result[i], result[j]);
-                            changeList.Add(result[i]);
-                            result.RemoveAt(j);
+                            Rectangle unionRect = Rectangle.Union(list[i], list[j]);
+                            list[i] = unionRect;
+                            list.RemoveAt(j);
                             merged = true;
+                            // 重置内层循环
+                            j = i;
                             break;
                         }
                     }
                     if (merged)
                     {
+                        // 重置内层循环后，也需要重置外层循环索引
+                        i = -1;
                         break;
                     }
                 }
             } while (merged);
-
-            return result;
         }
 
         private Bitmap CropImage(Bitmap source, Rectangle rect)
@@ -1348,6 +1347,7 @@ namespace zy_cutPicture
             this.pictureBox_debug.MouseClick += pictureBox_debug_MouseClick;
             this.pictureBox_debug.MouseDown += pictureBox_debug_MouseDown;
             this.pictureBox_debug.MouseMove += pictureBox_debug_MouseMove;
+            this.pictureBox_debug.MouseLeave += pictureBox_debug_MouseLeave;
             this.pictureBox_debug.MouseUp += pictureBox_debug_MouseUp;
             this.pictureBox_debug.Paint += pictureBox_debug_Paint;
 
@@ -1371,28 +1371,7 @@ namespace zy_cutPicture
 
             this.pictureBox_debug.ContextMenuStrip = contextMenuStrip_pictureBox_debug;
         }
-        private void CheckedMenuItem_Click()
-        {
-            // 这里添加合并操作的代码
-            //MessageBox.Show("你点击了打勾");
-
-            foreach (ListViewItem item in this.MenuItemPanel.Items)
-            {
-                if (item.Selected)
-                {
-                    item.Checked = true;
-                    this.MenuItemPanel.EnsureVisible(item.Index);
-                }
-            }
-            this.MenuItemPanel.Focus();
-        }   
-        private void MergeMenuItem_Click()
-        {
-            // 这里添加合并操作的代码
-            //MessageBox.Show("你点击了合并");
-            this.MenuItemPanel.MergeSelectedItems();
-            this.MenuItemPanel.Focus();
-        }
+        
 
         private void pictureBox_debug_MouseClick(object sender, MouseEventArgs e)
         {
@@ -1440,6 +1419,28 @@ namespace zy_cutPicture
                 currentDragRect_pictureBox_debug = GetBitmapRectangle(this.pictureBox_debug, startPoint_pictureBox_debug, e.Location);
                 this.pictureBox_debug.Invalidate(); // 触发 Paint 事件
             }
+            PictureBox pb = (PictureBox)sender;
+            if (pb.Image != null)
+            {
+                // 获取鼠标在 PictureBox 内的位置
+                Point mousePosition = e.Location;
+
+                // 获取 PictureBox 的缩放比例
+                float scaleX = (float)pb.Image.Width / pb.Width;
+                float scaleY = (float)pb.Image.Height / pb.Height;
+
+                // 计算在 Image 中的实际坐标
+                int imageX = (int)(mousePosition.X * scaleX);
+                int imageY = (int)(mousePosition.Y * scaleY);
+
+                // 更新 ToolTip 显示的内容
+                lblStatus.Text=$"X: {imageX}, Y: {imageY}";
+            }
+        } 
+        private void pictureBox_debug_MouseLeave(object sender, EventArgs e)
+        {
+            // 鼠标离开 PictureBox 时隐藏 ToolTip
+           
         }
 
         private void pictureBox_debug_MouseUp(object sender, MouseEventArgs e)
@@ -1591,8 +1592,20 @@ namespace zy_cutPicture
         private SettingForm settingForm;
         private void  OpenSettingForm() 
         {
+            if (settingForm != null && settingForm.Visible)
+            {
+                settingForm.Close();
+                return;
+            }
             settingForm = new SettingForm(this);
-            settingForm.ShowDialog();
+            settingForm.Size = new System.Drawing.Size(316, 225);
+
+            // 计算新 Form 的位置，使其显示在上一个 Form 的正中间
+            int newLeft = this.Left + (this.Width - settingForm.Width) / 2;
+            int newTop = this.Top + (this.Height - settingForm.Height) / 2;
+
+            settingForm.Location = new System.Drawing.Point(newLeft, newTop);
+            settingForm.Show();
         }
         public void UpdateProperty() 
         {
