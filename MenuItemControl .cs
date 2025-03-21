@@ -42,10 +42,11 @@ namespace zy_cutPicture
                 new ToolStripMenuItem("全勾选", null, (s, e) => SelectAllItems()),
                 new ToolStripMenuItem("清空勾选", null, (s, e) => ClearSelection()),
                 new ToolStripSeparator(),
-              
+               new ToolStripMenuItem("导出选中", null, (s, e) => ExportSelectedItems(false)),
                 new ToolStripMenuItem("合并选中", null, (s, e) => MergeSelectedItems()),
-                  new ToolStripMenuItem("导出选中", null, (s, e) => ExportSelectedItems(false)),
+                 
                   new ToolStripMenuItem("导出选中(合并的)", null, (s, e) => ExportSelectedItems(true)),
+                   new ToolStripSeparator(),
                 new ToolStripMenuItem("手动排列选中", null, (s, e) => ArrangeSelected()),
                 new ToolStripMenuItem("手动排列全部", null, (s, e) => ArrangeAll())
             });

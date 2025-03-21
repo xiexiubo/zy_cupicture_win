@@ -29,6 +29,9 @@ namespace zy_cutPicture
         private Panel controlPanel;
 
         // 其他成员变量
+        private VisitItem[,] visited;
+        private int sourceImage_Width;
+        private int sourceImage_Height;
         private Bitmap sourceImage;
         private Bitmap image_debug;
         private Bitmap image_combina;
@@ -309,7 +312,7 @@ namespace zy_cutPicture
             // 
             this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(508, 630);
+            this.lblStatus.Location = new System.Drawing.Point(6, 561);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(59, 12);
             this.lblStatus.TabIndex = 6;
@@ -342,6 +345,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2_content.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panel2_content.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.panel2_content.Controls.Add(this.lblStatus);
             this.panel2_content.Controls.Add(this.pictureBox_debug);
             this.panel2_content.Controls.Add(this.pictureBox);
             this.panel2_content.Location = new System.Drawing.Point(100, 0);
@@ -352,7 +356,6 @@ namespace zy_cutPicture
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(602, 651);
-            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.panel_image);
             this.Controls.Add(this.controlPanel);
             this.DoubleBuffered = true;
@@ -367,8 +370,8 @@ namespace zy_cutPicture
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.panel_image.ResumeLayout(false);
             this.panel2_content.ResumeLayout(false);
+            this.panel2_content.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -400,9 +403,7 @@ namespace zy_cutPicture
         }
         private void LoadImage(string path)
         {
-            this.sourceImage?.Dispose();
             this.sourceImage = null ;
-            this.image_debug?.Dispose();
             this.image_debug = null;
             this.visited = null;
             this.subRegions.Clear();
@@ -413,6 +414,8 @@ namespace zy_cutPicture
             this.text_input.Text = path;
             this.text_output.Text = path.Replace(Path.GetExtension(path), "\\");
             this.sourceImage = new Bitmap(path);
+            this.sourceImage_Width = this.sourceImage.Width;
+            this.sourceImage_Height = this.sourceImage.Height;
             this.pictureBox.Image = sourceImage;
             this.pictureBox.BackColor = Color.Transparent;
             //this.image_debug = this.GenerateImage_debug(sourceImage);
@@ -554,7 +557,7 @@ namespace zy_cutPicture
         private void btnExport_Click(object sender, EventArgs e)
         {
             if (sourceImage == null) return;
-
+            this.visited = VisitItem.GetVisitItems(this.sourceImage);
             isProcessing = true;
             cancelRequested = false;
             subRegions.Clear();
@@ -572,23 +575,13 @@ namespace zy_cutPicture
         {
             spacing = (int)numSpacing.Value;
         }
-        VisitItem[,] visited;
+       
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             this.subRegions.Clear();
-            this.visited = null;
-            visited = new VisitItem[sourceImage.Width, sourceImage.Height];
-            for (int i = 0; i < sourceImage.Width; i++)
+            for (int y = 0; y < sourceImage_Height; y++)
             {
-                for (int j = 0; j < sourceImage.Height; j++)
-                {
-                    visited[i, j] = new VisitItem();
-                }
-            }
-
-            for (int y = 0; y < sourceImage.Height; y++)
-            {
-                for (int x = 0; x < sourceImage.Width; x++)
+                for (int x = 0; x < sourceImage_Width; x++)
                 {
                     if (worker.CancellationPending)
                     {
@@ -596,7 +589,7 @@ namespace zy_cutPicture
                         return;
                     }
 
-                    if (visited[x, y].isVisit || IsTransparent(sourceImage.GetPixel(x, y)))
+                    if (visited[x, y].isVisit || IsTransparent(visited[x, y].col))
                         continue;
 
                     bool hasRect = false;
@@ -607,7 +600,7 @@ namespace zy_cutPicture
                         if (r.Contains(new Point(x, y)))
                         {
                             this.visited[x, y].isVisit = true;
-                            this.visited[x, y].color = Color.FromArgb(125, 0, 0, 255);
+                            //this.visited[x, y].color = Color.FromArgb(125, 0, 0, 255);
                             hasRect = true;
                             break;
                         }
@@ -628,14 +621,14 @@ namespace zy_cutPicture
         private bool IsValidPixel(Point point, VisitItem[,] visited)
         {
             // 边界检查（虽然GetNeighbors已经过滤，但保留以确保安全）
-            if (point.X < 0 || point.X >= sourceImage.Width) return false;
-            if (point.Y < 0 || point.Y >= sourceImage.Height) return false;
+            if (point.X < 0 || point.X >= sourceImage_Width) return false;
+            if (point.Y < 0 || point.Y >= sourceImage_Height) return false;
 
             // 检查是否已访问过
             if (visited[point.X, point.Y].isVisit) return false;
 
             // 检查像素透明度
-            Color pixelColor = sourceImage.GetPixel(point.X, point.Y);
+            Color pixelColor = visited[point.X, point.Y].col;
             return !this.IsTransparent(pixelColor); // 只要alpha通道>0即视为有效像素
         }
 
@@ -667,7 +660,7 @@ namespace zy_cutPicture
                         {
                             visited[neighbor.X, neighbor.Y].isVisit = true;
                             queue.Enqueue(neighbor);
-                            visited[neighbor.X, neighbor.Y].color = Color.FromArgb(128, 255, 0, 0);
+                            //visited[neighbor.X, neighbor.Y].color = Color.FromArgb(128, 255, 0, 0);
                         }
                     }
 
@@ -832,7 +825,7 @@ namespace zy_cutPicture
                     int y = p.Y + dy;
                     if (bounds.Contains(new Point(x, y)))
                         continue;
-                    if (x >= 0 && x < sourceImage.Width && y >= 0 && y < sourceImage.Height)
+                    if (x >= 0 && x < sourceImage_Width && y >= 0 && y < sourceImage_Height)
                     {
                         var pos = new Point(x, y);
                         list.Add(pos);
@@ -849,20 +842,23 @@ namespace zy_cutPicture
             {
                 subRegions.Add(rect);
                 //MergeRectangles(subRegions);
+                this.DebugCount++;
+                lblStatus.Text = $"{this.DebugCount}_{rect.X}_{rect.Y}_{rect.Width}_{rect.Height}";
+
                 pictureBox.Invalidate();
             }
-            lblStatus.Text = e.ToString();
         }
-
+        int DebugCount = 0;
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             isProcessing = false;
+            DebugCount = 0;
             if (!cancelRequested && this.isStartCut)
             {
                 ExportSubImages();
                 this.isStartCut = false;
             }
-            lblStatus.Text = "Ready";
+            lblStatus.Text = "完成计算";
             if (this.tog_isDebug.Checked)
             {
                 this.ShowDebug_texture();
@@ -1054,8 +1050,8 @@ namespace zy_cutPicture
             return new Rectangle(
                 Math.Max(0, bounds.X - p),
                 Math.Max(0, bounds.Y - p),
-                Math.Min(sourceImage.Width - bounds.X, bounds.Width + 1 + 2 * p),
-                Math.Min(sourceImage.Height - bounds.Y, bounds.Height + 1 + 2 * p));
+                Math.Min(sourceImage_Width - bounds.X, bounds.Width + 1 + 2 * p),
+                Math.Min(sourceImage_Height - bounds.Y, bounds.Height + 1 + 2 * p));
         }
 
         private void btn_outPath_Click(object sender, EventArgs e)
@@ -1217,7 +1213,7 @@ namespace zy_cutPicture
             var r2 = MergeRectanglesOne(list);
             this.newRects.Add(r2);
             if (this.visited == null) return;
-            var listPos = GetRectangleEdgePoints(r2,4,new Rectangle(0,0,this.sourceImage.Width,this.sourceImage.Height));
+            var listPos = GetRectangleEdgePoints(r2,4,new Rectangle(0,0,this.sourceImage_Width,this.sourceImage_Height));
             for (int i = 0; i < listPos.Count; i++) 
             {
                 this.visited[listPos[i].X, listPos[i].Y].isCombine = true;
@@ -1362,11 +1358,11 @@ namespace zy_cutPicture
                 new ToolStripMenuItem("全勾选", null, (s, e) => this.MenuItemPanel.SelectAllItems()),
                 new ToolStripMenuItem("清空勾选", null, (s, e) => this.MenuItemPanel.ClearSelection()),
                 new ToolStripSeparator(),
-
-                new ToolStripMenuItem("合并选中", null, (s, e) => this.MenuItemPanel.MergeSelectedItems()),
-                  new ToolStripMenuItem("导出选中", null, (s, e) => this.MenuItemPanel.ExportSelectedItems(false)),
+                 new ToolStripMenuItem("导出选中", null, (s, e) => this.MenuItemPanel.ExportSelectedItems(false)),
+                new ToolStripMenuItem("合并选中", null, (s, e) => this.MenuItemPanel.MergeSelectedItems()),                 
                   new ToolStripMenuItem("导出选中(合并的)", null, (s, e) => this.MenuItemPanel.ExportSelectedItems(true)),
-                new ToolStripMenuItem("手动排列选中", null, (s, e) => this.MenuItemPanel.ArrangeSelected()),
+               new ToolStripSeparator(),
+              new ToolStripMenuItem("手动排列选中", null, (s, e) => this.MenuItemPanel.ArrangeSelected()),
                 new ToolStripMenuItem("手动排列全部", null, (s, e) => this.MenuItemPanel.ArrangeAll())
           });
 
@@ -1598,11 +1594,27 @@ namespace zy_cutPicture
         public bool isCheck = false;
         public bool isSelected =false;
         public bool isCombine =false;
+        public Color col=Color.White;
         public Color color = Color.FromArgb(0, 255, 255, 255);
-
+        public static  int width = 0;
+        public static int height = 0;
         public VisitItem()
+        {            
+        }
+        public static VisitItem[,] GetVisitItems(Bitmap source) 
         {
-            isVisit = false;
+            int w = width = source.Width;
+            int h = height = source.Height;
+            var v = new VisitItem[w, h];
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    v[i, j] = new VisitItem();
+                    v[i, j].col = source.GetPixel(i, j);
+                }
+            }
+            return v;
         }
     }
     // Program.cs
