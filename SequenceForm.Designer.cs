@@ -47,9 +47,11 @@ namespace zy_cutPicture
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panelWorkArea = new System.Windows.Forms.Panel();
             this.toolboxPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.selectToolButton = new System.Windows.Forms.Button();
+            this.brushToolButton = new System.Windows.Forms.Button();
+            this.eraserToolButton = new System.Windows.Forms.Button();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,13 +67,10 @@ namespace zy_cutPicture
             this.optionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectToolButton = new System.Windows.Forms.Button();
-            this.brushToolButton = new System.Windows.Forms.Button();
-            this.eraserToolButton = new System.Windows.Forms.Button();
             this.customTitleBar = new System.Windows.Forms.Panel();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.minimizeButton = new System.Windows.Forms.Button();
             this.maximizeButton = new System.Windows.Forms.Button();
+            this.minimizeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.Button();
             this.panelWorkArea.SuspendLayout();
             this.toolboxPanel.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -80,6 +79,7 @@ namespace zy_cutPicture
             // 
             // panelWorkArea
             // 
+            this.panelWorkArea.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
             this.panelWorkArea.Controls.Add(this.toolboxPanel);
             this.panelWorkArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelWorkArea.Location = new System.Drawing.Point(0, 24);
@@ -101,121 +101,12 @@ namespace zy_cutPicture
             this.toolboxPanel.TabIndex = 1;
             this.toolboxPanel.WrapContents = false;
             // 
-            // mainMenuStrip
-            // 
-            this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenuItem,
-            this.editMenuItem,
-            this.toolsMenuItem,
-            this.helpMenuItem});
-            this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
-            this.mainMenuStrip.TabIndex = 2;
-            this.mainMenuStrip.Text = "menuStrip1";
-            // 
-            // fileMenuItem
-            // 
-            this.fileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newMenuItem,
-            this.openMenuItem,
-            this.saveMenuItem,
-            this.saveAsMenuItem});
-            this.fileMenuItem.Name = "fileMenuItem";
-            this.fileMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileMenuItem.Text = "文件";
-            // 
-            // newMenuItem
-            // 
-            this.newMenuItem.Name = "newMenuItem";
-            this.newMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.newMenuItem.Text = "新建";
-            // 
-            // openMenuItem
-            // 
-            this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.openMenuItem.Text = "打开";
-            // 
-            // saveMenuItem
-            // 
-            this.saveMenuItem.Name = "saveMenuItem";
-            this.saveMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.saveMenuItem.Text = "保存";
-            // 
-            // saveAsMenuItem
-            // 
-            this.saveAsMenuItem.Name = "saveAsMenuItem";
-            this.saveAsMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.saveAsMenuItem.Text = "另存为";
-            // 
-            // editMenuItem
-            // 
-            this.editMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.undoMenuItem,
-            this.redoMenuItem,
-            this.copyMenuItem,
-            this.pasteMenuItem});
-            this.editMenuItem.Name = "editMenuItem";
-            this.editMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.editMenuItem.Text = "编辑";
-            // 
-            // undoMenuItem
-            // 
-            this.undoMenuItem.Name = "undoMenuItem";
-            this.undoMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.undoMenuItem.Text = "撤销";
-            // 
-            // redoMenuItem
-            // 
-            this.redoMenuItem.Name = "redoMenuItem";
-            this.redoMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.redoMenuItem.Text = "重做";
-            // 
-            // copyMenuItem
-            // 
-            this.copyMenuItem.Name = "copyMenuItem";
-            this.copyMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.copyMenuItem.Text = "复制";
-            // 
-            // pasteMenuItem
-            // 
-            this.pasteMenuItem.Name = "pasteMenuItem";
-            this.pasteMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.pasteMenuItem.Text = "粘贴";
-            // 
-            // toolsMenuItem
-            // 
-            this.toolsMenuItem.DropDownItems.Add(this.optionsMenuItem);
-            this.toolsMenuItem.Name = "toolsMenuItem";
-            this.toolsMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.toolsMenuItem.Text = "工具";
-            // 
-            // optionsMenuItem
-            // 
-            this.optionsMenuItem.Name = "optionsMenuItem";
-            this.optionsMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.optionsMenuItem.Text = "选项";
-            // 
-            // helpMenuItem
-            // 
-            this.helpMenuItem.DropDownItems.Add(this.aboutMenuItem);
-            this.helpMenuItem.Name = "helpMenuItem";
-            this.helpMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.helpMenuItem.Text = "帮助";
-            // 
-            // aboutMenuItem
-            // 
-            this.aboutMenuItem.Name = "aboutMenuItem";
-            this.aboutMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.aboutMenuItem.Text = "关于";
-            // 
             // selectToolButton
             // 
             this.selectToolButton.FlatAppearance.BorderSize = 0;
             this.selectToolButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.selectToolButton.Image = global::zy_cutPicture.Properties.Resources.SelectToolIcon;
-            this.selectToolButton.Location = new System.Drawing.Point(5, 5);
+            this.selectToolButton.Location = new System.Drawing.Point(3, 3);
             this.selectToolButton.Name = "selectToolButton";
             this.selectToolButton.Size = new System.Drawing.Size(40, 40);
             this.selectToolButton.TabIndex = 0;
@@ -227,7 +118,7 @@ namespace zy_cutPicture
             this.brushToolButton.FlatAppearance.BorderSize = 0;
             this.brushToolButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.brushToolButton.Image = global::zy_cutPicture.Properties.Resources.BrushToolIcon;
-            this.brushToolButton.Location = new System.Drawing.Point(5, 51);
+            this.brushToolButton.Location = new System.Drawing.Point(3, 49);
             this.brushToolButton.Name = "brushToolButton";
             this.brushToolButton.Size = new System.Drawing.Size(40, 40);
             this.brushToolButton.TabIndex = 1;
@@ -239,56 +130,138 @@ namespace zy_cutPicture
             this.eraserToolButton.FlatAppearance.BorderSize = 0;
             this.eraserToolButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.eraserToolButton.Image = global::zy_cutPicture.Properties.Resources.EraserToolIcon;
-            this.eraserToolButton.Location = new System.Drawing.Point(5, 97);
+            this.eraserToolButton.Location = new System.Drawing.Point(3, 95);
             this.eraserToolButton.Name = "eraserToolButton";
             this.eraserToolButton.Size = new System.Drawing.Size(40, 40);
             this.eraserToolButton.TabIndex = 2;
             this.eraserToolButton.UseVisualStyleBackColor = true;
             this.eraserToolButton.Click += new System.EventHandler(this.eraserToolButton_Click);
             // 
+            // mainMenuStrip
+            // 
+            this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileMenuItem,
+            this.editMenuItem,
+            this.toolsMenuItem,
+            this.helpMenuItem});
+            this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.mainMenuStrip.Name = "mainMenuStrip";
+            this.mainMenuStrip.Size = new System.Drawing.Size(800, 25);
+            this.mainMenuStrip.TabIndex = 2;
+            this.mainMenuStrip.Text = "menuStrip1";
+            this.mainMenuStrip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
+            // 
+            // fileMenuItem
+            // 
+            this.fileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newMenuItem,
+            this.openMenuItem,
+            this.saveMenuItem,
+            this.saveAsMenuItem});
+            this.fileMenuItem.Name = "fileMenuItem";
+            this.fileMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.fileMenuItem.Text = "文件";
+            // 
+            // newMenuItem
+            // 
+            this.newMenuItem.Name = "newMenuItem";
+            this.newMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.newMenuItem.Text = "新建";
+            // 
+            // openMenuItem
+            // 
+            this.openMenuItem.Name = "openMenuItem";
+            this.openMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.openMenuItem.Text = "打开";
+            // 
+            // saveMenuItem
+            // 
+            this.saveMenuItem.Name = "saveMenuItem";
+            this.saveMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveMenuItem.Text = "保存";
+            // 
+            // saveAsMenuItem
+            // 
+            this.saveAsMenuItem.Name = "saveAsMenuItem";
+            this.saveAsMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveAsMenuItem.Text = "另存为";
+            // 
+            // editMenuItem
+            // 
+            this.editMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoMenuItem,
+            this.redoMenuItem,
+            this.copyMenuItem,
+            this.pasteMenuItem});
+            this.editMenuItem.Name = "editMenuItem";
+            this.editMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.editMenuItem.Text = "编辑";
+            // 
+            // undoMenuItem
+            // 
+            this.undoMenuItem.Name = "undoMenuItem";
+            this.undoMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.undoMenuItem.Text = "撤销";
+            // 
+            // redoMenuItem
+            // 
+            this.redoMenuItem.Name = "redoMenuItem";
+            this.redoMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.redoMenuItem.Text = "重做";
+            // 
+            // copyMenuItem
+            // 
+            this.copyMenuItem.Name = "copyMenuItem";
+            this.copyMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.copyMenuItem.Text = "复制";
+            // 
+            // pasteMenuItem
+            // 
+            this.pasteMenuItem.Name = "pasteMenuItem";
+            this.pasteMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.pasteMenuItem.Text = "粘贴";
+            // 
+            // toolsMenuItem
+            // 
+            this.toolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsMenuItem});
+            this.toolsMenuItem.Name = "toolsMenuItem";
+            this.toolsMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.toolsMenuItem.Text = "工具";
+            // 
+            // optionsMenuItem
+            // 
+            this.optionsMenuItem.Name = "optionsMenuItem";
+            this.optionsMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.optionsMenuItem.Text = "选项";
+            // 
+            // helpMenuItem
+            // 
+            this.helpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutMenuItem});
+            this.helpMenuItem.Name = "helpMenuItem";
+            this.helpMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.helpMenuItem.Text = "帮助";
+            // 
+            // aboutMenuItem
+            // 
+            this.aboutMenuItem.Name = "aboutMenuItem";
+            this.aboutMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.aboutMenuItem.Text = "关于";
+            // 
             // customTitleBar
             // 
-            this.customTitleBar.BackColor = SystemColors.Control;
+            this.customTitleBar.BackColor = System.Drawing.SystemColors.Control;
             this.customTitleBar.Controls.Add(this.maximizeButton);
             this.customTitleBar.Controls.Add(this.minimizeButton);
             this.customTitleBar.Controls.Add(this.closeButton);
             this.customTitleBar.Controls.Add(this.mainMenuStrip);
-            this.customTitleBar.Dock = DockStyle.Top;
+            this.customTitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.customTitleBar.Location = new System.Drawing.Point(0, 0);
             this.customTitleBar.Name = "customTitleBar";
             this.customTitleBar.Size = new System.Drawing.Size(800, 24);
             this.customTitleBar.TabIndex = 3;
             this.customTitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
-            this.mainMenuStrip.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
-            this.closeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
-            this.minimizeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
-            this.maximizeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
-            // 
-            // closeButton
-            // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.FlatAppearance.BorderSize = 0;
-            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.closeButton.Location = new System.Drawing.Point(776, 0);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(24, 24);
-            this.closeButton.TabIndex = 0;
-            this.closeButton.Text = "X";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
-            // 
-            // minimizeButton
-            // 
-            this.minimizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.minimizeButton.FlatAppearance.BorderSize = 0;
-            this.minimizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.minimizeButton.Location = new System.Drawing.Point(752, 0);
-            this.minimizeButton.Name = "minimizeButton";
-            this.minimizeButton.Size = new System.Drawing.Size(24, 24);
-            this.minimizeButton.TabIndex = 1;
-            this.minimizeButton.Text = "-";
-            this.minimizeButton.UseVisualStyleBackColor = true;
-            this.minimizeButton.Click += new System.EventHandler(this.minimizeButton_Click);
             // 
             // maximizeButton
             // 
@@ -303,6 +276,32 @@ namespace zy_cutPicture
             this.maximizeButton.UseVisualStyleBackColor = true;
             this.maximizeButton.Click += new System.EventHandler(this.maximizeButton_Click);
             // 
+            // minimizeButton
+            // 
+            this.minimizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.minimizeButton.FlatAppearance.BorderSize = 0;
+            this.minimizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.minimizeButton.Location = new System.Drawing.Point(752, 0);
+            this.minimizeButton.Name = "minimizeButton";
+            this.minimizeButton.Size = new System.Drawing.Size(24, 24);
+            this.minimizeButton.TabIndex = 1;
+            this.minimizeButton.Text = "-";
+            this.minimizeButton.UseVisualStyleBackColor = true;
+            this.minimizeButton.Click += new System.EventHandler(this.minimizeButton_Click);
+            // 
+            // closeButton
+            // 
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.FlatAppearance.BorderSize = 0;
+            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.closeButton.Location = new System.Drawing.Point(776, 0);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(24, 24);
+            this.closeButton.TabIndex = 0;
+            this.closeButton.Text = "X";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
             // SequenceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -313,8 +312,8 @@ namespace zy_cutPicture
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "SequenceForm";
             this.Text = "序列图还原工具";
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SequenceForm_MouseMove);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SequenceForm_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SequenceForm_MouseMove);
             this.panelWorkArea.ResumeLayout(false);
             this.toolboxPanel.ResumeLayout(false);
             this.mainMenuStrip.ResumeLayout(false);
@@ -322,7 +321,6 @@ namespace zy_cutPicture
             this.customTitleBar.ResumeLayout(false);
             this.customTitleBar.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -363,8 +361,11 @@ namespace zy_cutPicture
         {
             if (e.Button == MouseButtons.Left)
             {
-                ReleaseCapture();
-                SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                if (sender != closeButton && sender != minimizeButton && sender != maximizeButton)
+                {
+                    ReleaseCapture();
+                    SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                }
             }
         }
 
@@ -394,92 +395,100 @@ namespace zy_cutPicture
 
         private void SequenceForm_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.None)
+            var formSize = this.Size;
+            var cursorPos = this.PointToClient(Cursor.Position);
+
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
             {
-                var clientSize = this.ClientSize;
-                if (e.X <= RESIZE_HANDLE_SIZE && e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNWSE;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE && e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNESW;
-                }
-                else if (e.X <= RESIZE_HANDLE_SIZE && e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNESW;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE && e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNWSE;
-                }
-                else if (e.X <= RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeWE;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeWE;
-                }
-                else if (e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNS;
-                }
-                else if (e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    this.Cursor = Cursors.SizeNS;
-                }
-                else
-                {
-                    this.Cursor = Cursors.Default;
-                }
+                this.Cursor = Cursors.SizeNWSE;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNESW;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNESW;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNWSE;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeWE;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeWE;
+            }
+            else if (cursorPos.Y <= RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNS;
+            }
+            else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNS;
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
         private void SequenceForm_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                var clientSize = this.ClientSize;
-                int wParam = 0;
-                if (e.X <= RESIZE_HANDLE_SIZE && e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTTOPLEFT;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE && e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTTOPRIGHT;
-                }
-                else if (e.X <= RESIZE_HANDLE_SIZE && e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTBOTTOMLEFT;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE && e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTBOTTOMRIGHT;
-                }
-                else if (e.X <= RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTLEFT;
-                }
-                else if (e.X >= clientSize.Width - RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTRIGHT;
-                }
-                else if (e.Y <= RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTTOP;
-                }
-                else if (e.Y >= clientSize.Height - RESIZE_HANDLE_SIZE)
-                {
-                    wParam = HTBOTTOM;
-                }
+            var formSize = this.Size;
+            var cursorPos = this.PointToClient(Cursor.Position);
+            int wParam = 0;
 
-                if (wParam != 0)
-                {
-                    ReleaseCapture();
-                    SendMessage(this.Handle, WM_NCLBUTTONDOWN, wParam, 0);
-                }
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTTOPLEFT;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTTOPRIGHT;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOMLEFT;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOMRIGHT;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTLEFT;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTRIGHT;
+            }
+            else if (cursorPos.Y <= RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTTOP;
+            }
+            else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOM;
+            }
+
+            if (wParam != 0)
+            {
+                ReleaseCapture();
+                SendMessage(this.Handle, WM_NCLBUTTONDOWN, wParam, 0);
+            }
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.Style |= 0x00040000; // 添加WS_THICKFRAME样式
+                return cp;
             }
         }
     }
