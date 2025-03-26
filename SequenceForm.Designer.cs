@@ -34,6 +34,9 @@ namespace zy_cutPicture
         private System.Windows.Forms.Button maximizeButton;
         private const int RESIZE_HANDLE_SIZE = 10;
 
+        private bool isDraggingTool = false;
+        private Point lastMousePositionTool;
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -93,13 +96,15 @@ namespace zy_cutPicture
             this.toolboxPanel.Controls.Add(this.selectToolButton);
             this.toolboxPanel.Controls.Add(this.brushToolButton);
             this.toolboxPanel.Controls.Add(this.eraserToolButton);
-            this.toolboxPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.toolboxPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.toolboxPanel.Location = new System.Drawing.Point(0, 0);
             this.toolboxPanel.Name = "toolboxPanel";
             this.toolboxPanel.Size = new System.Drawing.Size(50, 426);
             this.toolboxPanel.TabIndex = 1;
             this.toolboxPanel.WrapContents = false;
+            this.toolboxPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.toolboxPanel_MouseDown);
+            this.toolboxPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.toolboxPanel_MouseMove);
+            this.toolboxPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.toolboxPanel_MouseUp);
             // 
             // selectToolButton
             // 
@@ -165,26 +170,30 @@ namespace zy_cutPicture
             // newMenuItem
             // 
             this.newMenuItem.Name = "newMenuItem";
-            this.newMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.newMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newMenuItem.Text = "新建";
+            this.newMenuItem.Click += new System.EventHandler(this.newMenuItem_Click);
             // 
             // openMenuItem
             // 
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.openMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openMenuItem.Text = "打开";
+            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // saveMenuItem
             // 
             this.saveMenuItem.Name = "saveMenuItem";
-            this.saveMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveMenuItem.Text = "保存";
+            this.saveMenuItem.Click += new System.EventHandler(this.saveMenuItem_Click);
             // 
             // saveAsMenuItem
             // 
             this.saveAsMenuItem.Name = "saveAsMenuItem";
-            this.saveAsMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveAsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsMenuItem.Text = "另存为";
+            this.saveAsMenuItem.Click += new System.EventHandler(this.saveAsMenuItem_Click);
             // 
             // editMenuItem
             // 
@@ -232,7 +241,7 @@ namespace zy_cutPicture
             // optionsMenuItem
             // 
             this.optionsMenuItem.Name = "optionsMenuItem";
-            this.optionsMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.optionsMenuItem.Size = new System.Drawing.Size(100, 22);
             this.optionsMenuItem.Text = "选项";
             // 
             // helpMenuItem
@@ -246,7 +255,7 @@ namespace zy_cutPicture
             // aboutMenuItem
             // 
             this.aboutMenuItem.Name = "aboutMenuItem";
-            this.aboutMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.aboutMenuItem.Size = new System.Drawing.Size(100, 22);
             this.aboutMenuItem.Text = "关于";
             // 
             // customTitleBar
@@ -490,6 +499,35 @@ namespace zy_cutPicture
                 cp.Style |= 0x00040000; // 添加WS_THICKFRAME样式
                 return cp;
             }
+        }
+
+        private void toolboxPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isDraggingTool = true;
+                lastMousePositionTool = e.Location;
+            }
+        }
+
+        private void toolboxPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDraggingTool)
+            {
+                int deltaX = e.X - lastMousePositionTool.X;
+                int newX = toolboxPanel.Left + deltaX;
+
+                // 限制工具栏在窗口内拖动
+                if (newX >= 0 && newX <= panelWorkArea.Width - toolboxPanel.Width)
+                {
+                    toolboxPanel.Left = newX;
+                }
+            }
+        }
+
+        private void toolboxPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            isDraggingTool = false;
         }
     }
 }
