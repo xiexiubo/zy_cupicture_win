@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace zy_cutPicture
@@ -16,7 +11,7 @@ namespace zy_cutPicture
         private List<PictureBox> pictureBoxes = new List<PictureBox>();
         public SequenceForm()
         {
-            InitializeComponent();
+            InitializeComponent();     
         }
 
         public void init()
@@ -136,8 +131,6 @@ namespace zy_cutPicture
         private void saveAsMenuItem_Click(object sender, EventArgs e)
         {
 
-        }
-
-
+        }      
     }
 }
