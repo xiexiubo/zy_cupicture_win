@@ -8,10 +8,10 @@ namespace zy_cutPicture
 {
     public partial class SequenceForm : Form
     {
-        private List<PictureBox> pictureBoxes = new List<PictureBox>();
+        private List<PictureBoxX> pictureBoxes = new List<PictureBoxX>();
         public SequenceForm()
         {
-            InitializeComponent();     
+            InitializeComponent();
         }
 
         public void init()
@@ -39,8 +39,10 @@ namespace zy_cutPicture
         {
             try
             {
-                PictureBox pictureBox = new PictureBox();
+                PictureBoxX pictureBox = new PictureBoxX();
                 pictureBox.Image = Image.FromFile(filePath);
+                pictureBox.ImageX = pictureBox.Image;
+                pictureBox.Image = null;
                 pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
                 pictureBox.Location = new Point(10, 10);
                 pictureBox.BackColor = Color.Transparent;
@@ -48,6 +50,7 @@ namespace zy_cutPicture
                 pictureBox.MouseMove += PictureBox_MouseMove;
                 pictureBox.MouseUp += PictureBox_MouseUp;
                 panelWorkArea.Controls.Add(pictureBox);
+                panelWorkArea.Paint += panelWorkArea_Paint;
                 pictureBoxes.Add(pictureBox);
             }
             catch (Exception ex)
@@ -55,7 +58,16 @@ namespace zy_cutPicture
                 MessageBox.Show($"加载图片时出错: {ex.Message}");
             }
         }
+        private void panelWorkArea_Paint(object sender, PaintEventArgs e)
+        {
+            for (int i = 0; i < pictureBoxes.Count; i++)
+            {
+                Graphics g = e.Graphics;
+                Image img = pictureBoxes[i].ImageX;
+                g.DrawImage(img, new Point(pictureBoxes[i].Location.X, pictureBoxes[i].Location.Y));
+            }
 
+        }
         private Point lastMousePosition;
         private bool isDragging = false;
 
@@ -77,6 +89,7 @@ namespace zy_cutPicture
                 int deltaY = e.Y - lastMousePosition.Y;
                 pictureBox.Left += deltaX;
                 pictureBox.Top += deltaY;
+                panelWorkArea.Invalidate();
             }
         }
 
@@ -85,6 +98,7 @@ namespace zy_cutPicture
             if (e.Button == MouseButtons.Left)
             {
                 isDragging = false;
+                panelWorkArea.Invalidate();
             }
         }
 
@@ -131,6 +145,23 @@ namespace zy_cutPicture
         private void saveAsMenuItem_Click(object sender, EventArgs e)
         {
 
-        }      
+        }
+
+        public class PictureBoxX : PictureBox
+        {
+            public Image _imageX;
+            public Image ImageX
+            {
+                get
+                {
+                    return _imageX;
+                }
+                set
+                {
+                    _imageX = value;
+                }
+            }          
+            public int LayerOder;
+        }
     }
 }
