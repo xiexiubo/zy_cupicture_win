@@ -70,10 +70,14 @@ namespace zy_cutPicture
             this.optionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customTitleBar = new System.Windows.Forms.Panel();
             this.maximizeButton = new System.Windows.Forms.Button();
             this.minimizeButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
+            this.图层ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.动画ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelWorkArea.SuspendLayout();
             this.toolboxPanel.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -152,10 +156,11 @@ namespace zy_cutPicture
             this.fileMenuItem,
             this.editMenuItem,
             this.toolsMenuItem,
+            this.windowToolStripMenuItem,
             this.helpMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(184, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(228, 25);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             this.mainMenuStrip.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mainMenuStrip_MouseDoubleClick);
@@ -255,12 +260,24 @@ namespace zy_cutPicture
             this.helpMenuItem.Name = "helpMenuItem";
             this.helpMenuItem.Size = new System.Drawing.Size(44, 21);
             this.helpMenuItem.Text = "帮助";
+            this.helpMenuItem.Click += new System.EventHandler(this.helpMenuItem_Click);
             // 
             // aboutMenuItem
             // 
             this.aboutMenuItem.Name = "aboutMenuItem";
             this.aboutMenuItem.Size = new System.Drawing.Size(100, 22);
             this.aboutMenuItem.Text = "关于";
+            // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.图层ToolStripMenuItem,
+            this.动画ToolStripMenuItem,
+            this.属性ToolStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.windowToolStripMenuItem.Text = "窗口";
+            this.windowToolStripMenuItem.Click += new System.EventHandler(this.windowToolStripMenuItem_Click);
             // 
             // customTitleBar
             // 
@@ -274,6 +291,7 @@ namespace zy_cutPicture
             this.customTitleBar.Name = "customTitleBar";
             this.customTitleBar.Size = new System.Drawing.Size(800, 24);
             this.customTitleBar.TabIndex = 3;
+            this.customTitleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.customTitleBar_Paint);
             this.customTitleBar.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDoubleClick);
             this.customTitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.customTitleBar_MouseDown);
             // 
@@ -315,6 +333,24 @@ namespace zy_cutPicture
             this.closeButton.Text = "X";
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
+            // 图层ToolStripMenuItem
+            // 
+            this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
+            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.图层ToolStripMenuItem.Text = "图层";
+            // 
+            // 动画ToolStripMenuItem
+            // 
+            this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
+            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.动画ToolStripMenuItem.Text = "动画";
+            // 
+            // 属性ToolStripMenuItem
+            // 
+            this.属性ToolStripMenuItem.Name = "属性ToolStripMenuItem";
+            this.属性ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.属性ToolStripMenuItem.Text = "属性";
             // 
             // SequenceForm
             // 
@@ -417,15 +453,7 @@ namespace zy_cutPicture
             var formSize = this.Size;
             var cursorPos = this.PointToClient(Cursor.Position);
 
-            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                this.Cursor = Cursors.SizeNWSE;
-            }
-            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                this.Cursor = Cursors.SizeNESW;
-            }
-            else if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
             {
                 this.Cursor = Cursors.SizeNESW;
             }
@@ -440,10 +468,6 @@ namespace zy_cutPicture
             else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
             {
                 this.Cursor = Cursors.SizeWE;
-            }
-            else if (cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                this.Cursor = Cursors.SizeNS;
             }
             else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
             {
@@ -461,15 +485,7 @@ namespace zy_cutPicture
             var cursorPos = this.PointToClient(Cursor.Position);
             int wParam = 0;
 
-            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                wParam = HTTOPLEFT;
-            }
-            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                wParam = HTTOPRIGHT;
-            }
-            else if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
             {
                 wParam = HTBOTTOMLEFT;
             }
@@ -484,10 +500,6 @@ namespace zy_cutPicture
             else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
             {
                 wParam = HTRIGHT;
-            }
-            else if (cursorPos.Y <= RESIZE_HANDLE_SIZE)
-            {
-                wParam = HTTOP;
             }
             else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
             {
@@ -574,5 +586,10 @@ namespace zy_cutPicture
                 }
             }
         }
+
+        private ToolStripMenuItem windowToolStripMenuItem;
+        private ToolStripMenuItem 图层ToolStripMenuItem;
+        private ToolStripMenuItem 动画ToolStripMenuItem;
+        private ToolStripMenuItem 属性ToolStripMenuItem;
     }
 }    

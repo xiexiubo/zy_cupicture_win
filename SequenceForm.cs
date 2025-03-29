@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using static zy_cutPicture.SequenceForm;
 
 namespace zy_cutPicture
 {
@@ -12,6 +14,19 @@ namespace zy_cutPicture
         public SequenceForm()
         {
             InitializeComponent();
+            // 开启当前窗体的双缓冲
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+            // 通过反射设置 panelWorkArea 的双缓冲
+            SetDoubleBuffered(panelWorkArea);
+        }
+
+        private void SetDoubleBuffered(Control control)
+        {
+            if (SystemInformation.TerminalServerSession)
+                return;
+            PropertyInfo doubleBufferProperty = control.GetType().GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
+            doubleBufferProperty?.SetValue(control, true, null);
         }
 
         public void init()
@@ -39,12 +54,10 @@ namespace zy_cutPicture
         {
             try
             {
-                PictureBoxX pictureBox = new PictureBoxX();
-                pictureBox.Image = Image.FromFile(filePath);
-                pictureBox.ImageX = pictureBox.Image;
-                pictureBox.Image = null;
+                PictureBoxX pictureBox = new PictureBoxX(filePath);               
+               // pictureBox.Size = pictureBox.ImageX.Size;
                 pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-                pictureBox.Location = new Point(10, 10);
+                pictureBox.Location = new Point(panelWorkArea.Width/2, panelWorkArea.Height / 2);
                 pictureBox.BackColor = Color.Transparent;
                 pictureBox.MouseDown += PictureBox_MouseDown;
                 pictureBox.MouseMove += PictureBox_MouseMove;
@@ -52,20 +65,77 @@ namespace zy_cutPicture
                 panelWorkArea.Controls.Add(pictureBox);
                 panelWorkArea.Paint += panelWorkArea_Paint;
                 pictureBoxes.Add(pictureBox);
+                panelWorkArea.Invalidate();
+                panelWorkArea.Controls.SetChildIndex(pictureBox, 1);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"加载图片时出错: {ex.Message}");
             }
         }
+        public static Color GetColorAtPosition(int i, int count)
+        {
+            if (count <= 0)
+            {
+                throw new ArgumentException("count 必须是正整数", nameof(count));
+            }
+            if (i < 0 || i >= count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(i), "i 必须在 0 到 count - 1 的范围内");
+            }
+
+            int  value = (255*3)*i / (count);
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            if (value <= 255)
+            {
+                r = value;
+            }
+            else if (value > 255 && value <= 255 * 2)
+            {
+                //r = 255;
+                g = value-255;
+            }
+            else if (value > 255 * 2)
+            {
+                //r = 255;
+                //g = 255;
+                b = value - 255 * 2;
+            }
+            return Color.FromArgb(255,r, g, b);
+        }
+    
         private void panelWorkArea_Paint(object sender, PaintEventArgs e)
         {
-            for (int i = 0; i < pictureBoxes.Count; i++)
+            //panelWorkArea.BackgroundImage=null;
+            //Graphics bg = e.Graphics;
+            //bg.DrawImage(Properties.Resources.方格,0,0, panelWorkArea.Width, panelWorkArea.Height);
+           
+            for (int i = panelWorkArea.Controls.Count - 1; i >= 0; i--)
             {
+                var item = panelWorkArea.Controls[i] as PictureBoxX;
+                if (item == null) continue;
                 Graphics g = e.Graphics;
-                Image img = pictureBoxes[i].ImageX;
-                g.DrawImage(img, new Point(pictureBoxes[i].Location.X, pictureBoxes[i].Location.Y));
+                Image img = item.ImageX;
+                g.DrawImage(img, new Point(item.Location.X, item.Location.Y));
+               
+                // 创建一个 Pen 对象，用于绘制矩形的边框
+                Pen pen = new Pen(Color.Aqua, 2);
+                // 设置虚线样式
+                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                // 定义矩形的位置和大小
+                Rectangle rect = new Rectangle(item.Location.X, item.Location.Y,
+                    img.Size.Width, img.Size.Height);
+                // 绘制矩形
+                g.DrawRectangle(pen, rect);
+                // 释放 Pen 对象
+                pen.Dispose();
             }
+
+        }
+        public void SetLayerOder() 
+        {
 
         }
         private Point lastMousePosition;
@@ -73,10 +143,14 @@ namespace zy_cutPicture
 
         private void PictureBox_MouseDown(object sender, MouseEventArgs e)
         {
+            var box = (PictureBoxX)sender;           
+            panelWorkArea.Controls.SetChildIndex(box, 1);
+
             if (e.Button == MouseButtons.Left)
             {
                 isDragging = true;
                 lastMousePosition = e.Location;
+                
             }
         }
 
@@ -145,23 +219,42 @@ namespace zy_cutPicture
         private void saveAsMenuItem_Click(object sender, EventArgs e)
         {
 
+        }        
+
+        private void customTitleBar_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
-        public class PictureBoxX : PictureBox
+        private void helpMenuItem_Click(object sender, EventArgs e)
         {
-            public Image _imageX;
-            public Image ImageX
-            {
-                get
-                {
-                    return _imageX;
-                }
-                set
-                {
-                    _imageX = value;
-                }
-            }          
-            public int LayerOder;
+
         }
+
+        private void windowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+    public class PictureBoxX : PictureBox
+    {
+        public PictureBoxX(string path)
+        {
+            // 开启双缓冲
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+
+            this.path = path;
+            this.ImageX = Image.FromFile(path);
+            this.Size = new Size(ImageX.Width, ImageX.Height);
+        }
+        public Image ImageX;
+
+        /// <summary>
+        /// 动画序列索引
+        /// </summary>
+        public int IndexSeq;
+        public bool IsSelected = false;
+        public string path;
     }
 }
