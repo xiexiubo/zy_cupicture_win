@@ -118,7 +118,7 @@ namespace zy_cutPicture
                 if (item == null) continue;
                 Graphics g = e.Graphics;
                 Image img = item.ImageX;
-                g.DrawImage(img, new Point(item.Location.X, item.Location.Y));
+                g.DrawImage(img, item.Location.X, item.Location.Y, img.Width, img.Height);
                
                 // 创建一个 Pen 对象，用于绘制矩形的边框
                 Pen pen = new Pen(Color.Aqua, 2);
@@ -247,6 +247,8 @@ namespace zy_cutPicture
             this.path = path;
             this.ImageX = Image.FromFile(path);
             this.Size = new Size(ImageX.Width, ImageX.Height);
+
+            Console.WriteLine($"path:{this.path}   this.size:{ this}    {ImageX.Size} ");
         }
         public Image ImageX;
 
