@@ -123,6 +123,14 @@ namespace zy_cutPicture
                 // 创建一个 Pen 对象，用于绘制矩形的边框
                 using (Pen pen = new Pen(Color.Aqua, 2))
                 {
+                    if (i == 1)
+                    {
+                        pen.Color = Color.FromArgb(255, 20, 255, 255);
+                    }
+                    else 
+                    {
+                        pen.Color = Color.FromArgb(50, 0, 255, 255);
+                    }
                     // 设置虚线样式
                     pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
                     // 定义矩形的位置和大小
@@ -134,11 +142,7 @@ namespace zy_cutPicture
             }
         }
 
-        // 设置图层顺序
-        public void SetLayerOrder()
-        {
-            // 可在此处添加设置图层顺序的具体逻辑
-        }
+        
 
         // 记录鼠标上一次的位置
         private Point lastMousePosition;
