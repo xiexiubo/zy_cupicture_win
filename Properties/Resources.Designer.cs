@@ -113,6 +113,26 @@ namespace zy_cutPicture.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        public static System.Drawing.Bitmap 生成播放按钮 {
+            get {
+                object obj = ResourceManager.GetObject("生成播放按钮", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        public static System.Drawing.Bitmap 生成播放按钮2 {
+            get {
+                object obj = ResourceManager.GetObject("生成播放按钮2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         public static System.Drawing.Bitmap 选择箭头 {
             get {
                 object obj = ResourceManager.GetObject("选择箭头", resourceCulture);

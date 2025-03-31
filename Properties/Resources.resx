@@ -118,25 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="shezhi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shezhi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="生成播放按钮" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\生成播放按钮.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="选框" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\选框.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BrushToolIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BrushToolIcon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="选择箭头" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\选择箭头.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="EraserToolIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\EraserToolIcon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SelectToolIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SelectToolIcon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BrushToolIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BrushToolIcon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="shezhi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\shezhi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="方格" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\方格.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="选择箭头" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\选择箭头.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="选框" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\选框.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="生成播放按钮2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\生成播放按钮2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

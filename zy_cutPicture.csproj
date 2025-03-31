@@ -171,5 +171,11 @@
   <ItemGroup>
     <None Include="Resources\选框.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\生成播放按钮.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\生成播放按钮2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

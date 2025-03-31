@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ namespace zy_cutPicture
     {
         // 存储 PictureBoxX 控件的列表
         private List<PictureBoxX> pictureBoxList = new List<PictureBoxX>();
-        private enum eToolType 
+        private enum eToolType
         {
             选择工具,
             相似工具,
@@ -26,8 +27,8 @@ namespace zy_cutPicture
             // 开启当前窗体的双缓冲，减少闪烁
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
-            // 通过反射设置 panelWorkArea 的双缓冲
-            SetDoubleBuffered(panelWorkArea);
+            // 通过反射设置 panel_Area 的双缓冲
+            SetDoubleBuffered(panel_Area);
         }
 
         // 设置控件的双缓冲
@@ -42,9 +43,9 @@ namespace zy_cutPicture
         // 初始化工作区域面板的拖放功能
         public void Initialize()
         {
-            panelWorkArea.AllowDrop = true;
-            panelWorkArea.DragEnter += PanelWorkArea_DragEnter;
-            panelWorkArea.DragDrop += PanelWorkArea_DragDrop;
+            panel_Area.AllowDrop = true;
+            panel_Area.DragEnter += panel_Area_DragEnter;
+            panel_Area.DragDrop += panel_Area_DragDrop;
         }
 
         // 打开文件对话框选择图片
@@ -63,7 +64,7 @@ namespace zy_cutPicture
         }
         private Bitmap CropImage(Bitmap source, Rectangle rect)
         {
-         
+
             var bmp = new Bitmap(rect.Width, rect.Height);
             using (var g = Graphics.FromImage(bmp))
             {
@@ -81,16 +82,16 @@ namespace zy_cutPicture
             {
                 PictureBoxX pictureBox = new PictureBoxX(filePath);
                 pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-                pictureBox.Location = new Point(panelWorkArea.Width / 2, panelWorkArea.Height / 2);
+                pictureBox.Location = new Point(panel_Area.Width / 2, panel_Area.Height / 2);
                 pictureBox.BackColor = Color.Transparent;
                 pictureBox.MouseDown += PictureBox_MouseDown;
                 pictureBox.MouseMove += PictureBox_MouseMove;
                 pictureBox.MouseUp += PictureBox_MouseUp;
-                panelWorkArea.Controls.Add(pictureBox);
-                panelWorkArea.Paint += PanelWorkArea_Paint;
+                panel_Area.Controls.Add(pictureBox);
+                panel_Area.Paint += panel_Area_Paint;
                 pictureBoxList.Add(pictureBox);
-                panelWorkArea.Invalidate();
-                panelWorkArea.Controls.SetChildIndex(pictureBox, 1);
+                panel_Area.Invalidate();
+                panel_Area.Controls.SetChildIndex(pictureBox, 1);
             }
             catch (Exception ex)
             {
@@ -130,12 +131,12 @@ namespace zy_cutPicture
         }
 
         // 工作区域面板的绘制事件处理方法
-        private void PanelWorkArea_Paint(object sender, PaintEventArgs e)
+        private void panel_Area_Paint(object sender, PaintEventArgs e)
         {
 
-            for (int i = panelWorkArea.Controls.Count - 1; i >= 0; i--)
+            for (int i = panel_Area.Controls.Count - 1; i >= 0; i--)
             {
-                var pictureBox = panelWorkArea.Controls[i] as PictureBoxX;
+                var pictureBox = panel_Area.Controls[i] as PictureBoxX;
                 if (pictureBox == null) continue;
                 Graphics graphics = e.Graphics;
                 Image image = pictureBox.bitmap;
@@ -144,11 +145,11 @@ namespace zy_cutPicture
                 // 创建一个 Pen 对象，用于绘制矩形的边框
                 using (Pen pen = new Pen(Color.Aqua, 2))
                 {
-                    if (i == 1)
+                    if (i == 0)
                     {
                         pen.Color = Color.FromArgb(255, 20, 255, 255);
                     }
-                    else 
+                    else
                     {
                         pen.Color = Color.FromArgb(50, 0, 255, 255);
                     }
@@ -160,26 +161,28 @@ namespace zy_cutPicture
                     // 绘制矩形
                     graphics.DrawRectangle(pen, rectangle);
                 }
-                if (this.similarMap != null) 
+                if (this.similarMap != null)
                 {
                     var p = pictureBox.Location;
                     p.X = pictureBox.simmilarPos.X + p.X;
                     p.Y = pictureBox.simmilarPos.Y + p.Y;
-                    graphics.DrawRectangle(Pens.Red, new Rectangle(p.X, p.Y,this.similarMap.Width,this.similarMap.Height));
+                    graphics.DrawRectangle(Pens.Red, new Rectangle(p.X, p.Y, this.similarMap.Width, this.similarMap.Height));
                 }
             }
-            if (!currentDragRect_pictureBox_debug.IsEmpty && panelWorkArea.Controls.Count>1&& this.ToolType == eToolType.相似工具)
+            if (!currentDragRect_pictureBox_debug.IsEmpty && panel_Area.Controls.Count > 1 && this.ToolType == eToolType.相似工具)
             {
-                var p = panelWorkArea.Controls[1] as PictureBoxX;
+                var p = panel_Area.Controls[0] as PictureBoxX;
                 // 计算在 PictureBox 上显示的矩形位置
                 Rectangle displayRect = GetDisplayRectangle(p, currentDragRect_pictureBox_debug);
                 displayRect.X = displayRect.X + p.Location.X;
                 displayRect.Y = displayRect.Y + p.Location.Y;
                 e.Graphics.DrawRectangle(Pens.Red, displayRect);
             }
+            //if (this.pic_anim.Image == null)
+            this.pic_anim.BackgroundImage = this.pictureBoxList[0].bitmap;
         }
 
-        
+
 
         // 记录鼠标上一次的位置
         private Point lastMousePosition;
@@ -191,12 +194,12 @@ namespace zy_cutPicture
         {
             this.similarMap = null;
             var pictureBox = (PictureBoxX)sender;
-            panelWorkArea.Controls.SetChildIndex(pictureBox, 1);
+            panel_Area.Controls.SetChildIndex(pictureBox, 0);
             if (this.ToolType == eToolType.相似工具)
             {
                 currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, lastMousePosition, e.Location);
             }
-           
+
             if (e.Button == MouseButtons.Left)
             {
                 isDragging = true;
@@ -220,17 +223,18 @@ namespace zy_cutPicture
                 PictureBoxX pictureBox = (PictureBoxX)sender;
                 if (this.ToolType == eToolType.选择工具)
                 {
-                   
+
                     int deltaX = e.X - lastMousePosition.X;
                     int deltaY = e.Y - lastMousePosition.Y;
                     pictureBox.Left += deltaX;
                     pictureBox.Top += deltaY;
-                } else if (this.ToolType == eToolType.相似工具) 
+                }
+                else if (this.ToolType == eToolType.相似工具)
                 {
                     currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, this.lastMousePosition, e.Location);
                 }
-              
-                panelWorkArea.Invalidate();
+
+                panel_Area.Invalidate();
 
                 if (this.ToolType == eToolType.相似工具)
                 {
@@ -242,14 +246,14 @@ namespace zy_cutPicture
                 }
             }
         }
-       
+
         // 鼠标释放事件处理方法
         private void PictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             PictureBoxX pictureBox = (PictureBoxX)sender;
             if (e.Button == MouseButtons.Left)
             {
-                if (isDragging) 
+                if (isDragging)
                 {
 
                     if (Control.ModifierKeys == Keys.Alt)
@@ -269,13 +273,13 @@ namespace zy_cutPicture
                     }
                 }
                 isDragging = false;
-                panelWorkArea.Invalidate();
+                panel_Area.Invalidate();
             }
-          
+
         }
 
         // 工作区域面板的拖放进入事件处理方法
-        private void PanelWorkArea_DragEnter(object sender, DragEventArgs e)
+        private void panel_Area_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -288,7 +292,7 @@ namespace zy_cutPicture
         }
 
         // 工作区域面板的拖放完成事件处理方法
-        private void PanelWorkArea_DragDrop(object sender, DragEventArgs e)
+        private void panel_Area_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string filePath in files)
@@ -465,11 +469,11 @@ namespace zy_cutPicture
         private Bitmap similarMap = null;
         private Dictionary<Bitmap, BitmapDataCache> bitmapCache = new Dictionary<Bitmap, BitmapDataCache>();
         // 优化后的相似度计算方法
-        private  unsafe double CalculateSimilarityOptimized(BitmapDataCache sourceCache, BitmapDataCache targetCache,
+        private unsafe double CalculateSimilarityOptimized(BitmapDataCache sourceCache, BitmapDataCache targetCache,
             int sourceX, int sourceY, int width, int height)
         {
             int matchingPixels = 0;
-            
+
 
             fixed (byte* sourcePtr = sourceCache.Pixels)
             fixed (byte* targetPtr = targetCache.Pixels)
@@ -499,7 +503,7 @@ namespace zy_cutPicture
         }
 
         // 优化后的查找方法
-        private  Point FindMostSimilarPositionOptimized(Bitmap source, Bitmap target)
+        private Point FindMostSimilarPositionOptimized(Bitmap source, Bitmap target)
         {
             var sourceCache = GetBitmapDataCache(source);
             var targetCache = GetBitmapDataCache(target);
@@ -604,7 +608,7 @@ namespace zy_cutPicture
                     var sourceCache = GetBitmapDataCache(pictureBox.bitmap);
                     Point mostSimilarPosition = FindMostSimilarPositionOptimized(pictureBox.bitmap, similarMap);
                     pictureBox.simmilarPos = mostSimilarPosition;
-                    Console.WriteLine(pictureBox.FilePath+" "+mostSimilarPosition);
+                    Console.WriteLine(pictureBox.FilePath + " " + mostSimilarPosition);
                 }
             });
         }
@@ -645,14 +649,112 @@ namespace zy_cutPicture
 
         }
 
+        int typeArrange = 0;
+        bool isDuiqi = false;
+        private void ArrangePicType(int type)
+        {
+            int spacing = 10; // 图片之间的间距
+            int currentX = 10;
+            int currentY = 10;
+
+            foreach (PictureBoxX pictureBox in pictureBoxList)
+            {
+                if (type == 0)
+                {
+                    pictureBox.Location = new Point(currentX, currentY);
+                    currentX += pictureBox.Width + spacing;
+
+                    // 如果超出面板宽度，换行
+                    if (currentX + pictureBox.Width > panel_Area.Width)
+                    {
+                        currentX = 10;
+                        currentY += pictureBox.Height + spacing;
+                    }
+                }
+                else if (type == 1)
+                {
+                    int x = (this.panel_Area.Width - pictureBoxList[0].Width) / 2;
+                    int y = (this.panel_Area.Height - pictureBoxList[0].Height) / 2;
+                    pictureBox.Location = new Point(x, y);
+                }
+                else if (type == 2)
+                {
+                    int x = (this.panel_Area.Width - pictureBox.Width) / 2;
+                    int y = (this.panel_Area.Height - pictureBox.Height) / 2;
+                    pictureBox.Location = new Point(x, y);
+                }
+                else if (type == 3)
+                {
+                    // 以第一个图片的位置为基准进行左对齐                
+                    int x = (this.panel_Area.Width - pictureBoxList[0].Width) / 2;
+                    int y = (this.panel_Area.Height - pictureBoxList[0].Height) / 2;
+
+                    Point pos_fixed = pictureBoxList[0].simmilarPos;
+                    foreach (PictureBoxX p in pictureBoxList)
+                    {
+                        p.Location = new Point(x - (p.simmilarPos.X - pos_fixed.X), y - (p.simmilarPos.Y - pos_fixed.Y));
+                    }
+                }
+            }
+            panel_Area.Invalidate();
+        }
+        // 排列图组
         private void 排列图组ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            typeArrange++;
+            if (typeArrange == 3) typeArrange = 0;
+            ArrangePicType(typeArrange);
         }
 
+        // 对齐图组
         private void 对齐图组ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (pictureBoxList.Count > 0)
+            {
+                this.isDuiqi = !this.isDuiqi;
+                if (this.isDuiqi)
+                {
+                    ArrangePicType(3);
+                }
+                else
+                {
+                    ArrangePicType(typeArrange);
+                }
+            }
+        }
+        private int elapsedTime = 0;
+        Timer pic_anim_Timer = null;
+        int PlayOder = 0;
+        private void pic_anim_Timer_Tick(object sender, EventArgs e)
+        {
+            if (pictureBoxList.Count > 0)
+            {
+                PlayOder = (PlayOder + 1) % pictureBoxList.Count;
+                this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
+                this.pic_anim.Invalidate();
+            }
+        }
 
+        private void pic_anim_Click(object sender, EventArgs e)
+        {
+            if (pic_anim_Timer != null)
+            {
+                pic_anim_Timer.Stop();
+                pic_anim_Timer = null;
+                this.pic_anim.Image = zy_cutPicture.Properties.Resources.生成播放按钮2;
+            }
+            else
+            {
+                if (pictureBoxList.Count > 0)
+                {
+                    pic_anim_Timer = new Timer();
+                    pic_anim_Timer.Interval = 500;
+                    pic_anim_Timer.Tick += pic_anim_Timer_Tick;
+                    pic_anim_Timer.Start();
+                    PlayOder = 0;
+                    this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
+                }
+            }
         }
     }
 
@@ -679,7 +781,7 @@ namespace zy_cutPicture
         public bool IsSelected = false;
         // 文件路径
         public string FilePath;
-        public Point simmilarPos=Point.Empty;
+        public Point simmilarPos = Point.Empty;
     }
     // 添加新的类成员用于缓存图像数据
     class BitmapDataCache
