@@ -461,15 +461,15 @@ namespace zy_cutPicture
         //    }
         //}
 
-
+        private int tolerance = 100; // 颜色容差值
         private Bitmap similarMap = null;
         private Dictionary<Bitmap, BitmapDataCache> bitmapCache = new Dictionary<Bitmap, BitmapDataCache>();
         // 优化后的相似度计算方法
-        private static unsafe double CalculateSimilarityOptimized(BitmapDataCache sourceCache, BitmapDataCache targetCache,
+        private  unsafe double CalculateSimilarityOptimized(BitmapDataCache sourceCache, BitmapDataCache targetCache,
             int sourceX, int sourceY, int width, int height)
         {
             int matchingPixels = 0;
-            const int tolerance = 100; // 颜色容差值
+            
 
             fixed (byte* sourcePtr = sourceCache.Pixels)
             fixed (byte* targetPtr = targetCache.Pixels)
@@ -609,6 +609,51 @@ namespace zy_cutPicture
             });
         }
         #endregion
+
+        private void 图层ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.panel_tuceng.Visible = !this.panel_tuceng.Visible;
+        }
+
+        private void 动画ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.panel_anim.Visible = !this.panel_anim.Visible;
+        }
+
+        private void 工具ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.toolboxPanel.Visible = !this.toolboxPanel.Visible;
+        }
+
+        private void 选项ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // this.panel_xuanxiang.Visible = !this.panel_xuanxiang.Visible;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            this.tolerance = (int)num_rongcha.Value;
+        }
+
+        private void btn_resize_pic_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void editMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 排列图组ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 对齐图组ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class PictureBoxX : PictureBox

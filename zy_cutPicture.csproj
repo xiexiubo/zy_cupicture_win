@@ -165,5 +165,11 @@
   <ItemGroup>
     <None Include="Resources\SelectToolIcon1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\选择箭头.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\选框.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

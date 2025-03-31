@@ -61,35 +61,43 @@ namespace zy_cutPicture
             this.redoMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.排列图组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.对齐图组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.图层ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.动画ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.选项ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customTitleBar = new System.Windows.Forms.Panel();
             this.maximizeButton = new System.Windows.Forms.Button();
             this.minimizeButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
-            this.工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.选项ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelWorkArea = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btn_resize_pic = new System.Windows.Forms.Button();
+            this.num_rongcha = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel_anim = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.pic_anim = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btn_newNameExport = new System.Windows.Forms.Button();
             this.btn_name0Export = new System.Windows.Forms.Button();
             this.textBox_prefix = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.pic_anim = new System.Windows.Forms.PictureBox();
             this.label4 = new System.Windows.Forms.Label();
             this.panel_tuceng = new System.Windows.Forms.Panel();
             this.btn_layer2anim = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel_layer = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
             this.textBox_layer_name = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.icon = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.toolboxPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -99,9 +107,11 @@ namespace zy_cutPicture
             this.mainMenuStrip.SuspendLayout();
             this.customTitleBar.SuspendLayout();
             this.panelWorkArea.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_rongcha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel_anim.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).BeginInit();
             this.panel_tuceng.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -121,7 +131,7 @@ namespace zy_cutPicture
             this.helpMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(228, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(348, 25);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             this.mainMenuStrip.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mainMenuStrip_MouseDoubleClick);
@@ -140,28 +150,29 @@ namespace zy_cutPicture
             // newMenuItem
             // 
             this.newMenuItem.Name = "newMenuItem";
-            this.newMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.newMenuItem.Size = new System.Drawing.Size(147, 22);
             this.newMenuItem.Text = "新建";
             this.newMenuItem.Click += new System.EventHandler(this.newMenuItem_Click);
             // 
             // openMenuItem
             // 
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.openMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openMenuItem.Size = new System.Drawing.Size(147, 22);
             this.openMenuItem.Text = "打开";
             this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // saveMenuItem
             // 
             this.saveMenuItem.Name = "saveMenuItem";
-            this.saveMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveMenuItem.Size = new System.Drawing.Size(147, 22);
             this.saveMenuItem.Text = "保存";
             this.saveMenuItem.Click += new System.EventHandler(this.saveMenuItem_Click);
             // 
             // saveAsMenuItem
             // 
             this.saveAsMenuItem.Name = "saveAsMenuItem";
-            this.saveAsMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.saveAsMenuItem.Size = new System.Drawing.Size(147, 22);
             this.saveAsMenuItem.Text = "另存为";
             this.saveAsMenuItem.Click += new System.EventHandler(this.saveAsMenuItem_Click);
             // 
@@ -171,34 +182,53 @@ namespace zy_cutPicture
             this.undoMenuItem,
             this.redoMenuItem,
             this.copyMenuItem,
-            this.pasteMenuItem});
+            this.pasteMenuItem,
+            this.排列图组ToolStripMenuItem,
+            this.对齐图组ToolStripMenuItem});
             this.editMenuItem.Name = "editMenuItem";
             this.editMenuItem.Size = new System.Drawing.Size(44, 21);
             this.editMenuItem.Text = "编辑";
+            this.editMenuItem.Click += new System.EventHandler(this.editMenuItem_Click);
             // 
             // undoMenuItem
             // 
             this.undoMenuItem.Name = "undoMenuItem";
-            this.undoMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.undoMenuItem.Size = new System.Drawing.Size(200, 22);
             this.undoMenuItem.Text = "撤销";
             // 
             // redoMenuItem
             // 
             this.redoMenuItem.Name = "redoMenuItem";
-            this.redoMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.redoMenuItem.Size = new System.Drawing.Size(200, 22);
             this.redoMenuItem.Text = "重做";
             // 
             // copyMenuItem
             // 
             this.copyMenuItem.Name = "copyMenuItem";
-            this.copyMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.copyMenuItem.Size = new System.Drawing.Size(200, 22);
             this.copyMenuItem.Text = "复制";
             // 
             // pasteMenuItem
             // 
             this.pasteMenuItem.Name = "pasteMenuItem";
-            this.pasteMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.pasteMenuItem.Size = new System.Drawing.Size(200, 22);
             this.pasteMenuItem.Text = "粘贴";
+            // 
+            // 排列图组ToolStripMenuItem
+            // 
+            this.排列图组ToolStripMenuItem.Name = "排列图组ToolStripMenuItem";
+            this.排列图组ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
+            this.排列图组ToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.排列图组ToolStripMenuItem.Text = "排列图组(Alt-A)";
+            this.排列图组ToolStripMenuItem.Click += new System.EventHandler(this.排列图组ToolStripMenuItem_Click);
+            // 
+            // 对齐图组ToolStripMenuItem
+            // 
+            this.对齐图组ToolStripMenuItem.Name = "对齐图组ToolStripMenuItem";
+            this.对齐图组ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.B)));
+            this.对齐图组ToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.对齐图组ToolStripMenuItem.Text = "对齐图组(Alt-B)";
+            this.对齐图组ToolStripMenuItem.Click += new System.EventHandler(this.对齐图组ToolStripMenuItem_Click);
             // 
             // toolsMenuItem
             // 
@@ -211,7 +241,7 @@ namespace zy_cutPicture
             // optionsMenuItem
             // 
             this.optionsMenuItem.Name = "optionsMenuItem";
-            this.optionsMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.optionsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsMenuItem.Text = "选项";
             // 
             // windowToolStripMenuItem
@@ -229,14 +259,30 @@ namespace zy_cutPicture
             // 图层ToolStripMenuItem
             // 
             this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
-            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.图层ToolStripMenuItem.Text = "图层";
+            this.图层ToolStripMenuItem.Click += new System.EventHandler(this.图层ToolStripMenuItem_Click);
             // 
             // 动画ToolStripMenuItem
             // 
             this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
-            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.动画ToolStripMenuItem.Text = "动画";
+            this.动画ToolStripMenuItem.Click += new System.EventHandler(this.动画ToolStripMenuItem_Click);
+            // 
+            // 工具ToolStripMenuItem
+            // 
+            this.工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
+            this.工具ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.工具ToolStripMenuItem.Text = "工具";
+            this.工具ToolStripMenuItem.Click += new System.EventHandler(this.工具ToolStripMenuItem_Click);
+            // 
+            // 选项ToolStripMenuItem
+            // 
+            this.选项ToolStripMenuItem.Name = "选项ToolStripMenuItem";
+            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.选项ToolStripMenuItem.Text = "选项";
+            this.选项ToolStripMenuItem.Click += new System.EventHandler(this.选项ToolStripMenuItem_Click);
             // 
             // helpMenuItem
             // 
@@ -308,38 +354,102 @@ namespace zy_cutPicture
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
-            // 工具ToolStripMenuItem
-            // 
-            this.工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            this.工具ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.工具ToolStripMenuItem.Text = "工具";
-            // 
-            // 选项ToolStripMenuItem
-            // 
-            this.选项ToolStripMenuItem.Name = "选项ToolStripMenuItem";
-            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.选项ToolStripMenuItem.Text = "选项";
-            // 
             // panelWorkArea
             // 
             this.panelWorkArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelWorkArea.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.panelWorkArea.Controls.Add(this.panel1);
             this.panelWorkArea.Controls.Add(this.panel_anim);
             this.panelWorkArea.Controls.Add(this.panel_tuceng);
             this.panelWorkArea.Controls.Add(this.toolboxPanel);
             this.panelWorkArea.Location = new System.Drawing.Point(0, 24);
             this.panelWorkArea.Name = "panelWorkArea";
-            this.panelWorkArea.Size = new System.Drawing.Size(800, 472);
+            this.panelWorkArea.Size = new System.Drawing.Size(800, 480);
             this.panelWorkArea.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.btn_resize_pic);
+            this.panel1.Controls.Add(this.num_rongcha);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(571, 25);
+            this.panel1.TabIndex = 4;
+            // 
+            // btn_resize_pic
+            // 
+            this.btn_resize_pic.Location = new System.Drawing.Point(241, 1);
+            this.btn_resize_pic.Name = "btn_resize_pic";
+            this.btn_resize_pic.Size = new System.Drawing.Size(111, 23);
+            this.btn_resize_pic.TabIndex = 5;
+            this.btn_resize_pic.Text = "跟据识别重新生成";
+            this.btn_resize_pic.UseVisualStyleBackColor = true;
+            this.btn_resize_pic.Click += new System.EventHandler(this.btn_resize_pic_Click);
+            // 
+            // num_rongcha
+            // 
+            this.num_rongcha.Location = new System.Drawing.Point(172, 2);
+            this.num_rongcha.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.num_rongcha.Name = "num_rongcha";
+            this.num_rongcha.Size = new System.Drawing.Size(54, 21);
+            this.num_rongcha.TabIndex = 4;
+            this.num_rongcha.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.num_rongcha.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(139, 6);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(29, 12);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "容差";
+            this.label6.Visible = false;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(28, 6);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(101, 12);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "相似位置识别工具";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox1.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.pictureBox1.Image = global::zy_cutPicture.Properties.Resources.选框;
+            this.pictureBox1.Location = new System.Drawing.Point(3, 1);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(23, 20);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // panel_anim
             // 
             this.panel_anim.Controls.Add(this.panel4);
             this.panel_anim.Controls.Add(this.panel3);
             this.panel_anim.Controls.Add(this.label4);
-            this.panel_anim.Location = new System.Drawing.Point(526, 128);
+            this.panel_anim.Location = new System.Drawing.Point(574, 0);
             this.panel_anim.Name = "panel_anim";
             this.panel_anim.Size = new System.Drawing.Size(226, 219);
             this.panel_anim.TabIndex = 3;
@@ -347,19 +457,36 @@ namespace zy_cutPicture
             // panel4
             // 
             this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel4.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panel4.Controls.Add(this.pic_anim);
             this.panel4.Controls.Add(this.label3);
             this.panel4.Controls.Add(this.btn_newNameExport);
             this.panel4.Controls.Add(this.btn_name0Export);
             this.panel4.Controls.Add(this.textBox_prefix);
-            this.panel4.Location = new System.Drawing.Point(3, 169);
+            this.panel4.Location = new System.Drawing.Point(3, 21);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(223, 47);
+            this.panel4.Size = new System.Drawing.Size(223, 195);
             this.panel4.TabIndex = 0;
+            // 
+            // pic_anim
+            // 
+            this.pic_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.EraserToolIcon;
+            this.pic_anim.Location = new System.Drawing.Point(3, 3);
+            this.pic_anim.Name = "pic_anim";
+            this.pic_anim.Size = new System.Drawing.Size(216, 145);
+            this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pic_anim.TabIndex = 0;
+            this.pic_anim.TabStop = false;
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 9);
+            this.label3.Location = new System.Drawing.Point(5, 157);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 4;
@@ -369,7 +496,7 @@ namespace zy_cutPicture
             // 
             this.btn_newNameExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_newNameExport.AutoSize = true;
-            this.btn_newNameExport.Location = new System.Drawing.Point(136, 26);
+            this.btn_newNameExport.Location = new System.Drawing.Point(136, 174);
             this.btn_newNameExport.Name = "btn_newNameExport";
             this.btn_newNameExport.Size = new System.Drawing.Size(87, 22);
             this.btn_newNameExport.TabIndex = 3;
@@ -380,7 +507,7 @@ namespace zy_cutPicture
             // 
             this.btn_name0Export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_name0Export.AutoSize = true;
-            this.btn_name0Export.Location = new System.Drawing.Point(36, 26);
+            this.btn_name0Export.Location = new System.Drawing.Point(36, 174);
             this.btn_name0Export.Name = "btn_name0Export";
             this.btn_name0Export.Size = new System.Drawing.Size(94, 22);
             this.btn_name0Export.TabIndex = 2;
@@ -389,9 +516,9 @@ namespace zy_cutPicture
             // 
             // textBox_prefix
             // 
-            this.textBox_prefix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBox_prefix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_prefix.Location = new System.Drawing.Point(61, 3);
+            this.textBox_prefix.Location = new System.Drawing.Point(61, 151);
             this.textBox_prefix.Margin = new System.Windows.Forms.Padding(0);
             this.textBox_prefix.Name = "textBox_prefix";
             this.textBox_prefix.Size = new System.Drawing.Size(162, 21);
@@ -402,25 +529,10 @@ namespace zy_cutPicture
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.Controls.Add(this.pic_anim);
             this.panel3.Location = new System.Drawing.Point(0, 18);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(226, 146);
             this.panel3.TabIndex = 1;
-            // 
-            // pic_anim
-            // 
-            this.pic_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
-            this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.EraserToolIcon;
-            this.pic_anim.Location = new System.Drawing.Point(5, 0);
-            this.pic_anim.Name = "pic_anim";
-            this.pic_anim.Size = new System.Drawing.Size(218, 143);
-            this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pic_anim.TabIndex = 0;
-            this.pic_anim.TabStop = false;
             // 
             // label4
             // 
@@ -436,16 +548,16 @@ namespace zy_cutPicture
             this.panel_tuceng.Controls.Add(this.btn_layer2anim);
             this.panel_tuceng.Controls.Add(this.panel2);
             this.panel_tuceng.Controls.Add(this.label1);
-            this.panel_tuceng.Location = new System.Drawing.Point(314, 124);
+            this.panel_tuceng.Location = new System.Drawing.Point(662, 222);
             this.panel_tuceng.Name = "panel_tuceng";
-            this.panel_tuceng.Size = new System.Drawing.Size(135, 219);
+            this.panel_tuceng.Size = new System.Drawing.Size(135, 207);
             this.panel_tuceng.TabIndex = 2;
             // 
             // btn_layer2anim
             // 
             this.btn_layer2anim.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_layer2anim.Location = new System.Drawing.Point(3, 199);
+            this.btn_layer2anim.Location = new System.Drawing.Point(3, 187);
             this.btn_layer2anim.Name = "btn_layer2anim";
             this.btn_layer2anim.Size = new System.Drawing.Size(130, 19);
             this.btn_layer2anim.TabIndex = 2;
@@ -457,22 +569,34 @@ namespace zy_cutPicture
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panel2.Controls.Add(this.panel_layer);
-            this.panel2.Location = new System.Drawing.Point(0, 18);
+            this.panel2.Location = new System.Drawing.Point(3, 18);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(134, 181);
+            this.panel2.Size = new System.Drawing.Size(130, 169);
             this.panel2.TabIndex = 1;
             // 
             // panel_layer
             // 
             this.panel_layer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel_layer.Controls.Add(this.label2);
+            this.panel_layer.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.panel_layer.Controls.Add(this.textBox_layer_name);
+            this.panel_layer.Controls.Add(this.label2);
             this.panel_layer.Controls.Add(this.icon);
-            this.panel_layer.Location = new System.Drawing.Point(0, 18);
+            this.panel_layer.Location = new System.Drawing.Point(0, 12);
             this.panel_layer.Name = "panel_layer";
-            this.panel_layer.Size = new System.Drawing.Size(134, 25);
+            this.panel_layer.Size = new System.Drawing.Size(130, 25);
             this.panel_layer.TabIndex = 0;
+            // 
+            // textBox_layer_name
+            // 
+            this.textBox_layer_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_layer_name.Location = new System.Drawing.Point(29, 1);
+            this.textBox_layer_name.Margin = new System.Windows.Forms.Padding(0);
+            this.textBox_layer_name.Name = "textBox_layer_name";
+            this.textBox_layer_name.Size = new System.Drawing.Size(97, 21);
+            this.textBox_layer_name.TabIndex = 1;
             // 
             // label2
             // 
@@ -482,16 +606,7 @@ namespace zy_cutPicture
             this.label2.Size = new System.Drawing.Size(29, 12);
             this.label2.TabIndex = 2;
             this.label2.Text = "名字";
-            // 
-            // textBox_layer_name
-            // 
-            this.textBox_layer_name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_layer_name.Location = new System.Drawing.Point(50, 3);
-            this.textBox_layer_name.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox_layer_name.Name = "textBox_layer_name";
-            this.textBox_layer_name.Size = new System.Drawing.Size(84, 21);
-            this.textBox_layer_name.TabIndex = 1;
+            this.label2.Visible = false;
             // 
             // icon
             // 
@@ -499,7 +614,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Left)));
             this.icon.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
             this.icon.Image = global::zy_cutPicture.Properties.Resources.EraserToolIcon;
-            this.icon.Location = new System.Drawing.Point(0, 0);
+            this.icon.Location = new System.Drawing.Point(3, 0);
             this.icon.Name = "icon";
             this.icon.Size = new System.Drawing.Size(23, 22);
             this.icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -593,11 +708,14 @@ namespace zy_cutPicture
             this.customTitleBar.PerformLayout();
             this.panelWorkArea.ResumeLayout(false);
             this.panelWorkArea.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_rongcha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel_anim.ResumeLayout(false);
             this.panel_anim.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).EndInit();
             this.panel_tuceng.ResumeLayout(false);
             this.panel_tuceng.PerformLayout();
@@ -871,5 +989,13 @@ namespace zy_cutPicture
         private Label label3;
         private ToolStripMenuItem 工具ToolStripMenuItem;
         private ToolStripMenuItem 选项ToolStripMenuItem;
+        private Panel panel1;
+        private Label label5;
+        private PictureBox pictureBox1;
+        private NumericUpDown num_rongcha;
+        private Label label6;
+        private Button btn_resize_pic;
+        private ToolStripMenuItem 排列图组ToolStripMenuItem;
+        private ToolStripMenuItem 对齐图组ToolStripMenuItem;
     }
 }
