@@ -11,7 +11,13 @@ namespace zy_cutPicture
     {
         // 存储 PictureBoxX 控件的列表
         private List<PictureBoxX> pictureBoxList = new List<PictureBoxX>();
-
+        private enum eToolType 
+        {
+            选择工具,
+            相似工具,
+            橡皮擦工具
+        }
+        eToolType ToolType;
         public SequenceForm()
         {
             InitializeComponent();
@@ -53,7 +59,19 @@ namespace zy_cutPicture
                 }
             }
         }
-
+        private Bitmap CropImage(Bitmap source, Rectangle rect)
+        {
+         
+            var bmp = new Bitmap(rect.Width, rect.Height);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.DrawImage(source,
+                    new Rectangle(0, 0, rect.Width, rect.Height),
+                    rect,
+                    GraphicsUnit.Pixel);
+            }
+            return bmp;
+        }
         // 向工作区域面板添加 PictureBoxX 控件
         private void AddPictureBoxToPanel(string filePath)
         {
@@ -112,12 +130,13 @@ namespace zy_cutPicture
         // 工作区域面板的绘制事件处理方法
         private void PanelWorkArea_Paint(object sender, PaintEventArgs e)
         {
+
             for (int i = panelWorkArea.Controls.Count - 1; i >= 0; i--)
             {
                 var pictureBox = panelWorkArea.Controls[i] as PictureBoxX;
                 if (pictureBox == null) continue;
                 Graphics graphics = e.Graphics;
-                Image image = pictureBox.ImageX;
+                Image image = pictureBox.bitmap;
                 graphics.DrawImage(image, pictureBox.Location.X, pictureBox.Location.Y, image.Width, image.Height);
 
                 // 创建一个 Pen 对象，用于绘制矩形的边框
@@ -139,6 +158,22 @@ namespace zy_cutPicture
                     // 绘制矩形
                     graphics.DrawRectangle(pen, rectangle);
                 }
+                if (this.similarMap != null) 
+                {
+                    var p = pictureBox.Location;
+                    p.X = pictureBox.simmilarPos.X + p.X;
+                    p.Y = pictureBox.simmilarPos.Y + p.Y;
+                    graphics.DrawRectangle(Pens.Red, new Rectangle(p.X, p.Y,this.similarMap.Width,this.similarMap.Height));
+                }
+            }
+            if (!currentDragRect_pictureBox_debug.IsEmpty && panelWorkArea.Controls.Count>1&& this.ToolType == eToolType.相似工具)
+            {
+                var p = panelWorkArea.Controls[1] as PictureBoxX;
+                // 计算在 PictureBox 上显示的矩形位置
+                Rectangle displayRect = GetDisplayRectangle(p, currentDragRect_pictureBox_debug);
+                displayRect.X = displayRect.X + p.Location.X;
+                displayRect.Y = displayRect.Y + p.Location.Y;
+                e.Graphics.DrawRectangle(Pens.Red, displayRect);
             }
         }
 
@@ -148,17 +183,30 @@ namespace zy_cutPicture
         private Point lastMousePosition;
         // 标记是否正在拖动
         private bool isDragging = false;
-
+        private Rectangle currentDragRect_pictureBox_debug = Rectangle.Empty;
         // 鼠标按下事件处理方法
         private void PictureBox_MouseDown(object sender, MouseEventArgs e)
         {
+            this.similarMap = null;
             var pictureBox = (PictureBoxX)sender;
             panelWorkArea.Controls.SetChildIndex(pictureBox, 1);
-
+            if (this.ToolType == eToolType.相似工具)
+            {
+                currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, lastMousePosition, e.Location);
+            }
+           
             if (e.Button == MouseButtons.Left)
             {
                 isDragging = true;
                 lastMousePosition = e.Location;
+            }
+            if (this.ToolType == eToolType.相似工具)
+            {
+                Cursor.Current = Cursors.Cross;
+            }
+            else
+            {
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -167,23 +215,123 @@ namespace zy_cutPicture
         {
             if (isDragging)
             {
-                PictureBox pictureBox = (PictureBox)sender;
-                int deltaX = e.X - lastMousePosition.X;
-                int deltaY = e.Y - lastMousePosition.Y;
-                pictureBox.Left += deltaX;
-                pictureBox.Top += deltaY;
+                PictureBoxX pictureBox = (PictureBoxX)sender;
+                if (this.ToolType == eToolType.选择工具)
+                {
+                   
+                    int deltaX = e.X - lastMousePosition.X;
+                    int deltaY = e.Y - lastMousePosition.Y;
+                    pictureBox.Left += deltaX;
+                    pictureBox.Top += deltaY;
+                } else if (this.ToolType == eToolType.相似工具) 
+                {
+                    currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, this.lastMousePosition, e.Location);
+                }
+              
                 panelWorkArea.Invalidate();
+
+                if (this.ToolType == eToolType.相似工具)
+                {
+                    Cursor.Current = Cursors.Cross;
+                }
+                else
+                {
+                    Cursor.Current = Cursors.Default;
+                }
             }
         }
 
+        private Bitmap similarMap = null;
+
+
+        // 此方法用于计算两个矩形区域的像素相似度
+        private static double CalculateSimilarity(Bitmap source, Bitmap target, int x, int y)
+        {
+            int width = Math.Min(source.Width, target.Width);
+            int height = Math.Min(source.Height, target.Height);
+            int totalPixels = width * height;
+            int matchingPixels = 0;
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (source.GetPixel(x + i, y + j) == target.GetPixel(i , j))
+                    {
+                        matchingPixels++;
+                    }
+                }
+            }
+
+            return (double)matchingPixels / totalPixels;
+        }
+
+        // 该方法会找出目标图像中与源图像相似度最高的位置
+        private static Point FindMostSimilarPosition(Bitmap source, Bitmap target)
+        {
+            double maxSimilarity = 0;
+            Point mostSimilarPoint = new Point(0, 0);
+
+            for (int x = 0; x <= source.Width - target.Width ; x++)
+            {
+                for (int y = 0; y <= source.Height - target.Height; y++)
+                {
+                    double similarity = CalculateSimilarity(source, target, x, y);
+                    if (similarity > maxSimilarity)
+                    {
+                        maxSimilarity = similarity;
+                        mostSimilarPoint = new Point(x, y);
+                    }
+                }
+            }
+
+            return mostSimilarPoint;
+        }
+
+        // 此方法会将 PictureBox 列表中每个元素与 similarMap 对比，找到相似度最高的位置并设置其 Location
+        private void SetPointSimmilar(Bitmap similarMap, List<PictureBoxX> list)
+        {
+            foreach (PictureBoxX pictureBox in list)
+            {
+                if (pictureBox.bitmap != null)
+                {
+                    Bitmap sourceBitmap = new Bitmap(pictureBox.bitmap);
+                    Point mostSimilarPosition = FindMostSimilarPosition(sourceBitmap, similarMap);
+                    pictureBox.simmilarPos = mostSimilarPosition;
+                    Console.WriteLine("mostSimilarPosition:" + mostSimilarPosition);
+                }
+            }
+        }
+       
         // 鼠标释放事件处理方法
         private void PictureBox_MouseUp(object sender, MouseEventArgs e)
         {
+            PictureBoxX pictureBox = (PictureBoxX)sender;
             if (e.Button == MouseButtons.Left)
             {
+                if (isDragging) 
+                {
+
+                    if (Control.ModifierKeys == Keys.Alt)
+                    {
+                        if (this.ToolType == eToolType.相似工具)
+                        {
+                            if (currentDragRect_pictureBox_debug.Width > 0 && currentDragRect_pictureBox_debug.Height > 1)
+                            {
+                                this.similarMap = CropImage(pictureBox.bitmap, currentDragRect_pictureBox_debug);
+                                //currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, this.lastMousePosition, e.Location);
+                                this.SetPointSimmilar(this.similarMap, this.pictureBoxList);
+                            }
+                        }
+                        //this.MenuItemPanel.MergeSelectedItems();
+                        // 这里可以添加 Ctrl 键抬起后要执行的逻辑代码，也就是判断用户此时没按 Ctrl 键了
+                        Console.WriteLine("Keys.Alt 键已经按");
+                    }
+                }
                 isDragging = false;
                 panelWorkArea.Invalidate();
             }
+          
         }
 
         // 工作区域面板的拖放进入事件处理方法
@@ -214,7 +362,62 @@ namespace zy_cutPicture
                 }
             }
         }
+        private Rectangle GetBitmapRectangle(PictureBoxX pictureBox, Point start, Point end)
+        {
+            if (pictureBox.bitmap == null)
+            {
+                return Rectangle.Empty;
+            }
 
+            // 获取 PictureBox 的显示区域
+            Rectangle displayRectangle = pictureBox.ClientRectangle;
+
+            // 获取图像的原始尺寸
+            Size imageSize = pictureBox.bitmap.Size;
+
+            // 计算图像在 PictureBox 中的缩放比例
+            float scaleX = (float)imageSize.Width / displayRectangle.Width;
+            float scaleY = (float)imageSize.Height / displayRectangle.Height;
+
+            // 根据缩放比例计算起始点和结束点在位图中的像素坐标
+            int startX = (int)(start.X * scaleX);
+            int startY = (int)(start.Y * scaleY);
+            int endX = (int)(end.X * scaleX);
+            int endY = (int)(end.Y * scaleY);
+
+            // 确保矩形的坐标和尺寸为正值
+            int x = Math.Min(startX, endX);
+            int y = Math.Min(startY, endY);
+            int width = Math.Abs(endX - startX);
+            int height = Math.Abs(endY - startY);
+
+            return new Rectangle(x, y, width, height);
+        }
+        private Rectangle GetDisplayRectangle(PictureBoxX pictureBox, Rectangle bitmapRect)
+        {
+            if (pictureBox.bitmap == null)
+            {
+                return Rectangle.Empty;
+            }
+
+            // 获取 PictureBox 的显示区域
+            Rectangle displayRectangle = pictureBox.ClientRectangle;
+
+            // 获取图像的原始尺寸
+            Size imageSize = pictureBox.bitmap.Size;
+
+            // 计算图像在 PictureBox 中的缩放比例
+            float scaleX = (float)displayRectangle.Width / imageSize.Width;
+            float scaleY = (float)displayRectangle.Height / imageSize.Height;
+
+            // 根据缩放比例计算在 PictureBox 上显示的矩形位置
+            int x = (int)(bitmapRect.X * scaleX);
+            int y = (int)(bitmapRect.Y * scaleY);
+            int width = (int)(bitmapRect.Width * scaleX);
+            int height = (int)(bitmapRect.Height * scaleY);
+
+            return new Rectangle(x, y, width, height);
+        }
         // 新建菜单项点击事件处理方法
         private void newMenuItem_Click(object sender, EventArgs e)
         {
@@ -267,19 +470,20 @@ namespace zy_cutPicture
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
             this.FilePath = filePath;
-            this.ImageX = Image.FromFile(filePath);
-            this.Size = new Size(ImageX.Width, ImageX.Height);
+            this.bitmap = new Bitmap(filePath);
+            this.Size = new Size(bitmap.Width, bitmap.Height);
 
-            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {ImageX.Size} ");
+            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
         }
 
         // 图片对象
-        public Image ImageX;
+        public Bitmap bitmap;
         // 动画序列索引
         public int AnimationSequenceIndex;
         // 是否被选中
         public bool IsSelected = false;
         // 文件路径
         public string FilePath;
+        public Point simmilarPos=Point.Empty;
     }
 }

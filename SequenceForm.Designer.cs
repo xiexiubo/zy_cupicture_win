@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
 namespace zy_cutPicture
 {
     partial class SequenceForm
@@ -36,6 +35,7 @@ namespace zy_cutPicture
 
         private bool isDraggingTool = false;
         private Point lastMousePositionTool;
+        private Button selectedToolButton; // 新增：用于记录当前选中的工具按钮
 
         protected override void Dispose(bool disposing)
         {
@@ -68,16 +68,16 @@ namespace zy_cutPicture
             this.pasteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.图层ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.动画ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customTitleBar = new System.Windows.Forms.Panel();
             this.maximizeButton = new System.Windows.Forms.Button();
             this.minimizeButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
-            this.图层ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.动画ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelWorkArea.SuspendLayout();
             this.toolboxPanel.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -120,8 +120,9 @@ namespace zy_cutPicture
             this.selectToolButton.Image = global::zy_cutPicture.Properties.Resources.SelectToolIcon;
             this.selectToolButton.Location = new System.Drawing.Point(3, 3);
             this.selectToolButton.Name = "selectToolButton";
-            this.selectToolButton.Size = new System.Drawing.Size(37, 37);
+            this.selectToolButton.Size = new System.Drawing.Size(39, 37);
             this.selectToolButton.TabIndex = 0;
+            this.selectToolButton.Tag = "选择工具";
             this.selectToolButton.UseVisualStyleBackColor = true;
             this.selectToolButton.Click += new System.EventHandler(this.selectToolButton_Click);
             // 
@@ -134,6 +135,7 @@ namespace zy_cutPicture
             this.brushToolButton.Name = "brushToolButton";
             this.brushToolButton.Size = new System.Drawing.Size(35, 35);
             this.brushToolButton.TabIndex = 1;
+            this.brushToolButton.Tag = "相似工具";
             this.brushToolButton.UseVisualStyleBackColor = true;
             this.brushToolButton.Click += new System.EventHandler(this.brushToolButton_Click);
             // 
@@ -253,6 +255,35 @@ namespace zy_cutPicture
             this.optionsMenuItem.Size = new System.Drawing.Size(100, 22);
             this.optionsMenuItem.Text = "选项";
             // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.图层ToolStripMenuItem,
+            this.动画ToolStripMenuItem,
+            this.属性ToolStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.windowToolStripMenuItem.Text = "窗口";
+            this.windowToolStripMenuItem.Click += new System.EventHandler(this.windowToolStripMenuItem_Click);
+            // 
+            // 图层ToolStripMenuItem
+            // 
+            this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
+            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.图层ToolStripMenuItem.Text = "图层";
+            // 
+            // 动画ToolStripMenuItem
+            // 
+            this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
+            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.动画ToolStripMenuItem.Text = "动画";
+            // 
+            // 属性ToolStripMenuItem
+            // 
+            this.属性ToolStripMenuItem.Name = "属性ToolStripMenuItem";
+            this.属性ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.属性ToolStripMenuItem.Text = "属性";
+            // 
             // helpMenuItem
             // 
             this.helpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -267,17 +298,6 @@ namespace zy_cutPicture
             this.aboutMenuItem.Name = "aboutMenuItem";
             this.aboutMenuItem.Size = new System.Drawing.Size(100, 22);
             this.aboutMenuItem.Text = "关于";
-            // 
-            // windowToolStripMenuItem
-            // 
-            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.图层ToolStripMenuItem,
-            this.动画ToolStripMenuItem,
-            this.属性ToolStripMenuItem});
-            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
-            this.windowToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.windowToolStripMenuItem.Text = "窗口";
-            this.windowToolStripMenuItem.Click += new System.EventHandler(this.windowToolStripMenuItem_Click);
             // 
             // customTitleBar
             // 
@@ -334,24 +354,6 @@ namespace zy_cutPicture
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
-            // 图层ToolStripMenuItem
-            // 
-            this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
-            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.图层ToolStripMenuItem.Text = "图层";
-            // 
-            // 动画ToolStripMenuItem
-            // 
-            this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
-            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.动画ToolStripMenuItem.Text = "动画";
-            // 
-            // 属性ToolStripMenuItem
-            // 
-            this.属性ToolStripMenuItem.Name = "属性ToolStripMenuItem";
-            this.属性ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.属性ToolStripMenuItem.Text = "属性";
-            // 
             // SequenceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -379,17 +381,43 @@ namespace zy_cutPicture
 
         private void selectToolButton_Click(object sender, EventArgs e)
         {
+            SelectTool(sender as Button);
             System.Windows.Forms.MessageBox.Show("你选择了 选择工具");
         }
 
         private void brushToolButton_Click(object sender, EventArgs e)
         {
+            SelectTool(sender as Button);
             System.Windows.Forms.MessageBox.Show("你选择了 画笔工具");
         }
 
         private void eraserToolButton_Click(object sender, EventArgs e)
         {
+            SelectTool(sender as Button);
             System.Windows.Forms.MessageBox.Show("你选择了 橡皮擦工具");
+        }
+
+        private void SelectTool(Button button)
+        {
+            if (selectedToolButton != null)
+            {
+                selectedToolButton.FlatAppearance.BorderSize = 0;
+                selectedToolButton.BackColor = SystemColors.Control;
+            }
+
+            string s = (string)button.Tag;
+            this.ToolType = (eToolType)Enum.Parse(typeof(eToolType), s);//eToolType.选择;
+            if (this.ToolType == eToolType.相似工具)
+            {
+                Cursor.Current = Cursors.Cross;
+            }
+            else 
+            {
+                Cursor.Current = Cursors.Default;
+            }
+            button.FlatAppearance.BorderSize = 1;
+            button.BackColor = SystemColors.Highlight;
+            selectedToolButton = button;
         }
 
         private const int WM_NCLBUTTONDOWN = 0xA1;
@@ -422,7 +450,7 @@ namespace zy_cutPicture
         private void customTitleBar_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             mainMenuStrip_MouseDoubleClick(sender, e);
-        }       
+        }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
@@ -592,4 +620,4 @@ namespace zy_cutPicture
         private ToolStripMenuItem 动画ToolStripMenuItem;
         private ToolStripMenuItem 属性ToolStripMenuItem;
     }
-}    
+}
