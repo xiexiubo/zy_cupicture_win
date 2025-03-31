@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace zy_cutPicture
@@ -240,68 +242,6 @@ namespace zy_cutPicture
                 }
             }
         }
-
-        private Bitmap similarMap = null;
-
-
-        // 此方法用于计算两个矩形区域的像素相似度
-        private static double CalculateSimilarity(Bitmap source, Bitmap target, int x, int y)
-        {
-            int width = Math.Min(source.Width, target.Width);
-            int height = Math.Min(source.Height, target.Height);
-            int totalPixels = width * height;
-            int matchingPixels = 0;
-
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (source.GetPixel(x + i, y + j) == target.GetPixel(i , j))
-                    {
-                        matchingPixels++;
-                    }
-                }
-            }
-
-            return (double)matchingPixels / totalPixels;
-        }
-
-        // 该方法会找出目标图像中与源图像相似度最高的位置
-        private static Point FindMostSimilarPosition(Bitmap source, Bitmap target)
-        {
-            double maxSimilarity = 0;
-            Point mostSimilarPoint = new Point(0, 0);
-
-            for (int x = 0; x <= source.Width - target.Width ; x++)
-            {
-                for (int y = 0; y <= source.Height - target.Height; y++)
-                {
-                    double similarity = CalculateSimilarity(source, target, x, y);
-                    if (similarity > maxSimilarity)
-                    {
-                        maxSimilarity = similarity;
-                        mostSimilarPoint = new Point(x, y);
-                    }
-                }
-            }
-
-            return mostSimilarPoint;
-        }
-
-        // 此方法会将 PictureBox 列表中每个元素与 similarMap 对比，找到相似度最高的位置并设置其 Location
-        private void SetPointSimmilar(Bitmap similarMap, List<PictureBoxX> list)
-        {
-            foreach (PictureBoxX pictureBox in list)
-            {
-                if (pictureBox.bitmap != null)
-                {
-                    Bitmap sourceBitmap = new Bitmap(pictureBox.bitmap);
-                    Point mostSimilarPosition = FindMostSimilarPosition(sourceBitmap, similarMap);
-                    pictureBox.simmilarPos = mostSimilarPosition;
-                    Console.WriteLine("mostSimilarPosition:" + mostSimilarPosition);
-                }
-            }
-        }
        
         // 鼠标释放事件处理方法
         private void PictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -459,6 +399,216 @@ namespace zy_cutPicture
         {
             // 可在此处添加窗口操作的具体逻辑
         }
+
+        #region 查找相似的像素
+
+        //// 此方法用于计算两个矩形区域的像素相似度
+        //private static double CalculateSimilarity(Bitmap source, Bitmap target, int x, int y)
+        //{
+        //    int width = Math.Min(source.Width, target.Width);
+        //    int height = Math.Min(source.Height, target.Height);
+        //    int totalPixels = width * height;
+        //    int matchingPixels = 0;
+
+        //    for (int i = 0; i < width; i++)
+        //    {
+        //        for (int j = 0; j < height; j++)
+        //        {
+        //            if (source.GetPixel(x + i, y + j) == target.GetPixel(i , j))
+        //            {
+        //                matchingPixels++;
+        //            }
+        //        }
+        //    }
+
+        //    return (double)matchingPixels / totalPixels;
+        //}
+
+        //// 该方法会找出目标图像中与源图像相似度最高的位置
+        //private static Point FindMostSimilarPosition(Bitmap source, Bitmap target)
+        //{
+        //    double maxSimilarity = 0;
+        //    Point mostSimilarPoint = new Point(0, 0);
+
+        //    for (int x = 0; x <= source.Width - target.Width ; x++)
+        //    {
+        //        for (int y = 0; y <= source.Height - target.Height; y++)
+        //        {
+        //            double similarity = CalculateSimilarity(source, target, x, y);
+        //            if (similarity > maxSimilarity)
+        //            {
+        //                maxSimilarity = similarity;
+        //                mostSimilarPoint = new Point(x, y);
+        //            }
+        //        }
+        //    }
+
+        //    return mostSimilarPoint;
+        //}
+
+        //// 此方法会将 PictureBox 列表中每个元素与 similarMap 对比，找到相似度最高的位置并设置其 Location
+        //private void SetPointSimmilar(Bitmap similarMap, List<PictureBoxX> list)
+        //{
+        //    foreach (PictureBoxX pictureBox in list)
+        //    {
+        //        if (pictureBox.bitmap != null)
+        //        {
+        //            Bitmap sourceBitmap = new Bitmap(pictureBox.bitmap);
+        //            Point mostSimilarPosition = FindMostSimilarPosition(sourceBitmap, similarMap);
+        //            pictureBox.simmilarPos = mostSimilarPosition;
+        //            Console.WriteLine("mostSimilarPosition:" + mostSimilarPosition);
+        //        }
+        //    }
+        //}
+
+
+        private Bitmap similarMap = null;
+        private Dictionary<Bitmap, BitmapDataCache> bitmapCache = new Dictionary<Bitmap, BitmapDataCache>();
+        // 优化后的相似度计算方法
+        private static unsafe double CalculateSimilarityOptimized(BitmapDataCache sourceCache, BitmapDataCache targetCache,
+            int sourceX, int sourceY, int width, int height)
+        {
+            int matchingPixels = 0;
+            const int tolerance = 100; // 颜色容差值
+
+            fixed (byte* sourcePtr = sourceCache.Pixels)
+            fixed (byte* targetPtr = targetCache.Pixels)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    byte* sourceRow = sourcePtr + ((sourceY + y) * sourceCache.Stride) + (sourceX * sourceCache.BytesPerPixel);
+                    byte* targetRow = targetPtr + (y * targetCache.Stride);
+
+                    for (int x = 0; x < width; x++)
+                    {
+                        // 快速比较颜色差异（使用曼哈顿距离）
+                        int diff = Math.Abs(sourceRow[2] - targetRow[2]) +  // R
+                                   Math.Abs(sourceRow[1] - targetRow[1]) +  // G
+                                   Math.Abs(sourceRow[0] - targetRow[0]);   // B
+
+                        if (diff <= tolerance * 3) // 三个通道的总容差
+                            matchingPixels++;
+
+                        sourceRow += sourceCache.BytesPerPixel;
+                        targetRow += targetCache.BytesPerPixel;
+                    }
+                }
+            }
+
+            return (double)matchingPixels / (width * height);
+        }
+
+        // 优化后的查找方法
+        private  Point FindMostSimilarPositionOptimized(Bitmap source, Bitmap target)
+        {
+            var sourceCache = GetBitmapDataCache(source);
+            var targetCache = GetBitmapDataCache(target);
+
+            int searchStep = 2; // 搜索步长（平衡速度与精度）
+            int width = target.Width;
+            int height = target.Height;
+
+            int s_width = source.Width;
+            int s_height = source.Height;
+
+            double maxSimilarity = 0;
+            Point mostSimilarPoint = Point.Empty;
+
+            // 并行搜索
+            Parallel.For(0, (s_height - height) / searchStep + 1, y =>
+            {
+                int currentY = y * searchStep;
+                for (int x = 0; x <= s_width - width; x += searchStep)
+                {
+                    double similarity = CalculateSimilarityOptimized(
+                        sourceCache, targetCache,
+                        x, currentY,
+                        width, height);
+
+                    if (similarity > maxSimilarity)
+                    {
+                        lock (sourceCache)
+                        {
+                            if (similarity > maxSimilarity)
+                            {
+                                maxSimilarity = similarity;
+                                mostSimilarPoint = new Point(x, currentY);
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 局部精确搜索（在找到的最佳点附近进行精细搜索）
+            int refineRange = searchStep * 2;
+            for (int y = Math.Max(0, mostSimilarPoint.Y - refineRange);
+                 y < Math.Min(s_height - height, mostSimilarPoint.Y + refineRange);
+                 y++)
+            {
+                for (int x = Math.Max(0, mostSimilarPoint.X - refineRange);
+                     x < Math.Min(s_width - width, mostSimilarPoint.X + refineRange);
+                     x++)
+                {
+                    double similarity = CalculateSimilarityOptimized(
+                        sourceCache, targetCache,
+                        x, y,
+                        width, height);
+
+                    if (similarity > maxSimilarity)
+                    {
+                        maxSimilarity = similarity;
+                        mostSimilarPoint = new Point(x, y);
+                    }
+                }
+            }
+
+            return mostSimilarPoint;
+        }
+
+        // 获取位图数据缓存（带内存缓存）
+        private BitmapDataCache GetBitmapDataCache(Bitmap bmp)
+        {
+            if (bitmapCache.TryGetValue(bmp, out var cache))
+                return cache;
+
+            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            var bmpData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+
+            int bytesPerPixel = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
+            byte[] pixels = new byte[bmpData.Stride * bmp.Height];
+
+            System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixels, 0, pixels.Length);
+            bmp.UnlockBits(bmpData);
+
+            var newCache = new BitmapDataCache
+            {
+                Pixels = pixels,
+                Stride = bmpData.Stride,
+                BytesPerPixel = bytesPerPixel
+            };
+
+            bitmapCache[bmp] = newCache;
+            return newCache;
+        }
+
+        // 更新调用方法
+        private void SetPointSimmilar(Bitmap similarMap, List<PictureBoxX> list)
+        {
+            // 预缓存目标图像数据
+            var targetCache = GetBitmapDataCache(similarMap);
+
+            Parallel.ForEach(list, pictureBox =>
+            {
+                if (pictureBox.bitmap != null)
+                {
+                    var sourceCache = GetBitmapDataCache(pictureBox.bitmap);
+                    Point mostSimilarPosition = FindMostSimilarPositionOptimized(pictureBox.bitmap, similarMap);
+                    pictureBox.simmilarPos = mostSimilarPosition;
+                    Console.WriteLine(pictureBox.FilePath+" "+mostSimilarPosition);
+                }
+            });
+        }
+        #endregion
     }
 
     public class PictureBoxX : PictureBox
@@ -485,5 +635,12 @@ namespace zy_cutPicture
         // 文件路径
         public string FilePath;
         public Point simmilarPos=Point.Empty;
+    }
+    // 添加新的类成员用于缓存图像数据
+    class BitmapDataCache
+    {
+        public byte[] Pixels { get; set; }
+        public int Stride { get; set; }
+        public int BytesPerPixel { get; set; }
     }
 }

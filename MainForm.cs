@@ -1663,7 +1663,7 @@ namespace zy_cutPicture
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainForm());
+            Application.Run(new MainForm());
             //Application.Run(new SettingForm());
             Application.Run(new SequenceForm());
         }
