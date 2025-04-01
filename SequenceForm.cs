@@ -378,6 +378,7 @@ namespace zy_cutPicture
             similarMap = null;
             bitmapCache.Clear();
             pictureBoxList.Clear();
+            this.anim_icon_info.Text = "";
             this.panel_Area.Controls.Clear();
             this.OpenFiles();
         }
@@ -756,6 +757,11 @@ namespace zy_cutPicture
             {
                 return;
             }
+            if (outRect.Width == 0) 
+            {
+                MessageBox.Show("还没有识别特征点！(用矩形工具)","");
+                return;
+            }
 
             // 找出最大的宽度和高度
             int maxWidth = outRect.Width;
@@ -808,6 +814,7 @@ namespace zy_cutPicture
             {
                 PlayOder = (PlayOder + 1) % pictureBoxList.Count;
                 this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
+                this.anim_icon_info.Text = $"({pictureBoxList[PlayOder].bitmap.Width},{pictureBoxList[PlayOder].bitmap.Height})";
                 this.pic_anim.Invalidate();
             }
         }
@@ -872,6 +879,7 @@ namespace zy_cutPicture
         {
            similarMap = null;
             bitmapCache.Clear();
+            this.anim_icon_info.Text = "";
             for (int i = 0; i < pictureBoxList.Count; i++) 
             {
                 var p = pictureBoxList[i];

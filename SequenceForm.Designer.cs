@@ -74,6 +74,7 @@ namespace zy_cutPicture
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
             this.panel_anim = new ResizablePanel();
+            this.anim_icon_info = new System.Windows.Forms.Label();
             this.num_anim_interval = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.btn_play = new System.Windows.Forms.Button();
@@ -413,6 +414,7 @@ namespace zy_cutPicture
             this.panel_anim.AutoSize = true;
             this.panel_anim.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel_anim.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel_anim.Controls.Add(this.anim_icon_info);
             this.panel_anim.Controls.Add(this.num_anim_interval);
             this.panel_anim.Controls.Add(this.label3);
             this.panel_anim.Controls.Add(this.btn_play);
@@ -422,6 +424,19 @@ namespace zy_cutPicture
             this.panel_anim.Name = "panel_anim";
             this.panel_anim.Size = new System.Drawing.Size(266, 175);
             this.panel_anim.TabIndex = 3;
+            // 
+            // anim_icon_info
+            // 
+            this.anim_icon_info.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.anim_icon_info.BackColor = System.Drawing.Color.Transparent;
+            this.anim_icon_info.Location = new System.Drawing.Point(183, 118);
+            this.anim_icon_info.Name = "anim_icon_info";
+            this.anim_icon_info.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.anim_icon_info.Size = new System.Drawing.Size(72, 12);
+            this.anim_icon_info.TabIndex = 0;
+            this.anim_icon_info.Text = "0";
+            this.anim_icon_info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.anim_icon_info.UseMnemonic = false;
             // 
             // num_anim_interval
             // 
@@ -508,6 +523,7 @@ namespace zy_cutPicture
             this.panel_tuceng.Name = "panel_tuceng";
             this.panel_tuceng.Size = new System.Drawing.Size(135, 207);
             this.panel_tuceng.TabIndex = 2;
+            this.panel_tuceng.Visible = false;
             // 
             // btn_layer2anim
             // 
@@ -960,5 +976,6 @@ namespace zy_cutPicture
         private Label label3;
         private Button btn_play;
         private NumericUpDown num_anim_interval;
+        private Label anim_icon_info;
     }
 }
