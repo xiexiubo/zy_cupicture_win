@@ -45,8 +45,9 @@ namespace zy_cutPicture
         {
             this.components = new System.ComponentModel.Container();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.brushToolButton = new System.Windows.Forms.Button();
+            this.btn_magic = new System.Windows.Forms.Button();
             this.selectToolButton = new System.Windows.Forms.Button();
+            this.brushToolButton = new System.Windows.Forms.Button();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,20 +104,20 @@ namespace zy_cutPicture
             ((System.ComponentModel.ISupportInitialize)(this.icon)).BeginInit();
             this.SuspendLayout();
             // 
-            // brushToolButton
+            // btn_magic
             // 
-            this.brushToolButton.BackgroundImage = global::zy_cutPicture.Properties.Resources.选框;
-            this.brushToolButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.brushToolButton.FlatAppearance.BorderSize = 0;
-            this.brushToolButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.brushToolButton.Location = new System.Drawing.Point(29, 2);
-            this.brushToolButton.Name = "brushToolButton";
-            this.brushToolButton.Size = new System.Drawing.Size(20, 20);
-            this.brushToolButton.TabIndex = 1;
-            this.brushToolButton.Tag = "相似工具";
-            this.toolTip.SetToolTip(this.brushToolButton, "识别区工具(M)");
-            this.brushToolButton.UseVisualStyleBackColor = true;
-            this.brushToolButton.Click += new System.EventHandler(this.brushToolButton_Click);
+            this.btn_magic.BackgroundImage = global::zy_cutPicture.Properties.Resources.魔术棒;
+            this.btn_magic.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btn_magic.FlatAppearance.BorderSize = 0;
+            this.btn_magic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_magic.Location = new System.Drawing.Point(60, 2);
+            this.btn_magic.Name = "btn_magic";
+            this.btn_magic.Size = new System.Drawing.Size(20, 20);
+            this.btn_magic.TabIndex = 6;
+            this.btn_magic.Tag = "魔术棒工具";
+            this.toolTip.SetToolTip(this.btn_magic, "魔术棒工具(W)");
+            this.btn_magic.UseVisualStyleBackColor = true;
+            this.btn_magic.Click += new System.EventHandler(this.btn_magic_Click);
             // 
             // selectToolButton
             // 
@@ -133,6 +134,21 @@ namespace zy_cutPicture
             this.toolTip.SetToolTip(this.selectToolButton, "选择工具(V)");
             this.selectToolButton.UseVisualStyleBackColor = true;
             this.selectToolButton.Click += new System.EventHandler(this.selectToolButton_Click);
+            // 
+            // brushToolButton
+            // 
+            this.brushToolButton.BackgroundImage = global::zy_cutPicture.Properties.Resources.选框;
+            this.brushToolButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.brushToolButton.FlatAppearance.BorderSize = 0;
+            this.brushToolButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.brushToolButton.Location = new System.Drawing.Point(29, 2);
+            this.brushToolButton.Name = "brushToolButton";
+            this.brushToolButton.Size = new System.Drawing.Size(20, 20);
+            this.brushToolButton.TabIndex = 1;
+            this.brushToolButton.Tag = "相似工具";
+            this.toolTip.SetToolTip(this.brushToolButton, "识别区工具(M)");
+            this.brushToolButton.UseVisualStyleBackColor = true;
+            this.brushToolButton.Click += new System.EventHandler(this.brushToolButton_Click);
             // 
             // mainMenuStrip
             // 
@@ -348,6 +364,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_xuanxiang.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.panel_xuanxiang.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel_xuanxiang.Controls.Add(this.btn_magic);
             this.panel_xuanxiang.Controls.Add(this.selectToolButton);
             this.panel_xuanxiang.Controls.Add(this.brushToolButton);
             this.panel_xuanxiang.Controls.Add(this.btn_resize_pic);
@@ -610,6 +627,7 @@ namespace zy_cutPicture
             this.Controls.Add(this.customTitleBar);
             this.Controls.Add(this.panelWorkArea);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.KeyPreview = true;
             this.Name = "SequenceForm";
             this.Text = "序列图还原工具";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SequenceForm_MouseDown);
@@ -649,14 +667,17 @@ namespace zy_cutPicture
         {
             SelectTool(sender as Button);
         }
-       
+        private void btn_magic_Click(object sender, EventArgs e)
+        {
+            SelectTool(sender as Button);
+        }
 
         private void SelectTool(Button button)
         {
             if (selectedToolButton != null)
             {
-                selectedToolButton.FlatAppearance.BorderSize = 0;
-                selectedToolButton.BackColor = SystemColors.Control;
+                selectedToolButton.FlatAppearance.BorderSize = 2;
+                selectedToolButton.BackColor = Color.Red;
             }
 
             string s = (string)button.Tag;
@@ -977,5 +998,6 @@ namespace zy_cutPicture
         private Button btn_play;
         private NumericUpDown num_anim_interval;
         private Label anim_icon_info;
+        private Button btn_magic;
     }
 }

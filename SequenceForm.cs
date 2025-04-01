@@ -20,7 +20,7 @@ namespace zy_cutPicture
         {
             选择工具,
             相似工具,
-            橡皮擦工具
+            魔术棒工具
         }
         eToolType ToolType;
         public SequenceForm()
@@ -31,10 +31,12 @@ namespace zy_cutPicture
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
             // 通过反射设置 panel_Area 的双缓冲
             SetDoubleBuffered(panel_Area);
-            brushToolButton.PerformClick();
             panel_anim.MouseDown += Panel_anim_MouseDown;
             panel_anim.MouseMove += Panel_anim_MouseMove;
             panel_anim.MouseUp += Panel_anim_MouseUp;
+            this.KeyDown += SequenceForm_KeyDown;
+
+            SelectTool(this.brushToolButton);
         }
     
 
@@ -889,8 +891,23 @@ namespace zy_cutPicture
             }           
         }
 
-      
 
+        private void SequenceForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            // 检查是否按下了 Ctrl + C 组合键
+            if ( e.KeyCode == Keys.W)
+            {
+                this.btn_magic.PerformClick();               
+            }
+            if (e.KeyCode == Keys.M)
+            {
+                this.brushToolButton.PerformClick();
+            }
+            if (e.KeyCode == Keys.V)
+            {
+                this.selectToolButton.PerformClick();
+            }
+        }
         private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -986,7 +1003,7 @@ namespace zy_cutPicture
             }
         }
 
-
+       
     }
 
     public class PictureBoxX : PictureBox
