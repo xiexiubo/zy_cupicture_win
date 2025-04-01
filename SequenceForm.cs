@@ -7,7 +7,6 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace zy_cutPicture
 {
@@ -31,7 +30,11 @@ namespace zy_cutPicture
             // 通过反射设置 panel_Area 的双缓冲
             SetDoubleBuffered(panel_Area);
             brushToolButton.PerformClick();
+            panel_anim.MouseDown += Panel_anim_MouseDown;
+            panel_anim.MouseMove += Panel_anim_MouseMove;
+            panel_anim.MouseUp += Panel_anim_MouseUp;
         }
+    
 
         // 设置控件的双缓冲
         private void SetDoubleBuffered(Control control)

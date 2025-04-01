@@ -22,10 +22,13 @@ namespace zy_cutPicture
         private System.Windows.Forms.Button minimizeButton;
         private System.Windows.Forms.Button maximizeButton;
         private const int RESIZE_HANDLE_SIZE = 10;
-
-        private bool isDraggingTool = false;
-        private Point lastMousePositionTool;
+       
         private Button selectedToolButton; // 新增：用于记录当前选中的工具按钮
+
+        private bool panel_anim_isDragging = false;
+        private Point panel_anim_lastMousePosition;
+        private bool panel_anim_isResizing = false;
+        private const int panel_anim_resizeBorder = 10;
 
         protected override void Dispose(bool disposing)
         {
@@ -70,7 +73,7 @@ namespace zy_cutPicture
             this.num_rongcha = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
-            this.panel_anim = new System.Windows.Forms.Panel();
+            this.panel_anim = new ResizablePanel();
             this.num_anim_interval = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.btn_play = new System.Windows.Forms.Button();
@@ -406,7 +409,9 @@ namespace zy_cutPicture
             // 
             // panel_anim
             // 
-            this.panel_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_anim.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panel_anim.AutoSize = true;
+            this.panel_anim.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel_anim.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panel_anim.Controls.Add(this.num_anim_interval);
             this.panel_anim.Controls.Add(this.label3);
@@ -415,17 +420,18 @@ namespace zy_cutPicture
             this.panel_anim.Controls.Add(this.label4);
             this.panel_anim.Location = new System.Drawing.Point(329, 0);
             this.panel_anim.Name = "panel_anim";
-            this.panel_anim.Size = new System.Drawing.Size(266, 142);
+            this.panel_anim.Size = new System.Drawing.Size(266, 175);
             this.panel_anim.TabIndex = 3;
             // 
             // num_anim_interval
             // 
+            this.num_anim_interval.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.num_anim_interval.Increment = new decimal(new int[] {
             16,
             0,
             0,
             0});
-            this.num_anim_interval.Location = new System.Drawing.Point(80, 117);
+            this.num_anim_interval.Location = new System.Drawing.Point(111, 144);
             this.num_anim_interval.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -437,7 +443,7 @@ namespace zy_cutPicture
             0,
             0});
             this.num_anim_interval.Name = "num_anim_interval";
-            this.num_anim_interval.Size = new System.Drawing.Size(73, 21);
+            this.num_anim_interval.Size = new System.Drawing.Size(45, 21);
             this.num_anim_interval.TabIndex = 3;
             this.num_anim_interval.Value = new decimal(new int[] {
             200,
@@ -447,8 +453,9 @@ namespace zy_cutPicture
             // 
             // label3
             // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 121);
+            this.label3.Location = new System.Drawing.Point(40, 149);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
@@ -456,7 +463,8 @@ namespace zy_cutPicture
             // 
             // btn_play
             // 
-            this.btn_play.Location = new System.Drawing.Point(180, 113);
+            this.btn_play.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btn_play.Location = new System.Drawing.Point(164, 142);
             this.btn_play.Name = "btn_play";
             this.btn_play.Size = new System.Drawing.Size(45, 24);
             this.btn_play.TabIndex = 1;
@@ -474,7 +482,7 @@ namespace zy_cutPicture
             this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.生成播放按钮2;
             this.pic_anim.Location = new System.Drawing.Point(3, 24);
             this.pic_anim.Name = "pic_anim";
-            this.pic_anim.Size = new System.Drawing.Size(256, 86);
+            this.pic_anim.Size = new System.Drawing.Size(256, 110);
             this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pic_anim.TabIndex = 0;
             this.pic_anim.TabStop = false;
@@ -599,6 +607,7 @@ namespace zy_cutPicture
             this.panel_xuanxiang.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_rongcha)).EndInit();
             this.panel_Area.ResumeLayout(false);
+            this.panel_Area.PerformLayout();
             this.panel_anim.ResumeLayout(false);
             this.panel_anim.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_anim_interval)).EndInit();
@@ -780,22 +789,6 @@ namespace zy_cutPicture
             }
         }
 
-        private void toolboxPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                isDraggingTool = true;
-                lastMousePositionTool = e.Location;
-            }
-        }
-
-     
-
-        private void toolboxPanel_MouseUp(object sender, MouseEventArgs e)
-        {
-            isDraggingTool = false;
-        }
-
         // 双击菜单栏事件处理方法
         private void mainMenuStrip_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -824,6 +817,119 @@ namespace zy_cutPicture
                 }
             }
         }
+        private void Panel_anim_MouseDown(object sender, MouseEventArgs e)
+        {
+            const int TOP_EDGE_HEIGHT = 20;
+
+            Console.WriteLine(e.Y);
+            // 检测是否点击上边缘
+            if (e.Y <= TOP_EDGE_HEIGHT)
+            {
+                //panel_anim_isDragging = true;
+                //panel_anim_lastMousePosition = e.Location;
+                ReleaseCapture();
+                SendMessage(this.panel_anim.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                return;
+            }
+            var formSize = this.panel_anim.Size;
+            var cursorPos = this.panel_anim.PointToClient(Cursor.Position);
+            int wParam = 0;
+
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOMLEFT;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOMRIGHT;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTLEFT;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTRIGHT;
+            }
+            else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                wParam = HTBOTTOM;
+            }
+
+            if (wParam != 0)
+            {
+                ReleaseCapture();
+                SendMessage(this.panel_anim.Handle, WM_NCLBUTTONDOWN, wParam, 0);
+            }
+            //if (e.Button == MouseButtons.Left)
+            //{
+            //    if (IsNearBorder(e.Location))
+            //    {
+            //        panel_anim_isResizing = true;
+            //    }
+            //    else
+            //    {
+            //        panel_anim_isDragging = true;
+            //        panel_anim_lastMousePosition = e.Location;
+            //    }
+            //}
+        }
+
+        private bool IsNearBorder(Point location)
+        {
+            Rectangle bounds = panel_anim.ClientRectangle;
+            return location.X <= panel_anim_resizeBorder || location.X >= bounds.Width - panel_anim_resizeBorder ||
+                   location.Y <= panel_anim_resizeBorder || location.Y >= bounds.Height - panel_anim_resizeBorder;
+        }
+
+        private void Panel_anim_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (panel_anim_isDragging)
+            {
+                Panel panel = (Panel)sender;
+                int deltaX = e.X - lastMousePosition.X;
+                int deltaY = e.Y - lastMousePosition.Y;
+                panel.Left += deltaX;
+                panel.Top += deltaY;              
+
+                panel_Area.Invalidate();
+                return;
+            }
+            var formSize = this.panel_anim.Size;
+            var cursorPos = this.panel_anim.PointToClient(Cursor.Position);
+
+            if (cursorPos.X <= RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNESW;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE && cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNWSE;
+            }
+            else if (cursorPos.X <= RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeWE;
+            }
+            else if (cursorPos.X >= formSize.Width - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeWE;
+            }
+            else if (cursorPos.Y >= formSize.Height - RESIZE_HANDLE_SIZE)
+            {
+                this.Cursor = Cursors.SizeNS;
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        private void Panel_anim_MouseUp(object sender, MouseEventArgs e)
+        {
+            panel_anim_isDragging = false;
+            panel_anim_isResizing = false;
+        }
 
         private ToolStripMenuItem windowToolStripMenuItem;
         private ToolStripMenuItem 图层ToolStripMenuItem;
@@ -836,7 +942,7 @@ namespace zy_cutPicture
         private TextBox textBox_layer_name;
         private Label label2;
         private Button btn_layer2anim;
-        private Panel panel_anim;
+        private ResizablePanel panel_anim;
         private PictureBox pic_anim;
         private Label label4;
         private ToolStripMenuItem 选项ToolStripMenuItem;
