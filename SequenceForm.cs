@@ -37,6 +37,7 @@ namespace zy_cutPicture
             this.KeyDown += SequenceForm_KeyDown;
 
             SelectTool(this.brushToolButton);
+            panel_anim.Location = new Point(this.Width- panel_anim.Width,32);
         }
     
 
@@ -159,7 +160,7 @@ namespace zy_cutPicture
                 {
                     if (i == 0)
                     {
-                        pen.Color = Color.FromArgb(255, 20, 255, 255);
+                        pen.Color = Color.FromArgb(255, 255, 0, 0);
                     }
                     else
                     {
@@ -1003,7 +1004,28 @@ namespace zy_cutPicture
             }
         }
 
-       
+        private void 旋转90ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.panel_Area.Controls.Count < 1)
+                return;
+            var p = this.panel_Area.Controls[0] as PictureBoxX;
+            var bitmap = BitmapHelper.RotateBitmap90DegreesClockwise(p.bitmap);
+            p.setpicX(bitmap);
+            this.panel_Area.Invalidate();
+        }
+
+        private void 全体旋转90ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.panel_Area.Controls.Count < 1)
+                return;
+            for (int i = 0; this.panel_Area.Controls.Count > i; i++)
+            {
+                var p = this.panel_Area.Controls[i] as PictureBoxX;
+               var bitmap = BitmapHelper.RotateBitmap90DegreesClockwise(p.bitmap);
+                p.setpicX(bitmap);
+            }
+            this.panel_Area.Invalidate();
+        }
     }
 
     public class PictureBoxX : PictureBox
@@ -1015,15 +1037,39 @@ namespace zy_cutPicture
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
             this.FilePath = filePath;
-            this.bitmap = new Bitmap(filePath);
-            this.Size = new Size(bitmap.Width, bitmap.Height);
 
-            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
+            try
+            {
+                using (Bitmap tempBitmap = new Bitmap(filePath))
+                {                 
+                    int width = tempBitmap.Width;
+                    int height = tempBitmap.Height;                 
+
+                    this.bitmap = new Bitmap(tempBitmap, width, height);
+                    this.Size = new Size(this.bitmap.Width, this.bitmap.Height);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"加载图片时出错: {ex.Message}");
+                // 可以根据需要进行其他处理，如显示默认图片
+            }
+
+            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {this.bitmap?.Size} ");
         }
         public  void setpicX(string filePath)
         {           
             this.FilePath = filePath;
             this.bitmap = new Bitmap(filePath);
+            this.Size = new Size(bitmap.Width, bitmap.Height);
+            this.simmilarPos = Point.Empty;
+            this.simmilarPosTemp = Point.Empty;
+            IsSelected = false;
+            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
+        }
+        public void setpicX(Bitmap bitmap)
+        {
+            this.bitmap = bitmap;
             this.Size = new Size(bitmap.Width, bitmap.Height);
             this.simmilarPos = Point.Empty;
             this.simmilarPosTemp = Point.Empty;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace zy_cutPicture
 { 
@@ -156,6 +157,22 @@ namespace zy_cutPicture
                 Math.Pow(deltaHPrime / SH, 2) +
                 RT * (deltaCPrime / SC) * (deltaHPrime / SH)
             );
+        }
+    }
+
+    public class BitmapHelper
+    {
+        public static Bitmap RotateBitmap90DegreesClockwise(Bitmap source)
+        {
+            Bitmap rotatedBitmap = new Bitmap(source.Height, source.Width);
+            using (Graphics g = Graphics.FromImage(rotatedBitmap))
+            {
+                g.TranslateTransform(rotatedBitmap.Width / 2, rotatedBitmap.Height / 2);
+                g.RotateTransform(90);
+                g.TranslateTransform(-source.Width / 2, -source.Height / 2);
+                g.DrawImage(source, 0, 0);
+            }
+            return rotatedBitmap;
         }
     }
 }
