@@ -7,6 +7,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace zy_cutPicture
 {
@@ -29,6 +30,7 @@ namespace zy_cutPicture
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
             // 通过反射设置 panel_Area 的双缓冲
             SetDoubleBuffered(panel_Area);
+            brushToolButton.PerformClick();
         }
 
         // 设置控件的双缓冲
@@ -92,6 +94,9 @@ namespace zy_cutPicture
                 pictureBoxList.Add(pictureBox);
                 panel_Area.Invalidate();
                 panel_Area.Controls.SetChildIndex(pictureBox, 1);
+
+
+               //var panelL= new Panel(panel_layer)
             }
             catch (Exception ex)
             {
@@ -178,8 +183,8 @@ namespace zy_cutPicture
                 displayRect.Y = displayRect.Y + p.Location.Y;
                 e.Graphics.DrawRectangle(Pens.Red, displayRect);
             }
-            //if (this.pic_anim.Image == null)
-            this.pic_anim.BackgroundImage = this.pictureBoxList[0].bitmap;
+            if (this.pic_anim_Timer == null&& this.pictureBoxList.Count>0)
+                this.pic_anim.BackgroundImage = this.pictureBoxList[0].bitmap;
         }
 
 
@@ -272,6 +277,7 @@ namespace zy_cutPicture
                         Console.WriteLine("Keys.Alt 键已经按");
                     }
                 }
+                this.setPosTemp(false);
                 isDragging = false;
                 panel_Area.Invalidate();
             }
@@ -366,6 +372,10 @@ namespace zy_cutPicture
         private void newMenuItem_Click(object sender, EventArgs e)
         {
             // 可在此处添加新建操作的具体逻辑
+            similarMap = null;
+            bitmapCache.Clear();
+            pictureBoxList.Clear();
+            this.panel_Area.Controls.Clear();
         }
 
         // 打开菜单项点击事件处理方法
@@ -465,7 +475,7 @@ namespace zy_cutPicture
         //    }
         //}
 
-        private int tolerance = 100; // 颜色容差值
+        private int tolerance = 1; // 颜色容差值
         private Bitmap similarMap = null;
         private Dictionary<Bitmap, BitmapDataCache> bitmapCache = new Dictionary<Bitmap, BitmapDataCache>();
         // 优化后的相似度计算方法
@@ -485,13 +495,31 @@ namespace zy_cutPicture
 
                     for (int x = 0; x < width; x++)
                     {
-                        // 快速比较颜色差异（使用曼哈顿距离）
-                        int diff = Math.Abs(sourceRow[2] - targetRow[2]) +  // R
-                                   Math.Abs(sourceRow[1] - targetRow[1]) +  // G
-                                   Math.Abs(sourceRow[0] - targetRow[0]);   // B
+                        if (true)
+                        {
+                            // 快速比较颜色差异（使用曼哈顿距离）
+                            int diff = //Math.Abs(sourceRow[3] - targetRow[3]) +  // A
+                                Math.Abs(sourceRow[2] - targetRow[2]) +  // R
+                                       Math.Abs(sourceRow[1] - targetRow[1]) +  // G
+                                       Math.Abs(sourceRow[0] - targetRow[0]);   // B
 
-                        if (diff <= tolerance * 3) // 三个通道的总容差
-                            matchingPixels++;
+                            if (diff <= tolerance * 3&& 0.01f >= Math.Abs(sourceRow[3] - targetRow[3]) ) // 三个通道的总容差
+                                matchingPixels++;
+                        }
+                        else
+                        {                    
+
+                            if (0.01f >= Math.Abs(sourceRow[3] - targetRow[3]) &&   //A
+                                tolerance >= Math.Abs(sourceRow[2] - targetRow[2]) &&//R
+                                tolerance >= Math.Abs(sourceRow[1] - targetRow[1]) &&//G
+                                tolerance >= Math.Abs(sourceRow[0] - targetRow[0])   //B
+                                ) // 三个通道的都容差
+                                matchingPixels++;
+                        }
+
+
+
+
 
                         sourceRow += sourceCache.BytesPerPixel;
                         targetRow += targetCache.BytesPerPixel;
@@ -502,18 +530,19 @@ namespace zy_cutPicture
             return (double)matchingPixels / (width * height);
         }
 
+        
         // 优化后的查找方法
-        private Point FindMostSimilarPositionOptimized(Bitmap source, Bitmap target)
+        private Point FindMostSimilarPositionOptimized(Bitmap source, Bitmap target,int sourceW,int sourceH,int targetW,int targetH)
         {
             var sourceCache = GetBitmapDataCache(source);
             var targetCache = GetBitmapDataCache(target);
 
             int searchStep = 2; // 搜索步长（平衡速度与精度）
-            int width = target.Width;
-            int height = target.Height;
+            int width = targetW;
+            int height = targetH;
 
-            int s_width = source.Width;
-            int s_height = source.Height;
+            int s_width = sourceW;
+            int s_height = sourceH;
 
             double maxSimilarity = 0;
             Point mostSimilarPoint = Point.Empty;
@@ -606,9 +635,11 @@ namespace zy_cutPicture
                 if (pictureBox.bitmap != null)
                 {
                     var sourceCache = GetBitmapDataCache(pictureBox.bitmap);
-                    Point mostSimilarPosition = FindMostSimilarPositionOptimized(pictureBox.bitmap, similarMap);
+                    Point mostSimilarPosition = FindMostSimilarPositionOptimized(pictureBox.bitmap, similarMap, pictureBox.Width, pictureBox.Height, similarMap.Width, similarMap.Height);
                     pictureBox.simmilarPos = mostSimilarPosition;
                     Console.WriteLine(pictureBox.FilePath + " " + mostSimilarPosition);
+                    var p = pictureBox;
+                    Console.WriteLine("---p: " + p.Location + "  " + p.Size + " " + p.FilePath);
                 }
             });
         }
@@ -624,14 +655,11 @@ namespace zy_cutPicture
             this.panel_anim.Visible = !this.panel_anim.Visible;
         }
 
-        private void 工具ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.toolboxPanel.Visible = !this.toolboxPanel.Visible;
-        }
+      
 
         private void 选项ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // this.panel_xuanxiang.Visible = !this.panel_xuanxiang.Visible;
+             this.panel_xuanxiang.Visible = !this.panel_xuanxiang.Visible;
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -641,7 +669,7 @@ namespace zy_cutPicture
 
         private void btn_resize_pic_Click(object sender, EventArgs e)
         {
-
+            this.ReGeneratePic(this.pictureBoxList);
         }
 
         private void editMenuItem_Click(object sender, EventArgs e)
@@ -649,8 +677,10 @@ namespace zy_cutPicture
 
         }
 
-        int typeArrange = 0;
+        int typeArrange = 2;
         bool isDuiqi = false;
+        Rectangle outRect = Rectangle.Empty;
+
         private void ArrangePicType(int type)
         {
             int spacing = 10; // 图片之间的间距
@@ -683,20 +713,63 @@ namespace zy_cutPicture
                     int y = (this.panel_Area.Height - pictureBox.Height) / 2;
                     pictureBox.Location = new Point(x, y);
                 }
-                else if (type == 3)
-                {
-                    // 以第一个图片的位置为基准进行左对齐                
-                    int x = (this.panel_Area.Width - pictureBoxList[0].Width) / 2;
-                    int y = (this.panel_Area.Height - pictureBoxList[0].Height) / 2;
-
-                    Point pos_fixed = pictureBoxList[0].simmilarPos;
-                    foreach (PictureBoxX p in pictureBoxList)
-                    {
-                        p.Location = new Point(x - (p.simmilarPos.X - pos_fixed.X), y - (p.simmilarPos.Y - pos_fixed.Y));
-                    }
-                }
+                
+            }
+            if (type == 3)
+            {
+                setPosTemp(true);
+                //Console.WriteLine("outRect: " + outRect + "x:" + x + "  y:" + y);
             }
             panel_Area.Invalidate();
+        }
+
+        void setPosTemp(bool setLocation) 
+        {
+            // 以第一个图片的位置为基准进行左对齐                
+            int x = (this.panel_Area.Width - pictureBoxList[0].Width) / 2;
+            int y = (this.panel_Area.Height - pictureBoxList[0].Height) / 2;
+            Point pos_fixed = pictureBoxList[0].simmilarPos;
+            outRect = Rectangle.Empty;
+
+            foreach (PictureBoxX p in pictureBoxList)
+            {
+
+                var pos = new Point(x - (p.simmilarPos.X - pos_fixed.X), y - (p.simmilarPos.Y - pos_fixed.Y));
+
+                if (setLocation)
+                    p.Location = pos;
+                //Console.WriteLine("p: " + p.Location + "  " + p.Size + "   outRect" + outRect + "   " + p.FilePath);
+                p.simmilarPosTemp = pos;
+                if (outRect == Rectangle.Empty)
+                    outRect = new Rectangle(pos, p.Size);
+                outRect = Rectangle.Union(outRect, new Rectangle(pos, p.Size));
+            }
+            Console.WriteLine("outRect: " + outRect + "x:" + x + "  y:" + y);
+        }
+        void ReGeneratePic(List<PictureBoxX> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return;
+            }
+
+            // 找出最大的宽度和高度
+            int maxWidth = outRect.Width;
+            int maxHeight = outRect.Height;
+            // 调整每个图片的大小
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+                //var p = new Point(x - (p.simmilarPos.X - pos_fixed.X), y - (p.simmilarPos.Y - pos_fixed.Y));
+
+                Bitmap newBitmap = new Bitmap(maxWidth, maxHeight);
+                using (Graphics g = Graphics.FromImage(newBitmap))
+                {
+                    g.Clear(Color.Transparent);
+                    g.DrawImage(item.bitmap, new Rectangle(item.simmilarPosTemp.X- outRect.X, item.simmilarPosTemp.Y - outRect.Y, item.bitmap.Width, item.bitmap.Height));
+                }
+                list[i].bitmap = newBitmap;
+            }
         }
         // 排列图组
         private void 排列图组ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -741,6 +814,8 @@ namespace zy_cutPicture
             {
                 pic_anim_Timer.Stop();
                 pic_anim_Timer = null;
+                this.pic_anim.BackgroundImage =this.pictureBoxList[0].bitmap;
+                this.pic_anim.BackgroundImageLayout = ImageLayout.Stretch;
                 this.pic_anim.Image = zy_cutPicture.Properties.Resources.生成播放按钮2;
             }
             else
@@ -748,14 +823,96 @@ namespace zy_cutPicture
                 if (pictureBoxList.Count > 0)
                 {
                     pic_anim_Timer = new Timer();
-                    pic_anim_Timer.Interval = 500;
+                    pic_anim_Timer.Interval = 1000/5;
                     pic_anim_Timer.Tick += pic_anim_Timer_Tick;
                     pic_anim_Timer.Start();
                     PlayOder = 0;
+                    this.pic_anim.BackgroundImage = zy_cutPicture.Properties.Resources.方格;
+                    this.pic_anim.BackgroundImageLayout = ImageLayout.Tile;
                     this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
                 }
             }
         }
+
+        private void btn_play_Click(object sender, EventArgs e)
+        {
+            if (pic_anim_Timer != null)
+            {
+                pic_anim_Timer.Stop();
+                pic_anim_Timer = null;
+                this.pic_anim.BackgroundImage = this.pictureBoxList[0].bitmap;
+                this.pic_anim.BackgroundImageLayout = ImageLayout.Stretch;
+                this.pic_anim.Image = zy_cutPicture.Properties.Resources.生成播放按钮2;
+                this.btn_play.Text = "Play";
+            }
+            else
+            {
+                if (pictureBoxList.Count > 0)
+                {
+                    pic_anim_Timer = new Timer();
+                    pic_anim_Timer.Interval = (int)num_anim_interval.Value;
+                    pic_anim_Timer.Tick += pic_anim_Timer_Tick;
+                    pic_anim_Timer.Start();
+                    PlayOder = 0;
+                    this.pic_anim.BackgroundImage = zy_cutPicture.Properties.Resources.方格;
+                    this.pic_anim.BackgroundImageLayout = ImageLayout.Tile;
+                    this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
+                    this.btn_play.Text = "Stop";
+                }
+            }
+        }
+
+       
+
+        private void 重新打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           similarMap = null;
+            bitmapCache.Clear();
+            for (int i = 0; i < pictureBoxList.Count; i++) 
+            {
+                var p = pictureBoxList[i];
+               p.setpicX(p.FilePath);
+            }
+            this.OpenFiles();
+        }
+
+      
+
+        private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var p in pictureBoxList)
+            {
+                p.bitmap.Save(p.FilePath, ImageFormat.Png);
+            }
+        }
+
+        private void 另ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "文本文件|*.txt";
+            saveFileDialog.Title = "另存为";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string filePath = saveFileDialog.FileName;
+                    for (int i = 0; i < pictureBoxList.Count; i++)
+                    {
+                        PictureBoxX p = pictureBoxList[i];
+                        p.bitmap.Save(Path.Combine(filePath,"_"+i.ToString()), ImageFormat.Png);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"保存文件时出错: {ex.Message}");
+                }
+            }
+
+            
+        }
+
+       
     }
 
     public class PictureBoxX : PictureBox
@@ -772,6 +929,16 @@ namespace zy_cutPicture
 
             Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
         }
+        public  void setpicX(string filePath)
+        {           
+            this.FilePath = filePath;
+            this.bitmap = new Bitmap(filePath);
+            this.Size = new Size(bitmap.Width, bitmap.Height);
+            this.simmilarPos = Point.Empty;
+            this.simmilarPosTemp = Point.Empty;
+            IsSelected = false;
+            Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
+        }
 
         // 图片对象
         public Bitmap bitmap;
@@ -782,6 +949,7 @@ namespace zy_cutPicture
         // 文件路径
         public string FilePath;
         public Point simmilarPos = Point.Empty;
+        public Point simmilarPosTemp = Point.Empty;
     }
     // 添加新的类成员用于缓存图像数据
     class BitmapDataCache
