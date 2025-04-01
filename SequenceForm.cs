@@ -379,6 +379,7 @@ namespace zy_cutPicture
             bitmapCache.Clear();
             pictureBoxList.Clear();
             this.panel_Area.Controls.Clear();
+            this.OpenFiles();
         }
 
         // 打开菜单项点击事件处理方法
@@ -875,8 +876,7 @@ namespace zy_cutPicture
             {
                 var p = pictureBoxList[i];
                p.setpicX(p.FilePath);
-            }
-            this.OpenFiles();
+            }           
         }
 
       
