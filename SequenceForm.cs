@@ -5,6 +5,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -891,16 +893,34 @@ namespace zy_cutPicture
 
         private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (var p in pictureBoxList)
+            try
             {
-                p.bitmap.Save(p.FilePath, ImageFormat.Png);
+                foreach (var p in pictureBoxList)
+                {
+                    if (File.Exists(p.FilePath))
+                    {
+                        // 确保文件没有被其他程序占用
+                        using (FileStream fs = new FileStream(p.FilePath, FileMode.Open, FileAccess.Write))
+                        {
+                            p.bitmap.Save(fs, ImageFormat.Png);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"文件路径 {p.FilePath} 不存在，无法保存。");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"保存文件时出错: {ex.Message}");
             }
         }
 
         private void 另ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "文本文件|*.txt";
+            saveFileDialog.Filter = "PNG 文件|*.png";
             saveFileDialog.Title = "另存为";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -908,10 +928,21 @@ namespace zy_cutPicture
                 try
                 {
                     string filePath = saveFileDialog.FileName;
+                    string directory = Path.GetDirectoryName(filePath);
+                    string name = Path.GetFileNameWithoutExtension(filePath);
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+
                     for (int i = 0; i < pictureBoxList.Count; i++)
                     {
                         PictureBoxX p = pictureBoxList[i];
-                        p.bitmap.Save(Path.Combine(filePath,"_"+i.ToString()), ImageFormat.Png);
+                        string newFilePath = Path.Combine(directory, $"{name}_{i}.png");
+                        using (FileStream fs = new FileStream(newFilePath, FileMode.Create, FileAccess.Write))
+                        {
+                            p.bitmap.Save(fs, ImageFormat.Png);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -920,10 +951,42 @@ namespace zy_cutPicture
                 }
             }
 
-            
+
         }
 
-       
+        static bool HasCreateFolderPermission(string path)
+        {
+            try
+            {
+                // 获取当前用户的身份
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+                // 获取目录的访问控制列表
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
+                AuthorizationRuleCollection rules = directorySecurity.GetAccessRules(true, true, typeof(NTAccount));
+
+                // 检查是否有创建文件夹的权限
+                foreach (FileSystemAccessRule rule in rules)
+                {
+                    NTAccount ntAccount = rule.IdentityReference as NTAccount;
+                    if (ntAccount != null && principal.IsInRole(ntAccount.Value) &&
+                        (rule.FileSystemRights & FileSystemRights.CreateDirectories) == FileSystemRights.CreateDirectories &&
+                        rule.AccessControlType == AccessControlType.Allow)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
     }
 
     public class PictureBoxX : PictureBox
