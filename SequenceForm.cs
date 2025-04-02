@@ -1024,6 +1024,8 @@ namespace zy_cutPicture
             if (PlayOder < 0)
                 PlayOder = pictureBoxList.Count - 1;
             set_pic_anim();
+            this.panel_Area.Invalidate();
+            this.pic_anim.Invalidate();
             this.pic_anim.Focus();
         }
 
@@ -1033,6 +1035,8 @@ namespace zy_cutPicture
             if (PlayOder >= pictureBoxList.Count)
                 PlayOder = 0;           
             set_pic_anim();
+            this.panel_Area.Invalidate();
+            this.pic_anim.Invalidate();
             this.pic_anim.Focus();
         }
 
