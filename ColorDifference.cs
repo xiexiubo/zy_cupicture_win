@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace zy_cutPicture
 { 
@@ -173,6 +175,71 @@ namespace zy_cutPicture
                 g.DrawImage(source, 0, 0);
             }
             return rotatedBitmap;
+        }
+
+
+        public static Bitmap ModifyBitmap(Bitmap source,Func<byte, byte, byte, byte, byte[]> action)
+        {
+            // Use LockBits for much faster pixel manipulation
+            var result = new Bitmap(source.Width, source.Height, PixelFormat.Format32bppArgb);
+
+            var sourceData = source.LockBits(
+                new Rectangle(0, 0, source.Width, source.Height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb);
+
+            var resultData = result.LockBits(
+                new Rectangle(0, 0, result.Width, result.Height),
+                ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppArgb);
+
+            try
+            {
+                int bytesPerPixel = 4; // For 32bppArgb
+                int byteCount = sourceData.Stride * sourceData.Height;
+                byte[] pixels = new byte[byteCount];
+
+                // Copy source data
+                Marshal.Copy(sourceData.Scan0, pixels, 0, byteCount);
+
+                // Process pixels
+                for (int i = 0; i < byteCount; i += bytesPerPixel)
+                {
+                    // Pixel format is BGRA
+                    byte b = pixels[i];
+                    byte g = pixels[i + 1];
+                    byte r = pixels[i + 2];
+                    byte a = pixels[i + 3];
+
+
+                    if (action != null)
+                    {
+                        var bytes = action(a, r, g, b);
+                        pixels[i] = bytes[3];     // B
+                        pixels[i + 1] = bytes[2]; // G
+                        pixels[i + 2] = bytes[1]; // R
+                        pixels[i + 3] = bytes[0]; //A
+                    }
+                    else if (a > 0) // If not transparent
+                    {
+                        // Set to red while preserving original alpha
+                        pixels[i] = 0;     // B
+                        pixels[i + 1] = 0; // G
+                        pixels[i + 2] = 255; // R
+                        // Alpha remains the same
+                    }
+                }
+
+                // Copy back to result
+                Marshal.Copy(pixels, 0, resultData.Scan0, byteCount);
+            }
+            finally
+            {
+                source.UnlockBits(sourceData);
+                result.UnlockBits(resultData);
+            }
+
+            return result;
         }
     }
 }

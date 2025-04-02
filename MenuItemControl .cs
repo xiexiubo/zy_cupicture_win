@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -197,12 +198,19 @@ namespace zy_cutPicture
             var selectedItems = this.CheckedItems;
             if (selectedItems.Count > 0)
             {
-                // 示例：将选中的项移动到顶部
-                foreach (ListViewItem item in selectedItems)
+                string mergedText = string.Join(", ", selectedItems.Cast<ListViewItem>().Select(x => x.Text));
+                this.mainForm.MergeRectanglesOneName(selectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
+                //MessageBox.Show($"合并的项: {mergedText}", "合并选中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                for (int i = 0; i < selectedItems.Count; i++)
                 {
-                    item.Remove();
-                    this.Items.Insert(0, item);
+                    var item = selectedItems[i] as ListViewItem;
+                    if (item != null) item.ForeColor = Color.White;
                 }
+            }
+            else
+            if (this.SelectedItems.Count > 1)
+            {
+                this.mainForm.ExportSelectedItemsToSequence(this.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToList());
             }
             else
             {
@@ -215,8 +223,15 @@ namespace zy_cutPicture
         {
             // 示例：按文本排序
             var items = this.Items.Cast<ListViewItem>().OrderBy(x => x.Text).ToList();
-            this.Items.Clear();
-            this.Items.AddRange(items.ToArray());
+           
+            if (items.Count > 1)
+            {
+                this.mainForm.ExportSelectedItemsToSequence(items.Cast<ListViewItem>().Select(x => x.Text).ToList());
+            }
+            else
+            {
+                MessageDisplayer.ShowMessage("没有选中任何项", 1);
+            }
         }
 
         // 自定义绘制菜单项

@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Configuration;
 using zy_cutPicture.Properties;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
+using System.Threading;
 
 namespace zy_cutPicture
 {
@@ -871,7 +872,10 @@ namespace zy_cutPicture
 
             GenerateMenuItems();
         }
-
+        public string GetOutputPath() 
+        {
+            return this.text_output.Text;
+        }
         private void ExportSubImages(List<Rectangle> rects=null)
         {
             var path = this.text_output.Text;
@@ -1248,6 +1252,48 @@ namespace zy_cutPicture
                 this.ExportSubImages(list);
             }            
            // this.newRects.Add(MergeRectanglesOne(list));
+        }
+
+        public void ExportSelectedItemsToSequence(List<string> rects)
+        {
+
+            Thread messageThread = new Thread(() =>
+            {
+                var win = new SequenceForm();
+                //win.ShowDialog();
+                List<Rectangle> list = new List<Rectangle>();
+                foreach (var v in rects)
+                {
+                    var aary = v.Split('|');
+                    var r = new Rectangle();
+                    r.X = int.Parse(aary[1]);
+                    r.Y = int.Parse(aary[2]);
+                    r.Width = int.Parse(aary[3]);
+                    r.Height = int.Parse(aary[4]);
+                    list.Add(r);
+                }
+
+                foreach (var rect in list)
+                {
+                    if (rect.Width == 0 || rect.Height == 0)
+                    {
+
+                        Console.WriteLine($"跳过0宽高{rect}");
+                        continue;
+                    }
+
+                    var rectOut = ExpandBounds(rect);
+                    var path = Path.Combine(this.GetOutputPath(), $"{rectOut.X}_{rectOut.Y}_{rectOut.Width}_{rectOut.Height}.png");
+                    win.AddPictureBoxToPanel(path, CropImage(sourceImage, rectOut));
+                }
+
+                Application.Run(win);
+            });
+
+            // 配置线程
+            messageThread.SetApartmentState(ApartmentState.STA);
+            messageThread.IsBackground = false;
+            messageThread.Start();
         }
         private void ListView1_ItemSelected(object sender, ListViewItemSelectionChangedEventArgs e)
         {
