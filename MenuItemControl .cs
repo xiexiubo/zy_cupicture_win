@@ -312,7 +312,9 @@ namespace zy_cutPicture
         // 获取总高度
         private int GetTotalHeight()
         {
-            return this.Items.Count * this.Items[0].Bounds.Height;
+            if (this.Items.Count > 0)
+                return this.Items.Count * this.Items[0].Bounds.Height;
+            return 0;
         }
 
         // 滚动到指定位置

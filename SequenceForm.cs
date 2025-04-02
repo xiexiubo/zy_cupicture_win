@@ -9,8 +9,10 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Policy;
 using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace zy_cutPicture
 {
@@ -1363,7 +1365,19 @@ namespace zy_cutPicture
             }
         }
 
-        
+        private void 切图ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Thread messageThread = new Thread(() =>
+            {
+                var win = new MainForm();                
+                Application.Run(win);
+            });
+
+            // 配置线程
+            messageThread.SetApartmentState(ApartmentState.STA);
+            messageThread.IsBackground = false;
+            messageThread.Start();
+        }
     }
 
     public class PictureBoxX : PictureBox

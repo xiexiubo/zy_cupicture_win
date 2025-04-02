@@ -73,6 +73,16 @@ namespace zy_cutPicture
             this.minimizeButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.panelWorkArea = new System.Windows.Forms.Panel();
+            this.panel_anim = new ResizablePanel();
+            this.btn_play = new System.Windows.Forms.Button();
+            this.type_pre_pic = new System.Windows.Forms.ComboBox();
+            this.anim_icon_info = new System.Windows.Forms.Label();
+            this.num_anim_interval = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btn_pre = new System.Windows.Forms.Button();
+            this.btn_next = new System.Windows.Forms.Button();
+            this.pic_anim = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.panel_tuceng = new System.Windows.Forms.Panel();
             this.btn_layer2anim = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -86,28 +96,19 @@ namespace zy_cutPicture
             this.num_rongcha = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
-            this.panel_anim = new ResizablePanel();
-            this.btn_play = new System.Windows.Forms.Button();
-            this.type_pre_pic = new System.Windows.Forms.ComboBox();
-            this.anim_icon_info = new System.Windows.Forms.Label();
-            this.num_anim_interval = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btn_pre = new System.Windows.Forms.Button();
-            this.btn_next = new System.Windows.Forms.Button();
-            this.pic_anim = new System.Windows.Forms.PictureBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.切图ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.customTitleBar.SuspendLayout();
             this.panelWorkArea.SuspendLayout();
+            this.panel_anim.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_anim_interval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).BeginInit();
             this.panel_tuceng.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel_layer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.icon)).BeginInit();
             this.panel_xuanxiang.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_rongcha)).BeginInit();
-            this.panel_anim.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_anim_interval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).BeginInit();
             this.SuspendLayout();
             // 
             // btn_magic
@@ -166,7 +167,7 @@ namespace zy_cutPicture
             this.helpMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(184, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(304, 25);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             this.mainMenuStrip.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mainMenuStrip_MouseDoubleClick);
@@ -290,7 +291,8 @@ namespace zy_cutPicture
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.图层ToolStripMenuItem,
             this.动画ToolStripMenuItem,
-            this.选项ToolStripMenuItem});
+            this.选项ToolStripMenuItem,
+            this.切图ToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.windowToolStripMenuItem.Text = "窗口";
@@ -299,21 +301,21 @@ namespace zy_cutPicture
             // 图层ToolStripMenuItem
             // 
             this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
-            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.图层ToolStripMenuItem.Text = "图层";
             this.图层ToolStripMenuItem.Click += new System.EventHandler(this.图层ToolStripMenuItem_Click);
             // 
             // 动画ToolStripMenuItem
             // 
             this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
-            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.动画ToolStripMenuItem.Text = "动画";
             this.动画ToolStripMenuItem.Click += new System.EventHandler(this.动画ToolStripMenuItem_Click);
             // 
             // 选项ToolStripMenuItem
             // 
             this.选项ToolStripMenuItem.Name = "选项ToolStripMenuItem";
-            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.选项ToolStripMenuItem.Text = "选项";
             this.选项ToolStripMenuItem.Click += new System.EventHandler(this.选项ToolStripMenuItem_Click);
             // 
@@ -400,6 +402,152 @@ namespace zy_cutPicture
             this.panelWorkArea.Name = "panelWorkArea";
             this.panelWorkArea.Size = new System.Drawing.Size(598, 479);
             this.panelWorkArea.TabIndex = 0;
+            // 
+            // panel_anim
+            // 
+            this.panel_anim.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panel_anim.AutoSize = true;
+            this.panel_anim.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel_anim.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel_anim.Controls.Add(this.btn_play);
+            this.panel_anim.Controls.Add(this.type_pre_pic);
+            this.panel_anim.Controls.Add(this.anim_icon_info);
+            this.panel_anim.Controls.Add(this.num_anim_interval);
+            this.panel_anim.Controls.Add(this.label3);
+            this.panel_anim.Controls.Add(this.btn_pre);
+            this.panel_anim.Controls.Add(this.btn_next);
+            this.panel_anim.Controls.Add(this.pic_anim);
+            this.panel_anim.Controls.Add(this.label4);
+            this.panel_anim.Location = new System.Drawing.Point(218, 26);
+            this.panel_anim.Name = "panel_anim";
+            this.panel_anim.Size = new System.Drawing.Size(266, 175);
+            this.panel_anim.TabIndex = 3;
+            // 
+            // btn_play
+            // 
+            this.btn_play.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btn_play.Location = new System.Drawing.Point(196, 141);
+            this.btn_play.Name = "btn_play";
+            this.btn_play.Size = new System.Drawing.Size(55, 24);
+            this.btn_play.TabIndex = 6;
+            this.btn_play.Text = "Play";
+            this.btn_play.UseVisualStyleBackColor = true;
+            this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
+            // 
+            // type_pre_pic
+            // 
+            this.type_pre_pic.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.type_pre_pic.Items.AddRange(new object[] {
+            "None",
+            "正常",
+            "红色",
+            "绿色",
+            "蓝色",
+            "反色"});
+            this.type_pre_pic.Location = new System.Drawing.Point(130, 143);
+            this.type_pre_pic.Name = "type_pre_pic";
+            this.type_pre_pic.Size = new System.Drawing.Size(60, 20);
+            this.type_pre_pic.TabIndex = 4;
+            this.type_pre_pic.Text = "对比帧";
+            // 
+            // anim_icon_info
+            // 
+            this.anim_icon_info.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.anim_icon_info.AutoEllipsis = true;
+            this.anim_icon_info.BackColor = System.Drawing.Color.Transparent;
+            this.anim_icon_info.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.anim_icon_info.Location = new System.Drawing.Point(173, 118);
+            this.anim_icon_info.Name = "anim_icon_info";
+            this.anim_icon_info.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.anim_icon_info.Size = new System.Drawing.Size(82, 12);
+            this.anim_icon_info.TabIndex = 0;
+            this.anim_icon_info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // num_anim_interval
+            // 
+            this.num_anim_interval.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.num_anim_interval.Increment = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.num_anim_interval.Location = new System.Drawing.Point(75, 143);
+            this.num_anim_interval.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.num_anim_interval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.num_anim_interval.Name = "num_anim_interval";
+            this.num_anim_interval.Size = new System.Drawing.Size(45, 21);
+            this.num_anim_interval.TabIndex = 3;
+            this.num_anim_interval.Value = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 148);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "间隔(毫秒)";
+            // 
+            // btn_pre
+            // 
+            this.btn_pre.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btn_pre.Location = new System.Drawing.Point(2, 59);
+            this.btn_pre.Name = "btn_pre";
+            this.btn_pre.Size = new System.Drawing.Size(21, 35);
+            this.btn_pre.TabIndex = 1;
+            this.btn_pre.Text = "<";
+            this.btn_pre.UseVisualStyleBackColor = true;
+            this.btn_pre.Click += new System.EventHandler(this.btn_pre_Click);
+            // 
+            // btn_next
+            // 
+            this.btn_next.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btn_next.Location = new System.Drawing.Point(238, 59);
+            this.btn_next.Name = "btn_next";
+            this.btn_next.Size = new System.Drawing.Size(21, 35);
+            this.btn_next.TabIndex = 5;
+            this.btn_next.Text = ">";
+            this.btn_next.UseVisualStyleBackColor = true;
+            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
+            // 
+            // pic_anim
+            // 
+            this.pic_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.pic_anim.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.生成播放按钮2;
+            this.pic_anim.Location = new System.Drawing.Point(3, 24);
+            this.pic_anim.Name = "pic_anim";
+            this.pic_anim.Size = new System.Drawing.Size(256, 110);
+            this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pic_anim.TabIndex = 0;
+            this.pic_anim.TabStop = false;
+            this.pic_anim.Tag = "pic_anim";
+            this.pic_anim.Click += new System.EventHandler(this.pic_anim_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 4);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "序列动画";
             // 
             // panel_tuceng
             // 
@@ -556,151 +704,12 @@ namespace zy_cutPicture
             this.panel_Area.Size = new System.Drawing.Size(593, 445);
             this.panel_Area.TabIndex = 5;
             // 
-            // panel_anim
+            // 切图ToolStripMenuItem
             // 
-            this.panel_anim.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.panel_anim.AutoSize = true;
-            this.panel_anim.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel_anim.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel_anim.Controls.Add(this.btn_play);
-            this.panel_anim.Controls.Add(this.type_pre_pic);
-            this.panel_anim.Controls.Add(this.anim_icon_info);
-            this.panel_anim.Controls.Add(this.num_anim_interval);
-            this.panel_anim.Controls.Add(this.label3);
-            this.panel_anim.Controls.Add(this.btn_pre);
-            this.panel_anim.Controls.Add(this.btn_next);
-            this.panel_anim.Controls.Add(this.pic_anim);
-            this.panel_anim.Controls.Add(this.label4);
-            this.panel_anim.Location = new System.Drawing.Point(218, 26);
-            this.panel_anim.Name = "panel_anim";
-            this.panel_anim.Size = new System.Drawing.Size(266, 175);
-            this.panel_anim.TabIndex = 3;
-            // 
-            // btn_play
-            // 
-            this.btn_play.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btn_play.Location = new System.Drawing.Point(196, 141);
-            this.btn_play.Name = "btn_play";
-            this.btn_play.Size = new System.Drawing.Size(55, 24);
-            this.btn_play.TabIndex = 6;
-            this.btn_play.Text = "Play";
-            this.btn_play.UseVisualStyleBackColor = true;
-            this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
-            // 
-            // type_pre_pic
-            // 
-            this.type_pre_pic.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.type_pre_pic.Items.AddRange(new object[] {
-            "None",
-            "正常",
-            "红色",
-            "绿色",
-            "蓝色",
-            "反色"});
-            this.type_pre_pic.Location = new System.Drawing.Point(130, 143);
-            this.type_pre_pic.Name = "type_pre_pic";
-            this.type_pre_pic.Size = new System.Drawing.Size(60, 20);
-            this.type_pre_pic.TabIndex = 4;
-            this.type_pre_pic.Text = "对比帧";
-            // 
-            // anim_icon_info
-            // 
-            this.anim_icon_info.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.anim_icon_info.AutoEllipsis = true;
-            this.anim_icon_info.BackColor = System.Drawing.Color.Transparent;
-            this.anim_icon_info.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.anim_icon_info.Location = new System.Drawing.Point(173, 118);
-            this.anim_icon_info.Name = "anim_icon_info";
-            this.anim_icon_info.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.anim_icon_info.Size = new System.Drawing.Size(82, 12);
-            this.anim_icon_info.TabIndex = 0;
-            this.anim_icon_info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // num_anim_interval
-            // 
-            this.num_anim_interval.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.num_anim_interval.Increment = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.num_anim_interval.Location = new System.Drawing.Point(75, 143);
-            this.num_anim_interval.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.num_anim_interval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.num_anim_interval.Name = "num_anim_interval";
-            this.num_anim_interval.Size = new System.Drawing.Size(45, 21);
-            this.num_anim_interval.TabIndex = 3;
-            this.num_anim_interval.Value = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 148);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 12);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "间隔(毫秒)";
-            // 
-            // btn_pre
-            // 
-            this.btn_pre.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.btn_pre.Location = new System.Drawing.Point(2, 59);
-            this.btn_pre.Name = "btn_pre";
-            this.btn_pre.Size = new System.Drawing.Size(21, 35);
-            this.btn_pre.TabIndex = 1;
-            this.btn_pre.Text = "<";
-            this.btn_pre.UseVisualStyleBackColor = true;
-            this.btn_pre.Click += new System.EventHandler(this.btn_pre_Click);
-            // 
-            // btn_next
-            // 
-            this.btn_next.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btn_next.Location = new System.Drawing.Point(238, 59);
-            this.btn_next.Name = "btn_next";
-            this.btn_next.Size = new System.Drawing.Size(21, 35);
-            this.btn_next.TabIndex = 5;
-            this.btn_next.Text = ">";
-            this.btn_next.UseVisualStyleBackColor = true;
-            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
-            // 
-            // pic_anim
-            // 
-            this.pic_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
-            this.pic_anim.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.生成播放按钮2;
-            this.pic_anim.Location = new System.Drawing.Point(3, 24);
-            this.pic_anim.Name = "pic_anim";
-            this.pic_anim.Size = new System.Drawing.Size(256, 110);
-            this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pic_anim.TabIndex = 0;
-            this.pic_anim.TabStop = false;
-            this.pic_anim.Tag = "pic_anim";
-            this.pic_anim.Click += new System.EventHandler(this.pic_anim_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 4);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "序列动画";
+            this.切图ToolStripMenuItem.Name = "切图ToolStripMenuItem";
+            this.切图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.切图ToolStripMenuItem.Text = "切图";
+            this.切图ToolStripMenuItem.Click += new System.EventHandler(this.切图ToolStripMenuItem_Click);
             // 
             // SequenceForm
             // 
@@ -721,6 +730,10 @@ namespace zy_cutPicture
             this.customTitleBar.PerformLayout();
             this.panelWorkArea.ResumeLayout(false);
             this.panelWorkArea.PerformLayout();
+            this.panel_anim.ResumeLayout(false);
+            this.panel_anim.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_anim_interval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).EndInit();
             this.panel_tuceng.ResumeLayout(false);
             this.panel_tuceng.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -730,10 +743,6 @@ namespace zy_cutPicture
             this.panel_xuanxiang.ResumeLayout(false);
             this.panel_xuanxiang.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_rongcha)).EndInit();
-            this.panel_anim.ResumeLayout(false);
-            this.panel_anim.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_anim_interval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pic_anim)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1088,5 +1097,6 @@ namespace zy_cutPicture
         private ComboBox type_pre_pic;
         private Button btn_next;
         private Button btn_play;
+        private ToolStripMenuItem 切图ToolStripMenuItem;
     }
 }
