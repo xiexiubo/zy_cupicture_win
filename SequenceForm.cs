@@ -1382,6 +1382,12 @@ namespace zy_cutPicture
             messageThread.IsBackground = false;
             messageThread.Start();
         }
+
+        private void num_anim_interval_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.pic_anim_Timer != null)
+                this.pic_anim_Timer.Interval = (int)num_anim_interval.Value;
+        }
     }
 
     public class PictureBoxX : PictureBox

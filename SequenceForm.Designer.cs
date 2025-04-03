@@ -66,6 +66,7 @@ namespace zy_cutPicture
             this.图层ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.动画ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.选项ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.切图ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customTitleBar = new System.Windows.Forms.Panel();
@@ -96,7 +97,6 @@ namespace zy_cutPicture
             this.num_rongcha = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
-            this.切图ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.customTitleBar.SuspendLayout();
             this.panelWorkArea.SuspendLayout();
@@ -167,7 +167,7 @@ namespace zy_cutPicture
             this.helpMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(304, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(184, 25);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             this.mainMenuStrip.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mainMenuStrip_MouseDoubleClick);
@@ -318,6 +318,13 @@ namespace zy_cutPicture
             this.选项ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.选项ToolStripMenuItem.Text = "选项";
             this.选项ToolStripMenuItem.Click += new System.EventHandler(this.选项ToolStripMenuItem_Click);
+            // 
+            // 切图ToolStripMenuItem
+            // 
+            this.切图ToolStripMenuItem.Name = "切图ToolStripMenuItem";
+            this.切图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.切图ToolStripMenuItem.Text = "切图";
+            this.切图ToolStripMenuItem.Click += new System.EventHandler(this.切图ToolStripMenuItem_Click);
             // 
             // helpMenuItem
             // 
@@ -490,6 +497,7 @@ namespace zy_cutPicture
             0,
             0,
             0});
+            this.num_anim_interval.ValueChanged += new System.EventHandler(this.num_anim_interval_ValueChanged);
             // 
             // label3
             // 
@@ -703,13 +711,6 @@ namespace zy_cutPicture
             this.panel_Area.Name = "panel_Area";
             this.panel_Area.Size = new System.Drawing.Size(593, 445);
             this.panel_Area.TabIndex = 5;
-            // 
-            // 切图ToolStripMenuItem
-            // 
-            this.切图ToolStripMenuItem.Name = "切图ToolStripMenuItem";
-            this.切图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.切图ToolStripMenuItem.Text = "切图";
-            this.切图ToolStripMenuItem.Click += new System.EventHandler(this.切图ToolStripMenuItem_Click);
             // 
             // SequenceForm
             // 
