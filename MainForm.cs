@@ -1215,9 +1215,24 @@ namespace zy_cutPicture
                 r.Height = int.Parse(aary[4]);
                 list.Add(r);
                 removeRects.Add(r);
+                for (int i = MenuItemPanel.Items.Count - 1; i >= 0; i--) 
+                {
+                    var item = MenuItemPanel.Items[i];
+                    if(item.Text==v)
+                        MenuItemPanel.Items.RemoveAt(i);
+                }
+            }
+            for (int i = this.subRegions.Count - 1; i >= 0; i--)
+            {
+                var sub= this.subRegions[i];
+                if (list.Exists((r) => { return r == sub; })) 
+                {
+                    this.subRegions.RemoveAt(i);
+                }
             }
             var r2 = MergeRectanglesOne(list);
             this.newRects.Add(r2);
+            this.MenuItemPanel.AddMenuItem($"合|{r2.X}|{r2.Y}|{r2.Width}|{r2.Height}");
             if (this.visited == null) return;
             var listPos = GetRectangleEdgePoints(r2,4,new Rectangle(0,0,this.sourceImage_Width,this.sourceImage_Height));
             for (int i = 0; i < listPos.Count; i++) 
@@ -1272,6 +1287,7 @@ namespace zy_cutPicture
                     r.Height = int.Parse(aary[4]);
                     list.Add(r);
                 }
+                list.Sort((a, b) => { return a.X * a.Y - b.X * b.Y; });
 
                 foreach (var rect in list)
                 {

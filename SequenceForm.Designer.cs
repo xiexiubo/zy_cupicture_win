@@ -301,28 +301,28 @@ namespace zy_cutPicture
             // 图层ToolStripMenuItem
             // 
             this.图层ToolStripMenuItem.Name = "图层ToolStripMenuItem";
-            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.图层ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.图层ToolStripMenuItem.Text = "图层";
             this.图层ToolStripMenuItem.Click += new System.EventHandler(this.图层ToolStripMenuItem_Click);
             // 
             // 动画ToolStripMenuItem
             // 
             this.动画ToolStripMenuItem.Name = "动画ToolStripMenuItem";
-            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.动画ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.动画ToolStripMenuItem.Text = "动画";
             this.动画ToolStripMenuItem.Click += new System.EventHandler(this.动画ToolStripMenuItem_Click);
             // 
             // 选项ToolStripMenuItem
             // 
             this.选项ToolStripMenuItem.Name = "选项ToolStripMenuItem";
-            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.选项ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.选项ToolStripMenuItem.Text = "选项";
             this.选项ToolStripMenuItem.Click += new System.EventHandler(this.选项ToolStripMenuItem_Click);
             // 
             // 切图ToolStripMenuItem
             // 
             this.切图ToolStripMenuItem.Name = "切图ToolStripMenuItem";
-            this.切图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.切图ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.切图ToolStripMenuItem.Text = "切图";
             this.切图ToolStripMenuItem.Click += new System.EventHandler(this.切图ToolStripMenuItem_Click);
             // 
@@ -537,8 +537,6 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
-            this.pic_anim.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pic_anim.Image = global::zy_cutPicture.Properties.Resources.生成播放按钮2;
             this.pic_anim.Location = new System.Drawing.Point(3, 24);
             this.pic_anim.Name = "pic_anim";
             this.pic_anim.Size = new System.Drawing.Size(256, 110);

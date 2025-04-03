@@ -122,7 +122,7 @@ namespace zy_cutPicture
                 pictureBox.PreviewKeyDown += Focused_KeyDown;
                 panel_Area.Controls.Add(pictureBox);
                 panel_Area.Paint += panel_Area_Paint;
-                pictureBoxList.Add(pictureBox);
+                this.pictureBoxList.Add(pictureBox);
                 panel_Area.Controls.SetChildIndex(pictureBox, 1);
                 pictureBox.index_Anim = panel_Area.Controls.Count - 1;
 
@@ -183,14 +183,15 @@ namespace zy_cutPicture
                 using (Pen pen = new Pen(Color.Aqua, 2))
                 {
                     pen.Color = Color.FromArgb(50, 0, 0, 255);
+                    if (pictureBox == this.pictureBoxList[PlayOder])
+                    {
+                        pen.Color = Color.FromArgb(255, 0, 255, 0);
+                    }
                     if (pictureBox.Focused)
                     {
                         pen.Color = Color.FromArgb(255, 255, 0, 0);
                     }
-                    //if (pictureBox == this.pictureBoxList[PlayOder])
-                    //{
-                    //    pen.Color = Color.FromArgb(255, pictureBox.Focused ? 255 : 0, 255, 0);
-                    //}
+                   
                     // 设置虚线样式
                     pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
                     // 定义矩形的位置和大小
@@ -218,7 +219,7 @@ namespace zy_cutPicture
         }
         private void pic_anim_Paint(object sender, PaintEventArgs e)
         {
-            Console.WriteLine("=SelectedIndex=" + this.type_pre_pic.SelectedIndex);
+            //Console.WriteLine("=SelectedIndex=" + this.type_pre_pic.SelectedIndex);
             if (pictureBoxList.Count < 1)
                 return;
             PictureBoxX p;
@@ -338,6 +339,13 @@ namespace zy_cutPicture
             {
                 isDragging = true;
                 lastMousePosition = e.Location;
+
+                if (pic_anim_Timer == null)
+                {
+                    PlayOder = this.pictureBoxList.IndexOf(pictureBox);
+                    this.anim_icon_info.Text = $"{PlayOder} ({pictureBoxList[PlayOder].bitmap.Width},{pictureBoxList[PlayOder].bitmap.Height})";
+                }
+               
             }
             if (this.ToolType == eToolType.相似工具)
             {
@@ -887,6 +895,10 @@ namespace zy_cutPicture
                     outRect = new Rectangle(pos, p.Size);
                 outRect = Rectangle.Union(outRect, new Rectangle(pos, p.Size));
             }
+            foreach (PictureBoxX p in pictureBoxList)
+            {
+                p.simmilarPosTemp = new Point(p.simmilarPosTemp.X - outRect.X, p.simmilarPosTemp.Y - outRect.Y);
+            }
             Console.WriteLine("outRect: " + outRect + "x:" + x + "  y:" + y);
         }
         void ReGeneratePicOne(PictureBoxX p)
@@ -907,11 +919,14 @@ namespace zy_cutPicture
             using (Graphics g = Graphics.FromImage(newBitmap))
             {
                 g.Clear(Color.Transparent);
-                g.DrawImage(p.bitmap, new Rectangle(p.simmilarPosTemp.X - outRect.X, p.simmilarPosTemp.Y - outRect.Y, p.bitmap.Width, p.bitmap.Height));
+                g.DrawImage(p.bitmap, new Rectangle(p.simmilarPosTemp.X, p.simmilarPosTemp.Y, p.bitmap.Width, p.bitmap.Height));
             }
             p.bitmap = newBitmap;
             p.Width = (newBitmap.Width);
             p.Height = (newBitmap.Height);
+            p.simmilarPos =new Point( p.simmilarPos.X + p.simmilarPosTemp.X, p.simmilarPos.Y + p.simmilarPosTemp.Y);
+            p.simmilarPosTemp = Point.Empty;
+
         }
 
         void ReGeneratePic(List<PictureBoxX> list)
@@ -1016,7 +1031,8 @@ namespace zy_cutPicture
                 pic_anim_Timer.Stop();
                 pic_anim_Timer = null;
                 this.btn_play.Text = "Play";
-            }           
+            }
+            this.anim_icon_info.Text = $"{PlayOder} ({pictureBoxList[PlayOder].bitmap.Width},{pictureBoxList[PlayOder].bitmap.Height})";
         }
         private void btn_pre_Click(object sender, EventArgs e)
         {
