@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace zy_cutPicture
 { 
@@ -240,6 +242,102 @@ namespace zy_cutPicture
             }
 
             return result;
+        }
+
+        public static Rectangle CalculateImageRectangle(Size sizePanel, Size sizeContent,float space = 0.1f)
+        {
+            // 计算可用区域，离边缘至少10%空间
+            int marginX = (int)(sizePanel.Width * space);
+            int marginY = (int)(sizePanel.Height * space);
+            int availableWidth = sizePanel.Width - 2 * marginX;
+            int availableHeight = sizePanel.Height - 2 * marginY;
+
+            // 计算保持高宽比的图像大小
+            float aspectRatio = (float)sizeContent.Width / sizeContent.Height;
+            int displayWidth, displayHeight;
+            if (availableWidth / aspectRatio <= availableHeight)
+            {
+                displayWidth = availableWidth;
+                displayHeight = (int)(availableWidth / aspectRatio);
+            }
+            else
+            {
+                displayHeight = availableHeight;
+                displayWidth = (int)(availableHeight * aspectRatio);
+            }
+
+            // 计算图像的绘制位置，使其居中
+            int x = marginX + (availableWidth - displayWidth) / 2;
+            int y = marginY + (availableHeight - displayHeight) / 2;
+
+            return new Rectangle(x, y, displayWidth, displayHeight);
+        }
+
+        public static Rectangle Union(List<PictureBox> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return Rectangle.Empty;
+            }
+
+            Rectangle result = list[0].Bounds;
+            for (int i = 1; i < list.Count; i++)
+            {
+                result = Rectangle.Union(result, list[i].Bounds);
+            }
+            return result;
+        }
+        public static Size MaxSize(List<PictureBoxX> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return Size.Empty;
+            }
+
+            Size result = list[0].Size;
+            for (int i = 1; i < list.Count; i++)
+            {
+                result.Width =Math.Max(result.Width, list[i].Width);
+                result.Height =Math.Max(result.Height, list[i].Height);
+            }
+            return result;
+        }
+
+        public static Rectangle CalculateImagePicturesOutRect(List<PictureBoxX> pictureBoxList)
+        {          
+
+            // 用于存储每个图片框的实际矩形
+            List<Rectangle> rectangles = new List<Rectangle>();
+            
+            // 遍历每个图片框
+            for (int i = 0; i < pictureBoxList.Count; i++)
+            {
+                PictureBox pictureBox = pictureBoxList[i];
+                Point p = pictureBoxList[i].simmilarPos;
+
+                // 计算图片框在重叠点对齐后的实际位置
+                Point actualLocation = new Point(0 - p.X, 0 - p.Y);
+                // 创建图片框的实际矩形
+                Rectangle rect = new Rectangle(actualLocation, pictureBox.Size);
+                rectangles.Add(rect);                
+            }
+
+            // 初始化合并矩形
+            Rectangle unionRect = Rectangle.Empty;
+            // 合并所有矩形
+            foreach (Rectangle rect in rectangles)
+            {
+                unionRect = Rectangle.Union(unionRect, rect);
+            }
+            for (int i = 0; i < pictureBoxList.Count; i++)
+            {
+                PictureBoxX p = pictureBoxList[i];
+                Point acPos =new Point( - p.simmilarPos.X,  - p.simmilarPos.Y);
+                // 存储图片框相对于合并矩形的位置
+                pictureBoxList[i].pos_in_outrect = new Point(acPos.X - unionRect.X, acPos.Y - unionRect.Y);
+            }
+
+            return unionRect;
         }
     }
 }

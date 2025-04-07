@@ -129,6 +129,9 @@ namespace zy_cutPicture
 
                 panel_Area.Invalidate();
                 //var panelL= new Panel(panel_layer)
+                if (outRect == Rectangle.Empty)
+                    outRect = new Rectangle(0, 0, pictureBox.Width, pictureBox.Height);
+                outRect = Rectangle.Union(outRect, new Rectangle(0, 0, pictureBox.Width, pictureBox.Height));
             }
             catch (Exception ex)
             {
@@ -219,11 +222,21 @@ namespace zy_cutPicture
         }
         private void pic_anim_Paint(object sender, PaintEventArgs e)
         {
+          
             //Console.WriteLine("=SelectedIndex=" + this.type_pre_pic.SelectedIndex);
             if (pictureBoxList.Count < 1)
                 return;
             PictureBoxX p;
-            Rectangle rect =new Rectangle(0,0, this.pic_anim.Width, this.pic_anim.Height);
+            Rectangle rect =outRect!=Rectangle.Empty?outRect:new Rectangle(0,0, this.pic_anim.Width, this.pic_anim.Height);
+            var maxSize = outRect.Size;//BitmapHelper.MaxSize(this.pictureBoxList);
+            var r_max = BitmapHelper.CalculateImageRectangle(this.pic_anim.Size, maxSize);
+           
+            float rate_w_out = 1;
+            float rate_h_out = 1;
+            float rate_w = 1;
+            float rate_h = 1;
+            bool isWbiger = false;
+            Rectangle re = Rectangle.Empty;
             if (this.type_pre_pic.SelectedIndex > 0)
             {   //对比帧-1
                 //None 0
@@ -232,10 +245,21 @@ namespace zy_cutPicture
                 //绿色 3
                 //蓝色 4
                 //反色 5
+
                 if (PlayOder - 1 >= 0)
                     p = this.pictureBoxList[PlayOder - 1];
                 else
                     p = this.pictureBoxList[this.pictureBoxList.Count - 1];
+
+                rate_w_out = (float)maxSize.Width / r_max.Width;
+                rate_h_out = (float)maxSize.Height / r_max.Height;
+
+                re.X = (int)(r_max.X + p.pos_in_outrect.X/ rate_w_out);
+                re.Y = (int)(r_max.Y + p.pos_in_outrect.Y/ rate_h_out);
+                re.Width = (int)(p.Width/ rate_w_out);
+                re.Height = (int)(p.Height / rate_h_out);
+
+
                 Bitmap bitmap = p.bitmap;
 
                 
@@ -288,14 +312,26 @@ namespace zy_cutPicture
                     });
                 }
 
-                e.Graphics.DrawImage(bitmap, rect.X, rect.Y, rect.Width, rect.Height);
+                e.Graphics.DrawImage(bitmap, re);
             }
 
             //return;
 
             p = this.pictureBoxList[PlayOder];
+            rect = new Rectangle(p.pos_in_outrect, p.Size);
 
-            e.Graphics.DrawImage(p.bitmap, rect.X, rect.Y, rect.Width, rect.Height);
+            rate_w_out = (float)maxSize.Width / r_max.Width;
+            rate_h_out = (float)maxSize.Height / r_max.Height;
+
+            re.X = (int)(r_max.X + p.pos_in_outrect.X / rate_w_out);
+            re.Y = (int)(r_max.Y + p.pos_in_outrect.Y / rate_h_out);
+
+            re.Width = (int)(p.Width / rate_w_out);
+            re.Height = (int)(p.Height / rate_h_out);
+            //Console.WriteLine($"re--- {re}   p.temp {p.simmilarPosTemp_anim}");
+            e.Graphics.DrawRectangle(Pens.Black , r_max);
+            e.Graphics.DrawRectangle(Pens.Brown, new Rectangle(r_max.X, r_max.Y, re.Width, re.Height));
+            e.Graphics.DrawImage(p.bitmap, re);
 
             // 创建一个 Pen 对象，用于绘制矩形的边框
             using (Pen pen = new Pen(Color.Aqua, 5))
@@ -312,7 +348,7 @@ namespace zy_cutPicture
                 pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
                 // 绘制矩形
-                e.Graphics.DrawRectangle(pen, rect);
+                e.Graphics.DrawRectangle(pen, re);
             }
 
         }
@@ -523,6 +559,7 @@ namespace zy_cutPicture
             // 可在此处添加新建操作的具体逻辑
             similarMap = null;
             bitmapCache.Clear();
+            outRect = Rectangle.Empty;
             pictureBoxList.Clear();
             this.anim_icon_info.Text = "";
             this.panel_Area.Controls.Clear();
@@ -820,7 +857,7 @@ namespace zy_cutPicture
 
         private void btn_resize_pic_Click(object sender, EventArgs e)
         {
-            this.ReGeneratePic(this.pictureBoxList);
+            this.ReGeneratePic(this.pictureBoxList,true);
         }
 
         private void editMenuItem_Click(object sender, EventArgs e)
@@ -884,24 +921,13 @@ namespace zy_cutPicture
 
             foreach (PictureBoxX p in pictureBoxList)
             {
-
                 var pos = new Point(x - (p.simmilarPos.X - pos_fixed.X), y - (p.simmilarPos.Y - pos_fixed.Y));
-
                 if (setLocation)
-                    p.Location = pos;
-                //Console.WriteLine("p: " + p.Location + "  " + p.Size + "   outRect" + outRect + "   " + p.FilePath);
-                p.simmilarPosTemp = pos;
-                if (outRect == Rectangle.Empty)
-                    outRect = new Rectangle(pos, p.Size);
-                outRect = Rectangle.Union(outRect, new Rectangle(pos, p.Size));
+                    p.Location = pos;             
             }
-            foreach (PictureBoxX p in pictureBoxList)
-            {
-                p.simmilarPosTemp = new Point(p.simmilarPosTemp.X - outRect.X, p.simmilarPosTemp.Y - outRect.Y);
-            }
-            Console.WriteLine("outRect: " + outRect + "x:" + x + "  y:" + y);
+            outRect = BitmapHelper.CalculateImagePicturesOutRect(this.pictureBoxList);
         }
-        void ReGeneratePicOne(PictureBoxX p)
+        void ReGeneratePicOne(PictureBoxX p,bool show)
         {
             if (p == null || this.pictureBoxList == null || this.pictureBoxList.Count == 0)
             {
@@ -919,17 +945,25 @@ namespace zy_cutPicture
             using (Graphics g = Graphics.FromImage(newBitmap))
             {
                 g.Clear(Color.Transparent);
-                g.DrawImage(p.bitmap, new Rectangle(p.simmilarPosTemp.X, p.simmilarPosTemp.Y, p.bitmap.Width, p.bitmap.Height));
+                g.DrawImage(p.bitmap, new Rectangle(p.pos_in_outrect.X, p.pos_in_outrect.Y, p.bitmap.Width, p.bitmap.Height));
             }
-            p.bitmap = newBitmap;
-            p.Width = (newBitmap.Width);
-            p.Height = (newBitmap.Height);
-            p.simmilarPos =new Point( p.simmilarPos.X + p.simmilarPosTemp.X, p.simmilarPos.Y + p.simmilarPosTemp.Y);
-            p.simmilarPosTemp = Point.Empty;
+            if (show)
+            {
+                p.bitmap = newBitmap;
+                p.Width = (newBitmap.Width);
+                p.Height = (newBitmap.Height);
+                p.simmilarPos = Point.Empty;
+                p.pos_in_outrect =Point.Empty;
+            }
+            else
+            {
+                p.bitmapGenerate = newBitmap;
+            }
+                   
 
         }
 
-        void ReGeneratePic(List<PictureBoxX> list)
+        void ReGeneratePic(List<PictureBoxX> list, bool show)
         {
             if (list == null || list.Count == 0)
             {
@@ -943,7 +977,7 @@ namespace zy_cutPicture
             // 调整每个图片的大小
             for (int i = 0; i < list.Count; i++)
             {
-                ReGeneratePicOne(list[i]);
+                ReGeneratePicOne(list[i],show);
             }
         }
         // 排列图组
@@ -1059,7 +1093,7 @@ namespace zy_cutPicture
 
         private void 重新打开ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           similarMap = null;
+            similarMap = null;
             bitmapCache.Clear();
             this.anim_icon_info.Text = "";
             for (int i = 0; i < pictureBoxList.Count; i++) 
@@ -1145,9 +1179,11 @@ namespace zy_cutPicture
                 if (p != null)
                 {
 
-                    if (p.Focused)
+                    if (p.Focused&& this.similarMap!=null)
                     {
                         p.simmilarPos = new Point(p.simmilarPos.X - 1, p.simmilarPos.Y);
+
+                        this.setPosTemp(false);
                     }
                     //else 
                     //{
@@ -1158,7 +1194,9 @@ namespace zy_cutPicture
                 if (p2 != null && p2.Tag != null && p2.Tag.ToString() == "pic_anim") 
                 {
                     p =this.pictureBoxList[PlayOder];
-                    p.simmilarPos= new Point(p.simmilarPos.X - 1, p.simmilarPos.Y);
+                    p.simmilarPos = new Point(p.simmilarPos.X + 1, p.simmilarPos.Y);
+
+                    this.setPosTemp(false);
                 }
             }
             if (e.KeyCode == Keys.Right)
@@ -1167,9 +1205,11 @@ namespace zy_cutPicture
                 if (p != null)
                 {
 
-                    if (p.Focused)
+                    if (p.Focused && this.similarMap != null)
                     {
                         p.simmilarPos = new Point(p.simmilarPos.X + 1, p.simmilarPos.Y);
+
+                        this.setPosTemp(false);
                     }
                     //else 
                     //{
@@ -1180,7 +1220,9 @@ namespace zy_cutPicture
                 if (p2 != null && p2.Tag!=null&& p2.Tag.ToString() == "pic_anim")
                 {
                     p = this.pictureBoxList[PlayOder];
-                    p.simmilarPos = new Point(p.simmilarPos.X + 1, p.simmilarPos.Y);
+                    p.simmilarPos = new Point(p.simmilarPos.X - 1, p.simmilarPos.Y);
+
+                    this.setPosTemp(false);
                 }
             }
             if (e.KeyCode == Keys.Up)
@@ -1189,9 +1231,11 @@ namespace zy_cutPicture
                 if (p != null)
                 {
                     
-                    if (p.Focused)
+                    if (p.Focused && this.similarMap != null)
                     {
                         p.simmilarPos = new Point(p.simmilarPos.X, p.simmilarPos.Y - 1);
+
+                        this.setPosTemp(false);
                     }
                     //else 
                     //{
@@ -1202,7 +1246,9 @@ namespace zy_cutPicture
                 if (p2 != null && p2.Tag != null && p2.Tag.ToString() == "pic_anim")
                 {
                     p = this.pictureBoxList[PlayOder];
-                    p.simmilarPos = new Point(p.simmilarPos.X, p.simmilarPos.Y - 1);
+                    p.simmilarPos = new Point(p.simmilarPos.X, p.simmilarPos.Y + 1);
+
+                    this.setPosTemp(false);
                 }
             }
             if (e.KeyCode == Keys.Down)
@@ -1211,9 +1257,11 @@ namespace zy_cutPicture
                 if (p != null)
                 {
 
-                    if (p.Focused)
+                    if (p.Focused && this.similarMap != null)
                     {
                         p.simmilarPos = new Point(p.simmilarPos.X, p.simmilarPos.Y + 1);
+
+                        this.setPosTemp(false);
                     }
                     //else 
                     //{
@@ -1225,10 +1273,11 @@ namespace zy_cutPicture
                 {
                     p = this.pictureBoxList[PlayOder];
                
-                    p.simmilarPos = new Point(p.simmilarPos.X , p.simmilarPos.Y+1);
+                    p.simmilarPos = new Point(p.simmilarPos.X , p.simmilarPos.Y-1);
+
+                    this.setPosTemp(false);
                 }
             }
-            this.setPosTemp(false);
             this.panel_Area.Invalidate();
             this.pic_anim.Invalidate(); 
 
@@ -1240,6 +1289,7 @@ namespace zy_cutPicture
 
             try
             {
+                this.ReGeneratePic(this.pictureBoxList,false);
                 foreach (var p in pictureBoxList)
                 {
                     if (File.Exists(p.FilePath))
@@ -1247,7 +1297,10 @@ namespace zy_cutPicture
                         // 确保文件没有被其他程序占用
                         using (FileStream fs = new FileStream(p.FilePath, FileMode.Open, FileAccess.Write))
                         {
-                            p.bitmap.Save(fs, ImageFormat.Png);
+                            if (p.bitmapGenerate != null)
+                                p.bitmapGenerate.Save(fs, ImageFormat.Png);
+                            else
+                                p.bitmap.Save(fs, ImageFormat.Png);
                         }
                     }
                     else
@@ -1274,6 +1327,7 @@ namespace zy_cutPicture
             {
                 try
                 {
+                    this.ReGeneratePic(this.pictureBoxList,false);
                     string filePath = saveFileDialog.FileName;
                     string directory = Path.GetDirectoryName(filePath);
                     string name = Path.GetFileNameWithoutExtension(filePath);
@@ -1288,7 +1342,10 @@ namespace zy_cutPicture
                         string newFilePath = Path.Combine(directory, $"{name}_{i}.png");
                         using (FileStream fs = new FileStream(newFilePath, FileMode.Create, FileAccess.Write))
                         {
-                            p.bitmap.Save(fs, ImageFormat.Png);
+                            if (p.bitmapGenerate != null)
+                                p.bitmapGenerate.Save(fs, ImageFormat.Png);
+                            else
+                                p.bitmap.Save(fs, ImageFormat.Png);
                         }
                     }
                     Process.Start("explorer.exe", directory);
@@ -1441,7 +1498,7 @@ namespace zy_cutPicture
             this.bitmap = new Bitmap(filePath);
             this.Size = new Size(bitmap.Width, bitmap.Height);
             this.simmilarPos = Point.Empty;
-            this.simmilarPosTemp = Point.Empty;
+            this.pos_in_outrect = Point.Empty;
             IsSelected = false;
             Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
         }
@@ -1450,13 +1507,14 @@ namespace zy_cutPicture
             this.bitmap = bitmap;
             this.Size = new Size(bitmap.Width, bitmap.Height);
             this.simmilarPos = Point.Empty;
-            this.simmilarPosTemp = Point.Empty;
+            this.pos_in_outrect = Point.Empty;
             IsSelected = false;
             Console.WriteLine($"文件路径: {this.FilePath}   控件大小: {this.Size}    图片大小: {bitmap.Size} ");
         }
 
         // 图片对象
         public Bitmap bitmap;
+        public Bitmap bitmapGenerate;
         // 动画序列索引
         public int AnimationSequenceIndex;
         // 是否被选中
@@ -1464,7 +1522,7 @@ namespace zy_cutPicture
         // 文件路径
         public string FilePath;
         public Point simmilarPos = Point.Empty;
-        public Point simmilarPosTemp = Point.Empty;
+        public Point pos_in_outrect =Point.Empty; 
         public int index_Anim = 0;
     }
     // 添加新的类成员用于缓存图像数据
