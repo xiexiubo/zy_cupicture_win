@@ -42,7 +42,9 @@ namespace zy_cutPicture
             this.pic_anim.PreviewKeyDown += Focused_KeyDown;
 
             SelectTool(this.brushToolButton);
-            panel_anim.Location = new Point(this.Width- panel_anim.Width,32);
+            //panel_anim.Parent = this.panelWorkArea;
+            panel_anim.Location = new Point(this.Width- panel_anim.Width-30,32);
+           
             this.pic_anim.Paint+= pic_anim_Paint;
         }
     
@@ -229,15 +231,12 @@ namespace zy_cutPicture
             PictureBoxX p;
             Rectangle rect =outRect!=Rectangle.Empty?outRect:new Rectangle(0,0, this.pic_anim.Width, this.pic_anim.Height);
             var maxSize = outRect.Size;//BitmapHelper.MaxSize(this.pictureBoxList);
-            var r_max = BitmapHelper.CalculateImageRectangle(this.pic_anim.Size, maxSize);
+            var r_max = BitmapHelper.CalculateImageRectangle(this.pic_anim.Size, maxSize,0.01f);
            
             float rate_w_out = 1;
             float rate_h_out = 1;
-            float rate_w = 1;
-            float rate_h = 1;
-            bool isWbiger = false;
             Rectangle re = Rectangle.Empty;
-            if (this.type_pre_pic.SelectedIndex > 0)
+            if (this.ck_duibi.Checked)
             {   //对比帧-1
                 //None 0
                 //正常 1
@@ -245,11 +244,27 @@ namespace zy_cutPicture
                 //绿色 3
                 //蓝色 4
                 //反色 5
+                if (this.mode_pre_pic.SelectedIndex == 1)//上一帧
+                {
+                    if (PlayOder - 1 >= 0)
+                        p = this.pictureBoxList[PlayOder - 1];
+                    else
+                        p = this.pictureBoxList[this.pictureBoxList.Count - 1];
+                }
+                else if (this.mode_pre_pic.SelectedIndex == 2)//第一帧
+                {
 
-                if (PlayOder - 1 >= 0)
-                    p = this.pictureBoxList[PlayOder - 1];
-                else
+                    p = this.pictureBoxList[0];
+                }
+                else if (this.mode_pre_pic.SelectedIndex == 3)//最后一帧
+                {
                     p = this.pictureBoxList[this.pictureBoxList.Count - 1];
+                }
+                else 
+                {
+                    p = this.pictureBoxList[0];
+                }
+
 
                 rate_w_out = (float)maxSize.Width / r_max.Width;
                 rate_h_out = (float)maxSize.Height / r_max.Height;
@@ -262,7 +277,7 @@ namespace zy_cutPicture
 
                 Bitmap bitmap = p.bitmap;
 
-                
+
                 if (this.type_pre_pic.SelectedIndex == 2)
                 {
                     bitmap = BitmapHelper.ModifyBitmap(bitmap, (a, r, g, b) =>
@@ -311,7 +326,18 @@ namespace zy_cutPicture
                         return bs;
                     });
                 }
-
+                else 
+                {
+                    bitmap = BitmapHelper.ModifyBitmap(bitmap, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 255;
+                        bs[2] = 0;
+                        bs[3] = 0;
+                        return bs;
+                    });
+                }
                 e.Graphics.DrawImage(bitmap, re);
             }
 
@@ -1460,6 +1486,16 @@ namespace zy_cutPicture
         {
             if (this.pic_anim_Timer != null)
                 this.pic_anim_Timer.Interval = (int)num_anim_interval.Value;
+        }
+
+        private void panel_anim_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void ck_duibi_CheckedChanged(object sender, EventArgs e)
+        {
+            this.pic_anim.Invalidate();
         }
     }
 
