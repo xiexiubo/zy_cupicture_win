@@ -60,6 +60,8 @@ namespace zy_cutPicture
             this.对齐图组ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.旋转90ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.全体旋转90ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.水平翻转ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.垂直翻转ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.智能删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,8 +103,6 @@ namespace zy_cutPicture
             this.num_rongcha = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
-            this.水平翻转ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.垂直翻转ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.customTitleBar.SuspendLayout();
             this.panelWorkArea.SuspendLayout();
@@ -175,7 +175,7 @@ namespace zy_cutPicture
             this.helpMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Size = new System.Drawing.Size(304, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(184, 25);
             this.mainMenuStrip.TabIndex = 2;
             this.mainMenuStrip.Text = "menuStrip1";
             this.mainMenuStrip.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mainMenuStrip_MouseDoubleClick);
@@ -279,6 +279,20 @@ namespace zy_cutPicture
             this.全体旋转90ToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.全体旋转90ToolStripMenuItem.Text = "全体旋转90";
             this.全体旋转90ToolStripMenuItem.Click += new System.EventHandler(this.全体旋转90ToolStripMenuItem_Click);
+            // 
+            // 水平翻转ToolStripMenuItem
+            // 
+            this.水平翻转ToolStripMenuItem.Name = "水平翻转ToolStripMenuItem";
+            this.水平翻转ToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.水平翻转ToolStripMenuItem.Text = "水平翻转";
+            this.水平翻转ToolStripMenuItem.Click += new System.EventHandler(this.水平翻转ToolStripMenuItem_Click);
+            // 
+            // 垂直翻转ToolStripMenuItem
+            // 
+            this.垂直翻转ToolStripMenuItem.Name = "垂直翻转ToolStripMenuItem";
+            this.垂直翻转ToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.垂直翻转ToolStripMenuItem.Text = "垂直翻转";
+            this.垂直翻转ToolStripMenuItem.Click += new System.EventHandler(this.垂直翻转ToolStripMenuItem_Click);
             // 
             // 删除ToolStripMenuItem
             // 
@@ -771,20 +785,6 @@ namespace zy_cutPicture
             this.panel_Area.Name = "panel_Area";
             this.panel_Area.Size = new System.Drawing.Size(593, 445);
             this.panel_Area.TabIndex = 5;
-            // 
-            // 水平翻转ToolStripMenuItem
-            // 
-            this.水平翻转ToolStripMenuItem.Name = "水平翻转ToolStripMenuItem";
-            this.水平翻转ToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.水平翻转ToolStripMenuItem.Text = "水平翻转";
-            this.水平翻转ToolStripMenuItem.Click += new System.EventHandler(this.水平翻转ToolStripMenuItem_Click);
-            // 
-            // 垂直翻转ToolStripMenuItem
-            // 
-            this.垂直翻转ToolStripMenuItem.Name = "垂直翻转ToolStripMenuItem";
-            this.垂直翻转ToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.垂直翻转ToolStripMenuItem.Text = "垂直翻转";
-            this.垂直翻转ToolStripMenuItem.Click += new System.EventHandler(this.垂直翻转ToolStripMenuItem_Click);
             // 
             // SequenceForm
             // 

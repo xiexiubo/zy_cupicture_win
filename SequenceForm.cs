@@ -13,6 +13,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
+using Image = System.Drawing.Image;
+using Application = System.Windows.Forms.Application;
+using AnimatedGif;
 
 namespace zy_cutPicture
 {
@@ -1208,12 +1211,17 @@ namespace zy_cutPicture
             if (pictureBoxList.Count < 1) 
                 return;
             if (e.KeyCode == Keys.Tab)
-            {               
+            {
                 if (!this.pic_anim.Focused)
                 {
                     pic_anim_Timer_Tick(null, null);
                     panel_Area.Controls.SetChildIndex(this.pictureBoxList[PlayOder], 0);
                     this.pictureBoxList[PlayOder].Focus();
+                }
+                else 
+                {
+                    pic_anim_Timer_Tick(null, null);
+                    panel_Area.Controls.SetChildIndex(this.pictureBoxList[PlayOder], 0);
                 }
             }
             if (e.KeyCode == Keys.Left)
@@ -1363,10 +1371,10 @@ namespace zy_cutPicture
         private void 另ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "PNG 文件|*.png";
+            saveFileDialog.Filter = "PNG files|*.png|GIF file (*.gif) | *.gif";
             saveFileDialog.Title = "另存为";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            var r = saveFileDialog.ShowDialog();
+            if (r == DialogResult.OK)
             {
                 try
                 {
@@ -1374,6 +1382,7 @@ namespace zy_cutPicture
                     string filePath = saveFileDialog.FileName;
                     string directory = Path.GetDirectoryName(filePath);
                     string name = Path.GetFileNameWithoutExtension(filePath);
+                    string fileExtension = Path.GetExtension(filePath).ToLower();
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);
@@ -1383,13 +1392,30 @@ namespace zy_cutPicture
                     {
                         PictureBoxX p = pictureBoxList[i];
                         string newFilePath = Path.Combine(directory, $"{name}_{i}.png");
-                        using (FileStream fs = new FileStream(newFilePath, FileMode.Create, FileAccess.Write))
+                        if (fileExtension == ".png")
                         {
-                            if (p.bitmapGenerate != null)
-                                p.bitmapGenerate.Save(fs, ImageFormat.Png);
-                            else
-                                p.bitmap.Save(fs, ImageFormat.Png);
+                            using (FileStream fs = new FileStream(newFilePath, FileMode.Create, FileAccess.Write))
+                            {
+                                if (p.bitmapGenerate != null)
+                                    p.bitmapGenerate.Save(fs, ImageFormat.Png);
+                                else
+                                    p.bitmap.Save(fs, ImageFormat.Png);
+                            }
                         }
+                        else if (fileExtension == ".gif")
+                        {
+                            using (AnimatedGifCreator gifCreator = AnimatedGif.AnimatedGif.Create(saveFileDialog.FileName, (int)this.num_anim_interval.Value))
+                            {
+                                foreach (var pp in pictureBoxList)
+                                {
+                                    Bitmap bitmap = pp.bitmapGenerate ?? pp.bitmap;
+                                    gifCreator.AddFrame(pp.bitmapGenerate, delay: (int)this.num_anim_interval.Value, quality: GifQuality.Bit8);
+                                }
+                            }
+                        }
+
+
+
                     }
                     Process.Start("explorer.exe", directory);
                 }
