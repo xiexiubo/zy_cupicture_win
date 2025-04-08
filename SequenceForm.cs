@@ -171,10 +171,11 @@ namespace zy_cutPicture
             }
             return Color.FromArgb(255, red, green, blue);
         }
-
+        private readonly object _lock_similarMap = new object();
         // 工作区域面板的绘制事件处理方法
         private void panel_Area_Paint(object sender, PaintEventArgs e)
         {
+          
 
             for (int i = panel_Area.Controls.Count - 1; i >= 0; i--)
             {
@@ -205,16 +206,20 @@ namespace zy_cutPicture
                     // 绘制矩形
                     graphics.DrawRectangle(pen, rectangle);
                 }
-                if (this.similarMap != null)
+
+                lock (_lock_similarMap)
                 {
-                    var p = pictureBox.Location;
-                    p.X = pictureBox.simmilarPos.X + p.X;
-                    p.Y = pictureBox.simmilarPos.Y + p.Y;
-                    graphics.DrawRectangle(Pens.Red, new Rectangle(p.X, p.Y, this.similarMap.Width, this.similarMap.Height));
-                }
+                    if (this.similarMap != null)
+                    {
+                        var p = pictureBox.Location;
+                        p.X = pictureBox.simmilarPos.X + p.X;
+                        p.Y = pictureBox.simmilarPos.Y + p.Y;
+                        graphics.DrawRectangle(Pens.Red, new Rectangle(p.X, p.Y, this.similarMap.Width, this.similarMap.Height));
+                    }
+                }               
             }
-            if (this.ToolType == eToolType.相似工具&& this.currentDragRect_area_debug!=Rectangle.Empty)
             {
+            if ((this.ToolType == eToolType.相似工具|| this.ToolType == eToolType.魔术棒工具) && this.currentDragRect_area_debug!=Rectangle.Empty)
                 //var p = panel_Area.Controls[0] as PictureBoxX;
                 // 计算在 PictureBox 上显示的矩形位置                
                 e.Graphics.DrawRectangle(Pens.Red, currentDragRect_area_debug);
@@ -416,6 +421,18 @@ namespace zy_cutPicture
             else
             {
                 Cursor.Current = Cursors.Default;
+            }
+            if (this.ToolType == eToolType.魔术棒工具) 
+            {
+                var r = BitmapHelper.FindConnectedRegion(pictureBox, e.Location, this.tolerance);
+                currentDragRect_pictureBox_debug = r;
+                currentDragRect_area_debug = new Rectangle(r.X + pictureBox.Location.X, r.Y + pictureBox.Location.Y, r.Width, r.Height);
+                if (currentDragRect_pictureBox_debug.Width > 0 && currentDragRect_pictureBox_debug.Height > 1)
+                {
+                    this.similarMap = CropImage(pictureBox.bitmap, currentDragRect_pictureBox_debug);
+                    //currentDragRect_pictureBox_debug = GetBitmapRectangle(pictureBox, this.lastMousePosition, e.Location);
+                    this.SetPointSimmilar(this.similarMap, this.pictureBoxList);
+                }
             }
             this.pic_anim.Invalidate();
             this.panel_Area.Invalidate();   
@@ -1495,6 +1512,28 @@ namespace zy_cutPicture
 
         private void ck_duibi_CheckedChanged(object sender, EventArgs e)
         {
+            this.pic_anim.Invalidate();
+        }
+
+        private void 水平翻转ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.panel_Area.Controls.Count < 1)
+                return;
+            var p = this.panel_Area.Controls[0] as PictureBoxX;
+            var bitmap = BitmapHelper.FlipBitmapHorizontally(p.bitmap);
+            p.setpicX(bitmap);
+            this.panel_Area.Invalidate();
+            this.pic_anim.Invalidate();
+        }
+
+        private void 垂直翻转ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.panel_Area.Controls.Count < 1)
+                return;
+            var p = this.panel_Area.Controls[0] as PictureBoxX;
+            var bitmap = BitmapHelper.FlipBitmapVertically(p.bitmap);
+            p.setpicX(bitmap);
+            this.panel_Area.Invalidate();
             this.pic_anim.Invalidate();
         }
     }

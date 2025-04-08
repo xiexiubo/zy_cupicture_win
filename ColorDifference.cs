@@ -172,13 +172,27 @@ namespace zy_cutPicture
             using (Graphics g = Graphics.FromImage(rotatedBitmap))
             {
                 g.TranslateTransform(rotatedBitmap.Width / 2, rotatedBitmap.Height / 2);
-                g.RotateTransform(90);
+                g.RotateTransform(-90);
                 g.TranslateTransform(-source.Width / 2, -source.Height / 2);
                 g.DrawImage(source, 0, 0);
             }
             return rotatedBitmap;
         }
+        // 水平翻转
+        public static Bitmap FlipBitmapHorizontally(Bitmap source)
+        {
+            Bitmap flippedBitmap = new Bitmap(source);
+            flippedBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            return flippedBitmap;
+        }
 
+        // 垂直翻转
+        public static Bitmap FlipBitmapVertically(Bitmap source)
+        {
+            Bitmap flippedBitmap = new Bitmap(source);
+            flippedBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            return flippedBitmap;
+        }
 
         public static Bitmap ModifyBitmap(Bitmap source,Func<byte, byte, byte, byte, byte[]> action)
         {
@@ -338,6 +352,68 @@ namespace zy_cutPicture
             }
 
             return unionRect;
+        }
+
+        /// <summary>
+        /// 查找连续相似点
+        /// </summary>       
+        public static Rectangle FindConnectedRegion(PictureBoxX pictureBox, Point clickPoint, int tolerance)
+        {
+            // 获取 PictureBox 中的图像
+            Bitmap bitmap = pictureBox.bitmap;
+            // 获取点击点的颜色
+            Color targetColor = bitmap.GetPixel(clickPoint.X, clickPoint.Y);
+            // 用于标记哪些点已被访问
+            bool[,] visited = new bool[bitmap.Width, bitmap.Height];
+            // 用于存储待处理的点
+            System.Collections.Generic.Queue<Point> queue = new System.Collections.Generic.Queue<Point>();
+            // 初始化矩形的边界
+            int minX = int.MaxValue, maxX = int.MinValue, minY = int.MaxValue, maxY = int.MinValue;
+
+            // 将点击点加入队列并标记为已访问
+            queue.Enqueue(clickPoint);
+            visited[clickPoint.X, clickPoint.Y] = true;
+
+            // 开始广度优先搜索
+            while (queue.Count > 0)
+            {
+                Point current = queue.Dequeue();
+                // 更新矩形的边界
+                minX = Math.Min(minX, current.X);
+                maxX = Math.Max(maxX, current.X);
+                minY = Math.Min(minY, current.Y);
+                maxY = Math.Max(maxY, current.Y);
+
+                // 定义周围点的偏移量
+                int[] dx = { -1, 1, 0, 0 };
+                int[] dy = { 0, 0, -1, 1 };
+
+                // 遍历周围的点
+                for (int i = 0; i < 4; i++)
+                {
+                    int newX = current.X + dx[i];
+                    int newY = current.Y + dy[i];
+
+                    // 检查新点是否在图像范围内且未被访问
+                    if (newX >= 0 && newX < bitmap.Width && newY >= 0 && newY < bitmap.Height && !visited[newX, newY])
+                    {
+                        // 获取新点的颜色
+                        Color newColor = bitmap.GetPixel(newX, newY);
+                        // 计算颜色差异
+                        int diff = Math.Abs(newColor.R - targetColor.R) + Math.Abs(newColor.G - targetColor.G) + Math.Abs(newColor.B - targetColor.B);
+
+                        // 如果颜色差异小于容差，则将该点加入队列并标记为已访问
+                        if (diff <= tolerance)
+                        {
+                            queue.Enqueue(new Point(newX, newY));
+                            visited[newX, newY] = true;
+                        }
+                    }
+                }
+            }
+
+            // 创建并返回矩形
+            return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
         }
     }
 }
