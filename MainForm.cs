@@ -858,7 +858,8 @@ namespace zy_cutPicture
 
             //最后再合并一次  会卡
             MergeRectangles(subRegions);
-            
+
+            //this.subRegions= SortRectangles(this.subRegions);
             isProcessing = false;
             DebugCount = 0;
             if (!cancelRequested && this.isStartCut)
@@ -871,6 +872,44 @@ namespace zy_cutPicture
             this.ShowDebug_texture();
 
             GenerateMenuItems();
+        }
+        //从左到右从上到下排列
+        public static List<Rectangle> SortRectangles(List<Rectangle> list)
+        {
+            if (list == null || list.Count <= 1)
+            {
+                return list;
+            }
+
+            // 计算平均宽高
+            double totalWidth = 0;
+            double totalHeight = 0;
+            foreach (var rect in list)
+            {
+                totalWidth += rect.Width;
+                totalHeight += rect.Height;
+            }
+            double avgWidth = totalWidth / list.Count;
+            double avgHeight = totalHeight / list.Count;
+            //foreach (var rect1 in list)
+            //{
+            //    Point a = new Point(rect1.X + rect1.Width / 2, rect1.Y + rect1.Height / 2);
+            //    var v = (int)(a.X / avgWidth) + (int)Math.Floor(a.Y / (float)avgHeight) * 100;
+            //    Console.WriteLine($"rect{rect1} -- {avgWidth},{avgHeight}  center{a}    -v{v}");
+            //}
+            // 自定义比较器
+            list.Sort((rect1, rect2) =>
+            {
+                // 计算中心点
+                Point a = new Point(rect1.X + rect1.Width / 2, rect1.Y + rect1.Height / 2);
+                Point b = new Point(rect2.X + rect2.Width / 2, rect2.Y + rect2.Height / 2);
+
+
+                return (int)(a.X / avgWidth) + (int)Math.Floor(a.Y /(float)avgHeight) * 100 - ((int)(b.X / avgWidth) + (int)Math.Floor(b.Y / (float)avgHeight) * 100);
+            
+            });
+
+            return list;
         }
         public string GetOutputPath() 
         {
@@ -1287,8 +1326,8 @@ namespace zy_cutPicture
                     r.Height = int.Parse(aary[4]);
                     list.Add(r);
                 }
-                list.Sort((a, b) => { return a.X * a.Y - b.X * b.Y; });
-
+                //list.Sort((a, b) => { return a.X * a.Y - b.X * b.Y; });
+                list = SortRectangles(list);
                 foreach (var rect in list)
                 {
                     if (rect.Width == 0 || rect.Height == 0)

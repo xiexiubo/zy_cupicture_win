@@ -49,8 +49,31 @@ namespace zy_cutPicture
             panel_anim.Location = new Point(this.Width- panel_anim.Width-30,32);
            
             this.pic_anim.Paint+= pic_anim_Paint;
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
         }
-    
+        static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        {
+            // 获取程序集名称
+            string assemblyName = new AssemblyName(args.Name).Name + ".dll";
+            // 获取当前程序集
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+            // 获取资源名称
+            string resourceName = currentAssembly.GetName().Name + "." + assemblyName;
+
+            // 从资源中读取程序集数据
+            using (Stream stream = currentAssembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream != null)
+                {
+                    byte[] assemblyData = new byte[stream.Length];
+                    stream.Read(assemblyData, 0, assemblyData.Length);
+                    // 加载程序集
+                    return Assembly.Load(assemblyData);
+                }
+            }
+
+            return null;
+        }
 
         // 设置控件的双缓冲
         private void SetDoubleBuffered(Control control)
