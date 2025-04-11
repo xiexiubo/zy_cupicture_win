@@ -1457,7 +1457,7 @@ namespace zy_cutPicture
             contextMenuStrip_pictureBox_debug = new ContextMenuStrip();
             contextMenuStrip_pictureBox_debug.Items.AddRange(new ToolStripItem[]
           {
-                new ToolStripMenuItem("复制", null, (s, e) => this.MenuItemPanel.CopyMenuItem_Click()),
+                new ToolStripMenuItem("复制(文件名)", null, (s, e) => this.MenuItemPanel.CopyMenuItem_Click()),
                 new ToolStripMenuItem("勾选", null, (s, e) => this.MenuItemPanel.SelectCurr()),
                 new ToolStripMenuItem("全勾选", null, (s, e) => this.MenuItemPanel.SelectAllItems()),
                 new ToolStripMenuItem("清空勾选", null, (s, e) => this.MenuItemPanel.ClearSelection()),

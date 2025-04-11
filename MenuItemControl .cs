@@ -38,7 +38,7 @@ namespace zy_cutPicture
             contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem("复制", null, (s, e) => CopyMenuItem_Click()),
+                new ToolStripMenuItem("复制(文件名)", null, (s, e) => CopyMenuItem_Click()),
                 new ToolStripMenuItem("勾选", null, (s, e) => SelectCurr()),
                 new ToolStripMenuItem("全勾选", null, (s, e) => SelectAllItems()),
                 new ToolStripMenuItem("清空勾选", null, (s, e) => ClearSelection()),
@@ -92,6 +92,9 @@ namespace zy_cutPicture
             if (this.SelectedItems.Count > 0)
             {
                 string selectedText = this.SelectedItems[0].Text;
+                selectedText = selectedText.Replace("|", "_");
+                int index = selectedText.IndexOf("_");
+                selectedText = selectedText.Substring(index+1, selectedText.Length - index-1);
                 Clipboard.SetText(selectedText);
                 MessageBox.Show($"已复制: {selectedText}");
             }
