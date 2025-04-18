@@ -165,6 +165,7 @@ namespace zy_cutPicture
             {
                 MessageBox.Show($"加载图片时出错: {ex.Message}");
             }
+            ArrangePicType(0);
         }
 
         // 根据索引和总数生成颜色
@@ -387,6 +388,7 @@ namespace zy_cutPicture
             re.Height = (int)(p.Height / rate_h_out);
             //Console.WriteLine($"re--- {re}   p.temp {p.simmilarPosTemp_anim}");
             e.Graphics.DrawRectangle(Pens.Black , r_max);
+
             e.Graphics.DrawRectangle(Pens.Brown, new Rectangle(r_max.X, r_max.Y, re.Width, re.Height));
             e.Graphics.DrawImage(p.bitmap, re);
 
@@ -406,7 +408,20 @@ namespace zy_cutPicture
 
                 // 绘制矩形
                 e.Graphics.DrawRectangle(pen, re);
+                
             }
+            if (this.ck_duijiao.Checked)
+            {
+                using (Pen pen = new Pen(Color.Red, 3))
+                {
+                    // 设置虚线样式
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawLine(pen, r_max.Left, r_max.Top, r_max.Right, r_max.Bottom);
+                    e.Graphics.DrawLine(pen, r_max.Left, r_max.Bottom, r_max.Right, r_max.Top);
+                }
+
+            }
+
 
         }
 
@@ -508,10 +523,61 @@ namespace zy_cutPicture
             {
                 if (isDragging)
                 {
+                    if (this.ToolType == eToolType.选择工具)
+                    {
+                        int targetIndex = 0;
+                        int currentIndex = 0;
+                        double distance = int.MaxValue;
+                        Point center = Point.Empty;
+                        for (int i = 0; i < pictureBoxList.Count; i++)
+                        {
+                            if (pictureBox == pictureBoxList[i]) 
+                            {
+                                currentIndex= i;
+                                continue; 
+                            }
+                            Point p = new Point(pictureBoxList[i].Location.X + (int)(pictureBoxList[i].Width / 2), pictureBoxList[i].Location.Y + (int)(pictureBoxList[i].Height / 2));
 
+                           // Console.WriteLine($"{p}  {e.Location} {pictureBox.Location}");
+                            double dx = p.X - (pictureBox.Location.X+e.X);
+                            double dy = p.Y - (pictureBox.Location.Y+e.Y);
+                            double d = Math.Sqrt(dx * dx + dy * dy);
+                            if (distance > d)
+                            {
+                                targetIndex = i;
+                                distance = d;
+                                center=p;
+                            }
+                        }
+
+                        
+                        if (Control.ModifierKeys == Keys.Alt||Math.Abs(currentIndex-targetIndex)==1)
+                        {
+                            PictureBoxX temp = pictureBoxList[targetIndex];
+                            pictureBoxList[targetIndex] = pictureBoxList[currentIndex];
+                            pictureBoxList[currentIndex] = temp;
+                        }
+                        else
+                        {
+                            targetIndex = center.X < pictureBox.Location.X+e.X ? targetIndex + 1 : targetIndex;
+
+                            if (targetIndex < currentIndex)
+                                this.pictureBoxList.RemoveAt(currentIndex);
+                            this.pictureBoxList.Insert(targetIndex, pictureBox);
+                            if (targetIndex > currentIndex)
+                                this.pictureBoxList.RemoveAt(currentIndex);
+
+                        }
+
+                        this.ArrangePicType(0);
+                        this.panel_Area.Invalidate();
+                        this.pic_anim.Invalidate();
+                       // this.panelWorkArea.Invalidate();
+                    }
                     if (Control.ModifierKeys == Keys.Alt)
                     {
-                        if (this.ToolType == eToolType.相似工具)
+                        
+                         if (this.ToolType == eToolType.相似工具)
                         {
                             var r = GetBitmapRectangle(pictureBox, this.lastMousePosition, e.Location);
                             if (r.Width > 3 && r.Height > 3)
@@ -940,22 +1006,25 @@ namespace zy_cutPicture
 
         private void ArrangePicType(int type)
         {
+            this.typeArrange = type;
             int spacing = 10; // 图片之间的间距
             int currentX = 10;
             int currentY = 10;
 
-            foreach (PictureBoxX pictureBox in pictureBoxList)
+            var maxsize = BitmapHelper.MaxSize(pictureBoxList);
+            for (int i = 0; i < pictureBoxList.Count; i++)
             {
+                PictureBoxX pictureBox = pictureBoxList[i];
                 if (type == 0)
                 {
                     pictureBox.Location = new Point(currentX, currentY);
-                    currentX += pictureBox.Width + spacing;
+                    currentX += maxsize.Width + spacing;
 
                     // 如果超出面板宽度，换行
-                    if (currentX + pictureBox.Width > panel_Area.Width - this.panel_anim.Width)
+                    if (currentX + maxsize.Width > panel_Area.Width - this.panel_anim.Width)
                     {
                         currentX = 10;
-                        currentY += pictureBox.Height + spacing;
+                        currentY += maxsize.Height + spacing;
                     }
                 }
                 else if (type == 1)
@@ -1052,7 +1121,7 @@ namespace zy_cutPicture
         // 排列图组
         private void 排列图组ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            typeArrange++;
+            this.typeArrange++;
             if (typeArrange == 3) typeArrange = 0;
             ArrangePicType(typeArrange);
         }
