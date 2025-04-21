@@ -390,7 +390,109 @@ namespace zy_cutPicture
             e.Graphics.DrawRectangle(Pens.Black , r_max);
 
             e.Graphics.DrawRectangle(Pens.Brown, new Rectangle(r_max.X, r_max.Y, re.Width, re.Height));
-            e.Graphics.DrawImage(p.bitmap, re);
+
+            if (this.ck_duibi.Checked) 
+            {
+                //本色
+                //黑色
+                //灰色
+                //白色
+                //红色
+                //绿色
+                //蓝色
+                Bitmap bNew = p.bitmap;
+                if (this.mode_color.SelectedIndex == 0)
+                {
+                    e.Graphics.DrawImage(p.bitmap, re);
+                }
+                else if (this.mode_color.SelectedIndex == 1)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 0;
+                        bs[2] = 0;
+                        bs[3] = 0;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else if (this.mode_color.SelectedIndex == 2)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 128;
+                        bs[2] = 128;
+                        bs[3] = 128;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else if (this.mode_color.SelectedIndex == 3)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 255;
+                        bs[2] = 255;
+                        bs[3] = 255;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else if (this.mode_color.SelectedIndex == 4)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 255;
+                        bs[2] = 0;
+                        bs[3] = 0;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else if (this.mode_color.SelectedIndex == 5)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 0;
+                        bs[2] = 255;
+                        bs[3] = 0;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else if (this.mode_color.SelectedIndex == 6)
+                {
+                    bNew = BitmapHelper.ModifyBitmap(bNew, (a, r, g, b) =>
+                    {
+                        var bs = new byte[4];
+                        bs[0] = a;
+                        bs[1] = 0;
+                        bs[2] = 0;
+                        bs[3] = 255;
+                        return bs;
+                    });
+                    e.Graphics.DrawImage(bNew, re);
+                }
+                else 
+                {
+                    e.Graphics.DrawImage(p.bitmap, re);
+                }
+            } 
+            else 
+            {
+                e.Graphics.DrawImage(p.bitmap, re);
+            }
+                
 
             // 创建一个 Pen 对象，用于绘制矩形的边框
             using (Pen pen = new Pen(Color.Aqua, 5))
@@ -1150,7 +1252,6 @@ namespace zy_cutPicture
             if (pictureBoxList.Count > 0)
             {
                 PlayOder = (PlayOder + 1) % pictureBoxList.Count;
-                this.pic_anim.BackgroundImage = Properties.Resources.方格;
                 this.pic_anim.BackgroundImageLayout = ImageLayout.Tile;
                 this.pic_anim.Image = null;//zy_cutPicture.Properties.Resources.生成播放按钮2;
                 this.anim_icon_info.Text = $"{PlayOder} ({pictureBoxList[PlayOder].bitmap.Width},{pictureBoxList[PlayOder].bitmap.Height})";
@@ -1188,7 +1289,6 @@ namespace zy_cutPicture
                     pic_anim_Timer.Tick += pic_anim_Timer_Tick;
                     pic_anim_Timer.Start();
                     PlayOder = 0;
-                    this.pic_anim.BackgroundImage = zy_cutPicture.Properties.Resources.方格;
                     this.pic_anim.BackgroundImageLayout = ImageLayout.Tile;
                     //this.pic_anim.Image = pictureBoxList[PlayOder].bitmap;
                     this.btn_play.Text = "Stop";
@@ -1653,6 +1753,48 @@ namespace zy_cutPicture
             p.setpicX(bitmap);
             this.panel_Area.Invalidate();
             this.pic_anim.Invalidate();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var go = sender as ComboBox;
+            //方格
+            //黑色 1
+            //灰色 2
+            //白色 3
+            //红色 4
+            //绿色 5
+            //蓝色 6
+            pic_anim.BackgroundImage= null;
+            if (go.SelectedIndex == 1)
+            {
+                pic_anim.BackColor = Color.Black;
+            }
+            else if (go.SelectedIndex == 2)
+            {
+                pic_anim.BackColor = Color.Gray;
+            }
+            else if (go.SelectedIndex == 3)
+            {
+                pic_anim.BackColor = Color.White;
+            }
+            else if (go.SelectedIndex == 4)
+            {
+                pic_anim.BackColor = Color.Red;
+            }
+            else if (go.SelectedIndex == 5)
+            {
+                pic_anim.BackColor = Color.Green;
+            }
+            else if (go.SelectedIndex == 6)
+            {
+                pic_anim.BackColor = Color.Blue;
+            }           
+            else 
+            {
+                pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            }
+           
         }
     }
 

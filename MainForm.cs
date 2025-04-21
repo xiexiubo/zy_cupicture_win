@@ -65,6 +65,7 @@ namespace zy_cutPicture
         private Panel panel1_menu;
         private Panel panel2_content;
         private Button btnSetting;
+        private ComboBox mode_pre_pic;
         private bool isStartCut = false;
 
 
@@ -88,6 +89,7 @@ namespace zy_cutPicture
             this.btnCancel = new System.Windows.Forms.Button();
             this.numSpacing = new System.Windows.Forms.NumericUpDown();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.mode_pre_pic = new System.Windows.Forms.ComboBox();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btn_cut = new System.Windows.Forms.Button();
             this.numCutAlpha = new System.Windows.Forms.NumericUpDown();
@@ -116,7 +118,7 @@ namespace zy_cutPicture
             // btnOpen
             // 
             this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpen.Location = new System.Drawing.Point(542, 34);
+            this.btnOpen.Location = new System.Drawing.Point(646, 34);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(59, 21);
             this.btnOpen.TabIndex = 9;
@@ -146,7 +148,7 @@ namespace zy_cutPicture
             // numSpacing
             // 
             this.numSpacing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numSpacing.Location = new System.Drawing.Point(503, 5);
+            this.numSpacing.Location = new System.Drawing.Point(607, 5);
             this.numSpacing.Maximum = new decimal(new int[] {
             10,
             0,
@@ -165,6 +167,7 @@ namespace zy_cutPicture
             // controlPanel
             // 
             this.controlPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.controlPanel.Controls.Add(this.mode_pre_pic);
             this.controlPanel.Controls.Add(this.btnSetting);
             this.controlPanel.Controls.Add(this.btn_cut);
             this.controlPanel.Controls.Add(this.numCutAlpha);
@@ -183,15 +186,33 @@ namespace zy_cutPicture
             this.controlPanel.Location = new System.Drawing.Point(0, 0);
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Padding = new System.Windows.Forms.Padding(5);
-            this.controlPanel.Size = new System.Drawing.Size(602, 78);
+            this.controlPanel.Size = new System.Drawing.Size(706, 78);
             this.controlPanel.TabIndex = 5;
+            // 
+            // mode_pre_pic
+            // 
+            this.mode_pre_pic.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.mode_pre_pic.Items.AddRange(new object[] {
+            "方格",
+            "黑色",
+            "灰色",
+            "白色",
+            "红色",
+            "绿色",
+            "蓝色"});
+            this.mode_pre_pic.Location = new System.Drawing.Point(302, 4);
+            this.mode_pre_pic.Name = "mode_pre_pic";
+            this.mode_pre_pic.Size = new System.Drawing.Size(60, 20);
+            this.mode_pre_pic.TabIndex = 22;
+            this.mode_pre_pic.Text = "背景";
+            this.mode_pre_pic.SelectedIndexChanged += new System.EventHandler(this.mode_pre_pic_SelectedIndexChanged);
             // 
             // btnSetting
             // 
             this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSetting.BackgroundImage = global::zy_cutPicture.Properties.Resources.shezhi;
             this.btnSetting.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnSetting.Location = new System.Drawing.Point(569, 3);
+            this.btnSetting.Location = new System.Drawing.Point(673, 3);
             this.btnSetting.Name = "btnSetting";
             this.btnSetting.Size = new System.Drawing.Size(30, 30);
             this.btnSetting.TabIndex = 21;
@@ -212,7 +233,7 @@ namespace zy_cutPicture
             // numCutAlpha
             // 
             this.numCutAlpha.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numCutAlpha.Location = new System.Drawing.Point(333, 5);
+            this.numCutAlpha.Location = new System.Drawing.Point(437, 5);
             this.numCutAlpha.Maximum = new decimal(new int[] {
             255,
             0,
@@ -226,7 +247,7 @@ namespace zy_cutPicture
             // btn_outPath
             // 
             this.btn_outPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_outPath.Location = new System.Drawing.Point(542, 55);
+            this.btn_outPath.Location = new System.Drawing.Point(646, 55);
             this.btn_outPath.Name = "btn_outPath";
             this.btn_outPath.Size = new System.Drawing.Size(59, 21);
             this.btn_outPath.TabIndex = 15;
@@ -239,7 +260,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.text_output.Location = new System.Drawing.Point(65, 57);
             this.text_output.Name = "text_output";
-            this.text_output.Size = new System.Drawing.Size(472, 21);
+            this.text_output.Size = new System.Drawing.Size(576, 21);
             this.text_output.TabIndex = 14;
             // 
             // text_input
@@ -248,7 +269,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.text_input.Location = new System.Drawing.Point(65, 36);
             this.text_input.Name = "text_input";
-            this.text_input.Size = new System.Drawing.Size(472, 21);
+            this.text_input.Size = new System.Drawing.Size(576, 21);
             this.text_input.TabIndex = 13;
             // 
             // label2
@@ -265,7 +286,7 @@ namespace zy_cutPicture
             // 
             this.label_pading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_pading.AutoSize = true;
-            this.label_pading.Location = new System.Drawing.Point(413, 9);
+            this.label_pading.Location = new System.Drawing.Point(517, 9);
             this.label_pading.Name = "label_pading";
             this.label_pading.Size = new System.Drawing.Size(89, 12);
             this.label_pading.TabIndex = 10;
@@ -275,7 +296,7 @@ namespace zy_cutPicture
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(264, 9);
+            this.label3.Location = new System.Drawing.Point(368, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 18;
@@ -299,7 +320,7 @@ namespace zy_cutPicture
             this.panel_image.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_image.Location = new System.Drawing.Point(0, 78);
             this.panel_image.Name = "panel_image";
-            this.panel_image.Size = new System.Drawing.Size(602, 573);
+            this.panel_image.Size = new System.Drawing.Size(706, 573);
             this.panel_image.TabIndex = 11;
             // 
             // panel1_menu
@@ -323,7 +344,7 @@ namespace zy_cutPicture
             this.panel2_content.Controls.Add(this.pictureBox);
             this.panel2_content.Location = new System.Drawing.Point(100, 0);
             this.panel2_content.Name = "panel2_content";
-            this.panel2_content.Size = new System.Drawing.Size(500, 581);
+            this.panel2_content.Size = new System.Drawing.Size(604, 581);
             this.panel2_content.TabIndex = 13;
             // 
             // lblStatus
@@ -342,7 +363,7 @@ namespace zy_cutPicture
             this.pictureBox_debug.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox_debug.Location = new System.Drawing.Point(0, 0);
             this.pictureBox_debug.Name = "pictureBox_debug";
-            this.pictureBox_debug.Size = new System.Drawing.Size(500, 581);
+            this.pictureBox_debug.Size = new System.Drawing.Size(604, 581);
             this.pictureBox_debug.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_debug.TabIndex = 10;
             this.pictureBox_debug.TabStop = false;
@@ -354,14 +375,14 @@ namespace zy_cutPicture
             this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(500, 581);
+            this.pictureBox.Size = new System.Drawing.Size(604, 581);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 10;
             this.pictureBox.TabStop = false;
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(602, 651);
+            this.ClientSize = new System.Drawing.Size(706, 651);
             this.Controls.Add(this.panel_image);
             this.Controls.Add(this.controlPanel);
             this.DoubleBuffered = true;
@@ -404,7 +425,7 @@ namespace zy_cutPicture
             //// 保存配置文件
             //config.Save(ConfigurationSaveMode.Modified);
 
-            if (!string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path)&&File.Exists(path))
                 LoadImage(path);
         }
         private void LoadImage(string path)
@@ -419,6 +440,7 @@ namespace zy_cutPicture
 
             this.text_input.Text = path;
             this.text_output.Text = path.Replace(Path.GetExtension(path), "\\");
+
             this.sourceImage = new Bitmap(path);
             this.sourceImage_Width = this.sourceImage.Width;
             this.sourceImage_Height = this.sourceImage.Height;
@@ -1723,6 +1745,48 @@ namespace zy_cutPicture
         private void btnSetting_Click(object sender, EventArgs e)
         {
             OpenSettingForm();
+        }
+
+        private void mode_pre_pic_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            var go = sender as ComboBox;
+            //方格
+            //黑色 1
+            //灰色 2
+            //白色 3
+            //红色 4
+            //绿色 5
+            //蓝色 6
+            this.panel2_content.BackgroundImage = null;
+            if (go.SelectedIndex == 1)
+            {
+                this.panel2_content.BackColor = Color.Black;
+            }
+            else if (go.SelectedIndex == 2)
+            {
+                this.panel2_content.BackColor = Color.Gray;
+            }
+            else if (go.SelectedIndex == 3)
+            {
+                this.panel2_content.BackColor = Color.White;
+            }
+            else if (go.SelectedIndex == 4)
+            {
+                this.panel2_content.BackColor = Color.Red;
+            }
+            else if (go.SelectedIndex == 5)
+            {
+                this.panel2_content.BackColor = Color.Green;
+            }
+            else if (go.SelectedIndex == 6)
+            {
+                this.panel2_content.BackColor = Color.Blue;
+            }
+            else
+            {
+                this.panel2_content.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            }
         }
     }
     public class VisitItem

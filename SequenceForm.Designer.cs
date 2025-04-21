@@ -78,6 +78,9 @@ namespace zy_cutPicture
             this.panelWorkArea = new System.Windows.Forms.Panel();
             this.panel_anim = new ResizablePanel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.mode_color = new System.Windows.Forms.ComboBox();
+            this.ck_duijiao = new System.Windows.Forms.CheckBox();
             this.ck_duibi = new System.Windows.Forms.CheckBox();
             this.mode_pre_pic = new System.Windows.Forms.ComboBox();
             this.type_pre_pic = new System.Windows.Forms.ComboBox();
@@ -103,7 +106,6 @@ namespace zy_cutPicture
             this.num_rongcha = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.panel_Area = new System.Windows.Forms.Panel();
-            this.ck_duijiao = new System.Windows.Forms.CheckBox();
             this.mainMenuStrip.SuspendLayout();
             this.customTitleBar.SuspendLayout();
             this.panelWorkArea.SuspendLayout();
@@ -450,34 +452,80 @@ namespace zy_cutPicture
             this.panel_anim.Controls.Add(this.label4);
             this.panel_anim.Location = new System.Drawing.Point(252, 57);
             this.panel_anim.Name = "panel_anim";
-            this.panel_anim.Size = new System.Drawing.Size(274, 262);
+            this.panel_anim.Size = new System.Drawing.Size(350, 262);
             this.panel_anim.TabIndex = 3;
             this.panel_anim.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_anim_Paint);
             // 
             // groupBox2
             // 
             this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.groupBox2.Controls.Add(this.comboBox1);
+            this.groupBox2.Controls.Add(this.mode_color);
             this.groupBox2.Controls.Add(this.ck_duijiao);
             this.groupBox2.Controls.Add(this.ck_duibi);
             this.groupBox2.Controls.Add(this.mode_pre_pic);
             this.groupBox2.Controls.Add(this.type_pre_pic);
-            this.groupBox2.Location = new System.Drawing.Point(5, 229);
+            this.groupBox2.Location = new System.Drawing.Point(2, 231);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(262, 22);
+            this.groupBox2.Size = new System.Drawing.Size(350, 22);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "对比";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.comboBox1.Items.AddRange(new object[] {
+            "方格",
+            "黑色",
+            "灰色",
+            "白色",
+            "红色",
+            "绿色",
+            "蓝色"});
+            this.comboBox1.Location = new System.Drawing.Point(45, -3);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(63, 20);
+            this.comboBox1.TabIndex = 24;
+            this.comboBox1.Text = "背景色";
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // mode_color
+            // 
+            this.mode_color.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.mode_color.Items.AddRange(new object[] {
+            "本色",
+            "黑色",
+            "灰色",
+            "白色",
+            "红色",
+            "绿色",
+            "蓝色"});
+            this.mode_color.Location = new System.Drawing.Point(233, -3);
+            this.mode_color.Name = "mode_color";
+            this.mode_color.Size = new System.Drawing.Size(50, 20);
+            this.mode_color.TabIndex = 23;
+            this.mode_color.Text = "颜色";
+            // 
+            // ck_duijiao
+            // 
+            this.ck_duijiao.AutoSize = true;
+            this.ck_duijiao.Location = new System.Drawing.Point(287, 0);
+            this.ck_duijiao.Name = "ck_duijiao";
+            this.ck_duijiao.Size = new System.Drawing.Size(60, 16);
+            this.ck_duijiao.TabIndex = 7;
+            this.ck_duijiao.Text = "对角线";
+            this.ck_duijiao.UseVisualStyleBackColor = true;
             // 
             // ck_duibi
             // 
             this.ck_duibi.AutoSize = true;
             this.ck_duibi.Checked = true;
             this.ck_duibi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_duibi.Location = new System.Drawing.Point(35, 0);
+            this.ck_duibi.Location = new System.Drawing.Point(2, 0);
             this.ck_duibi.Name = "ck_duibi";
             this.ck_duibi.Size = new System.Drawing.Size(48, 16);
             this.ck_duibi.TabIndex = 6;
-            this.ck_duibi.Text = "开启";
+            this.ck_duibi.Text = "对比";
             this.ck_duibi.UseVisualStyleBackColor = true;
             this.ck_duibi.CheckedChanged += new System.EventHandler(this.ck_duibi_CheckedChanged);
             // 
@@ -489,11 +537,11 @@ namespace zy_cutPicture
             "上1帧",
             "第1帧",
             "最后帧"});
-            this.mode_pre_pic.Location = new System.Drawing.Point(81, -3);
+            this.mode_pre_pic.Location = new System.Drawing.Point(108, -3);
             this.mode_pre_pic.Name = "mode_pre_pic";
             this.mode_pre_pic.Size = new System.Drawing.Size(60, 20);
             this.mode_pre_pic.TabIndex = 5;
-            this.mode_pre_pic.Text = "对比帧";
+            this.mode_pre_pic.Text = "背景帧";
             // 
             // type_pre_pic
             // 
@@ -505,7 +553,7 @@ namespace zy_cutPicture
             "绿色",
             "蓝色",
             "反色"});
-            this.type_pre_pic.Location = new System.Drawing.Point(142, -4);
+            this.type_pre_pic.Location = new System.Drawing.Point(168, -3);
             this.type_pre_pic.Name = "type_pre_pic";
             this.type_pre_pic.Size = new System.Drawing.Size(60, 20);
             this.type_pre_pic.TabIndex = 4;
@@ -517,7 +565,7 @@ namespace zy_cutPicture
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.btn_play);
             this.groupBox1.Controls.Add(this.num_anim_interval);
-            this.groupBox1.Location = new System.Drawing.Point(5, 197);
+            this.groupBox1.Location = new System.Drawing.Point(43, 197);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(262, 23);
             this.groupBox1.TabIndex = 7;
@@ -580,7 +628,7 @@ namespace zy_cutPicture
             this.anim_icon_info.AutoEllipsis = true;
             this.anim_icon_info.BackColor = System.Drawing.Color.Transparent;
             this.anim_icon_info.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.anim_icon_info.Location = new System.Drawing.Point(185, 172);
+            this.anim_icon_info.Location = new System.Drawing.Point(261, 172);
             this.anim_icon_info.Name = "anim_icon_info";
             this.anim_icon_info.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.anim_icon_info.Size = new System.Drawing.Size(82, 12);
@@ -601,7 +649,7 @@ namespace zy_cutPicture
             // btn_next
             // 
             this.btn_next.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btn_next.Location = new System.Drawing.Point(248, 80);
+            this.btn_next.Location = new System.Drawing.Point(324, 80);
             this.btn_next.Name = "btn_next";
             this.btn_next.Size = new System.Drawing.Size(21, 35);
             this.btn_next.TabIndex = 5;
@@ -614,10 +662,11 @@ namespace zy_cutPicture
             this.pic_anim.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pic_anim.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pic_anim.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
             this.pic_anim.Location = new System.Drawing.Point(5, 19);
             this.pic_anim.Name = "pic_anim";
-            this.pic_anim.Size = new System.Drawing.Size(264, 167);
+            this.pic_anim.Size = new System.Drawing.Size(340, 167);
             this.pic_anim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pic_anim.TabIndex = 0;
             this.pic_anim.TabStop = false;
@@ -787,18 +836,6 @@ namespace zy_cutPicture
             this.panel_Area.Name = "panel_Area";
             this.panel_Area.Size = new System.Drawing.Size(814, 501);
             this.panel_Area.TabIndex = 5;
-            // 
-            // ck_duijiao
-            // 
-            this.ck_duijiao.AutoSize = true;
-            this.ck_duijiao.Checked = true;
-            this.ck_duijiao.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_duijiao.Location = new System.Drawing.Point(204, -1);
-            this.ck_duijiao.Name = "ck_duijiao";
-            this.ck_duijiao.Size = new System.Drawing.Size(60, 16);
-            this.ck_duijiao.TabIndex = 7;
-            this.ck_duijiao.Text = "对角线";
-            this.ck_duijiao.UseVisualStyleBackColor = true;
             // 
             // SequenceForm
             // 
@@ -1198,5 +1235,7 @@ namespace zy_cutPicture
         private ToolStripMenuItem 水平翻转ToolStripMenuItem;
         private ToolStripMenuItem 垂直翻转ToolStripMenuItem;
         private CheckBox ck_duijiao;
+        private ComboBox mode_color;
+        private ComboBox comboBox1;
     }
 }
