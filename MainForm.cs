@@ -1828,9 +1828,10 @@ namespace zy_cutPicture
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
-            //Application.Run(new SettingForm());
-            //Application.Run(new SequenceForm());
+            //Application.Run(new MainForm());//切图
+            //Application.Run(new SettingForm());//切图设置
+            //Application.Run(new SequenceForm());//序列图
+            Application.Run(new FormCutAtlasJson());//json切图
         }
     }
 }
