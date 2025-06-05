@@ -1043,7 +1043,8 @@ namespace zy_cutPicture
 
         private  async void btn_cut_Click(object sender, EventArgs e)
         {
-            string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
+            string selectedPath = SelectSaveDirectory();
+            //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
 
             if (selectedPath != null)
             {
