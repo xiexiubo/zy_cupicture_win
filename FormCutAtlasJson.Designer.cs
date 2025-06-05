@@ -40,10 +40,14 @@ namespace zy_cutPicture
             this.imagePreview = new System.Windows.Forms.PictureBox();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.openFilesButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.export = new System.Windows.Forms.Button();
             this.btn_allmanifest = new System.Windows.Forms.Button();
+            this.btn_itemdown = new System.Windows.Forms.Button();
+            this.btn_model = new System.Windows.Forms.Button();
+            this.btn_resv = new System.Windows.Forms.Button();
+            this.btn_cut = new System.Windows.Forms.Button();
+            this.lb_tip = new System.Windows.Forms.Label();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -116,27 +120,17 @@ namespace zy_cutPicture
             // 
             this.openFilesButton.Location = new System.Drawing.Point(21, 14);
             this.openFilesButton.Name = "openFilesButton";
-            this.openFilesButton.Size = new System.Drawing.Size(96, 35);
+            this.openFilesButton.Size = new System.Drawing.Size(68, 35);
             this.openFilesButton.TabIndex = 3;
             this.openFilesButton.Text = "打开文件";
             this.openFilesButton.UseVisualStyleBackColor = true;
             this.openFilesButton.Click += new System.EventHandler(this.openFilesButton_Click_1);
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(150, 16);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(115, 30);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "导出";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(324, 12);
+            this.button1.Location = new System.Drawing.Point(106, 16);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(115, 30);
+            this.button1.Size = new System.Drawing.Size(64, 30);
             this.button1.TabIndex = 5;
             this.button1.Text = "转换成xml";
             this.button1.UseVisualStyleBackColor = true;
@@ -144,30 +138,83 @@ namespace zy_cutPicture
             // 
             // export
             // 
-            this.export.Location = new System.Drawing.Point(461, 12);
+            this.export.Location = new System.Drawing.Point(176, 16);
             this.export.Name = "export";
-            this.export.Size = new System.Drawing.Size(115, 30);
+            this.export.Size = new System.Drawing.Size(67, 30);
             this.export.TabIndex = 6;
             this.export.Text = "导出";
             this.export.UseVisualStyleBackColor = true;
             // 
             // btn_allmanifest
             // 
-            this.btn_allmanifest.Location = new System.Drawing.Point(595, 12);
+            this.btn_allmanifest.Location = new System.Drawing.Point(354, 12);
             this.btn_allmanifest.Name = "btn_allmanifest";
-            this.btn_allmanifest.Size = new System.Drawing.Size(115, 30);
+            this.btn_allmanifest.Size = new System.Drawing.Size(84, 30);
             this.btn_allmanifest.TabIndex = 7;
             this.btn_allmanifest.Text = "allmanifest";
             this.btn_allmanifest.UseVisualStyleBackColor = true;
             this.btn_allmanifest.Click += new System.EventHandler(this.btn_allmanifest_Click);
             // 
+            // btn_itemdown
+            // 
+            this.btn_itemdown.Location = new System.Drawing.Point(444, 12);
+            this.btn_itemdown.Name = "btn_itemdown";
+            this.btn_itemdown.Size = new System.Drawing.Size(61, 30);
+            this.btn_itemdown.TabIndex = 8;
+            this.btn_itemdown.Text = "items";
+            this.btn_itemdown.UseVisualStyleBackColor = true;
+            this.btn_itemdown.Click += new System.EventHandler(this.btn_itemdown_Click);
+            // 
+            // btn_model
+            // 
+            this.btn_model.Location = new System.Drawing.Point(511, 12);
+            this.btn_model.Name = "btn_model";
+            this.btn_model.Size = new System.Drawing.Size(57, 30);
+            this.btn_model.TabIndex = 9;
+            this.btn_model.Text = "models";
+            this.btn_model.UseVisualStyleBackColor = true;
+            this.btn_model.Click += new System.EventHandler(this.btn_model_Click);
+            // 
+            // btn_resv
+            // 
+            this.btn_resv.Location = new System.Drawing.Point(574, 12);
+            this.btn_resv.Name = "btn_resv";
+            this.btn_resv.Size = new System.Drawing.Size(79, 30);
+            this.btn_resv.TabIndex = 10;
+            this.btn_resv.Text = "res版本资源";
+            this.btn_resv.UseVisualStyleBackColor = true;
+            this.btn_resv.Click += new System.EventHandler(this.btn_resv_Click);
+            // 
+            // btn_cut
+            // 
+            this.btn_cut.Location = new System.Drawing.Point(673, 12);
+            this.btn_cut.Name = "btn_cut";
+            this.btn_cut.Size = new System.Drawing.Size(79, 30);
+            this.btn_cut.TabIndex = 11;
+            this.btn_cut.Text = "切图";
+            this.btn_cut.UseVisualStyleBackColor = true;
+            this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
+            // 
+            // lb_tip
+            // 
+            this.lb_tip.AutoSize = true;
+            this.lb_tip.Location = new System.Drawing.Point(21, 506);
+            this.lb_tip.Name = "lb_tip";
+            this.lb_tip.Size = new System.Drawing.Size(41, 12);
+            this.lb_tip.TabIndex = 12;
+            this.lb_tip.Text = "label1";
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 561);
+            this.Controls.Add(this.lb_tip);
+            this.Controls.Add(this.btn_cut);
+            this.Controls.Add(this.btn_resv);
+            this.Controls.Add(this.btn_model);
+            this.Controls.Add(this.btn_itemdown);
             this.Controls.Add(this.btn_allmanifest);
             this.Controls.Add(this.export);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.openFilesButton);
             this.Controls.Add(this.splitContainer);
             this.Name = "FormCutAtlasJson";
@@ -181,6 +228,7 @@ namespace zy_cutPicture
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -193,9 +241,13 @@ namespace zy_cutPicture
         private PictureBox imagePreview;
         private SplitContainer splitContainer;
         private Button openFilesButton;
-        private Button button2;
         private Button button1;
         private Button export;
         private Button btn_allmanifest;
+        private Button btn_itemdown;
+        private Button btn_model;
+        private Button btn_resv;
+        private Button btn_cut;
+        private Label lb_tip;
     }
 }
