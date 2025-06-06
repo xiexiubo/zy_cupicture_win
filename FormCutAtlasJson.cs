@@ -574,13 +574,13 @@ namespace zy_cutPicture
                     {
                         return false;
                     }
-
+                   
                     if (jsonText.Contains("frameRate"))
                     {
                         McConfig data = JsonConvert.DeserializeObject<McConfig>(jsonText);
                         if (data != null && data.Mc != null)
                         {
-                            Console.WriteLine($"文件名: {data.Mc.Count} ,{data.Res.Count}");
+                            Console.WriteLine($"文件名:{jsonPath}");
                             foreach (var mc in data.Mc)
                             {
                                
@@ -615,9 +615,14 @@ namespace zy_cutPicture
 
                                     if (File.Exists(path))
                                     {
-                                        if (minX < 0 || minY < 0)
-                                        {
-                                            File.Delete(path);
+                                        //if (minX < 0 || minY < 0)
+                                        //{
+                                        //    File.Delete(path);
+                                        //}
+                                        FileInfo fileInfo = new FileInfo(path);
+                                        if (fileInfo.Length == 0)
+                                        { 
+                                            File.Delete(path); 
                                         }
                                         else
                                         {
@@ -645,6 +650,15 @@ namespace zy_cutPicture
                                         Directory.CreateDirectory(directory);
                                     }
                                     croppedBitmap.Save(path);
+
+                                    //update directory
+                                    //path = path.Replace("resource", "resource_update");
+                                    // directory = Path.GetDirectoryName(path);
+                                    //if (!Directory.Exists(directory))
+                                    //{
+                                    //    Directory.CreateDirectory(directory);
+                                    //}
+                                    //croppedBitmap.Save(path);
                                     croppedBitmap.Dispose();
                                 }
                                 return true;
@@ -686,9 +700,14 @@ namespace zy_cutPicture
 
                                 if (File.Exists(path))
                                 {
-                                    if (minX < 0 || minY < 0)
-                                    {
-                                        File.Delete(path);
+                                    //if (minX < 0 || minY < 0)
+                                    //{
+                                    //    File.Delete(path);
+                                    //}
+                                    FileInfo fileInfo = new FileInfo(path);
+                                    if (fileInfo.Length == 0)
+                                    { 
+                                        File.Delete(path); 
                                     }
                                     else
                                     {
@@ -719,6 +738,14 @@ namespace zy_cutPicture
                                     Directory.CreateDirectory(directory);
                                 }
                                 croppedBitmap.Save(path);
+                                //update directory
+                                //path = path.Replace("resource", "resource_update");
+                                //directory = Path.GetDirectoryName(path);
+                                //if (!Directory.Exists(directory))
+                                //{
+                                //    Directory.CreateDirectory(directory);
+                                //}
+                                //croppedBitmap.Save(path);
                                 croppedBitmap.Dispose();
                             }
                             return true;
