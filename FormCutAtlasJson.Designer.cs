@@ -48,6 +48,7 @@ namespace zy_cutPicture
             this.btn_resv = new System.Windows.Forms.Button();
             this.btn_cut = new System.Windows.Forms.Button();
             this.lb_tip = new System.Windows.Forms.Label();
+            this.btn_cut1 = new System.Windows.Forms.Button();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -191,7 +192,7 @@ namespace zy_cutPicture
             this.btn_cut.Name = "btn_cut";
             this.btn_cut.Size = new System.Drawing.Size(79, 30);
             this.btn_cut.TabIndex = 11;
-            this.btn_cut.Text = "切图";
+            this.btn_cut.Text = "切图(目录)";
             this.btn_cut.UseVisualStyleBackColor = true;
             this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
             // 
@@ -204,9 +205,20 @@ namespace zy_cutPicture
             this.lb_tip.TabIndex = 12;
             this.lb_tip.Text = "label1";
             // 
+            // btn_cut1
+            // 
+            this.btn_cut1.Location = new System.Drawing.Point(758, 12);
+            this.btn_cut1.Name = "btn_cut1";
+            this.btn_cut1.Size = new System.Drawing.Size(79, 30);
+            this.btn_cut1.TabIndex = 13;
+            this.btn_cut1.Text = "切图(文件)";
+            this.btn_cut1.UseVisualStyleBackColor = true;
+            this.btn_cut1.Click += new System.EventHandler(this.btn_cut1_Click);
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 561);
+            this.Controls.Add(this.btn_cut1);
             this.Controls.Add(this.lb_tip);
             this.Controls.Add(this.btn_cut);
             this.Controls.Add(this.btn_resv);
@@ -249,5 +261,6 @@ namespace zy_cutPicture
         private Button btn_resv;
         private Button btn_cut;
         private Label lb_tip;
+        private Button btn_cut1;
     }
 }

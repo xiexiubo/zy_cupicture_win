@@ -574,7 +574,7 @@ namespace zy_cutPicture
                     {
                         return false;
                     }
-                   
+                    Console.WriteLine($"-----文件名:{jsonPath}");
                     if (jsonText.Contains("frameRate"))
                     {
                         McConfig data = JsonConvert.DeserializeObject<McConfig>(jsonText);
@@ -652,13 +652,13 @@ namespace zy_cutPicture
                                     croppedBitmap.Save(path);
 
                                     //update directory
-                                    //path = path.Replace("resource", "resource_update");
-                                    // directory = Path.GetDirectoryName(path);
-                                    //if (!Directory.Exists(directory))
-                                    //{
-                                    //    Directory.CreateDirectory(directory);
-                                    //}
-                                    //croppedBitmap.Save(path);
+                                    path = path.Replace("resource", "resource_update");
+                                    directory = Path.GetDirectoryName(path);
+                                    if (!Directory.Exists(directory))
+                                    {
+                                        Directory.CreateDirectory(directory);
+                                    }
+                                    croppedBitmap.Save(path);
                                     croppedBitmap.Dispose();
                                 }
                                 return true;
@@ -666,7 +666,7 @@ namespace zy_cutPicture
                         }
 
                     }
-                    else if (jsonText.Contains("count"))
+                    else if (jsonText.Contains("\"count\""))
                     {
                         JsonDataModel data2 = JsonConvert.DeserializeObject<JsonDataModel>(jsonText);
                         if (data2 != null && data2.Count > 0)
@@ -915,7 +915,21 @@ namespace zy_cutPicture
                 return null;
             }
         }
+        private string SelectFilePath()
+        {
+            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            {
+                fileDialog.Title = "请选择文件";
+                fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                fileDialog.Filter = "所有文件 (*.*)|*.*"; // 可以自定义文件类型筛选
 
+                if (fileDialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fileDialog.FileName))
+                {
+                    return fileDialog.FileName;
+                }
+                return null;
+            }
+        }
         private async void btn_allmanifest_Click(object sender, EventArgs e)
         {
             string selectedPath = SelectSaveDirectory();
@@ -1075,7 +1089,7 @@ namespace zy_cutPicture
 
             if (selectedPath != null)
             {
-                btn_resv.Enabled = false;
+                btn_cut.Enabled = false;
                 try
                 {
                     // 调用异步方法
@@ -1089,7 +1103,51 @@ namespace zy_cutPicture
                 finally
                 {
                     // 恢复按钮状态
-                    btn_resv.Enabled = true;
+                    btn_cut.Enabled = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("未选择任何目录", "提示",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "JSON文件|*.json|所有文件|*.*";
+                //saveFileDialog.FileName = fileName;
+                saveFileDialog.Title = "选择保存位置";
+                // 禁用按钮防止重复点击
+
+            }
+        }
+
+        private async  void btn_cut1_Click(object sender, EventArgs e)
+        {
+            string selectedPath = SelectFilePath();
+
+            //string selectedPath  = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource\\assets\\gameui4\\window-sheet\\y_common-sheet.json";
+            //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
+            //Console.WriteLine("selectedPath:", selectedPath);
+            if (selectedPath != null)
+            {
+                btn_cut1.Enabled = false;
+                try
+                {
+                    // 检查文件是否为JSON文件
+                    if (Path.GetExtension(selectedPath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // 处理JSON文件
+                        ProcessJsonFile(selectedPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"加载配置失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // 恢复按钮状态
+                    btn_cut1.Enabled = true;
                 }
             }
             else
