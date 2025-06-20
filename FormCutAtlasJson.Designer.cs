@@ -49,6 +49,7 @@ namespace zy_cutPicture
             this.btn_cut = new System.Windows.Forms.Button();
             this.lb_tip = new System.Windows.Forms.Label();
             this.btn_cut1 = new System.Windows.Forms.Button();
+            this.btn_icon1 = new System.Windows.Forms.Button();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -215,9 +216,20 @@ namespace zy_cutPicture
             this.btn_cut1.UseVisualStyleBackColor = true;
             this.btn_cut1.Click += new System.EventHandler(this.btn_cut1_Click);
             // 
+            // btn_icon1
+            // 
+            this.btn_icon1.Location = new System.Drawing.Point(314, 488);
+            this.btn_icon1.Name = "btn_icon1";
+            this.btn_icon1.Size = new System.Drawing.Size(79, 30);
+            this.btn_icon1.TabIndex = 14;
+            this.btn_icon1.Text = "btn_icon1";
+            this.btn_icon1.UseVisualStyleBackColor = true;
+            this.btn_icon1.Click += new System.EventHandler(this.btn_icon1_Click);
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 561);
+            this.Controls.Add(this.btn_icon1);
             this.Controls.Add(this.btn_cut1);
             this.Controls.Add(this.lb_tip);
             this.Controls.Add(this.btn_cut);
@@ -262,5 +274,6 @@ namespace zy_cutPicture
         private Button btn_cut;
         private Label lb_tip;
         private Button btn_cut1;
+        private Button btn_icon1;
     }
 }

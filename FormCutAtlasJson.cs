@@ -510,6 +510,78 @@ namespace zy_cutPicture
             }
         }
 
+      
+    
+
+  
+    /// <summary>
+    /// 版本表资源下载
+    /// </summary>
+    /// <param name="directory"></param>
+    static async void DoneRes_(string directory)
+        {
+            try
+            {
+                //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
+                //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809";//modelinfo
+                //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.25209.2.json?v=20250620170332";
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+
+                    // 反序列化为配置对象
+                    Res_Custom config = JsonConvert.DeserializeObject<Res_Custom>(json);
+                    Console.WriteLine($"文件num: {config.Monsters.Count}");
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+
+                    int downCount = 0;
+
+                    foreach (var m in config.Monsters)
+                    {
+                        ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
+                        //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00086.png?ver=1.0.1
+                       
+                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/{m.Value.Head}.png?ver=1.0.1";
+                        string filePath = Path.Combine(directory, $"resource/icon/head/{m.Key}.png");
+                        Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
+                        //await 
+                        DownloadFileAsync(subUrl, filePath);
+
+                        downCount++;
+                    }
+
+                    //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+            }
+        }
+
         // 递归处理目录及其子目录
         static async void ProcessDirectory(string directoryPath)
         {
@@ -1125,6 +1197,8 @@ namespace zy_cutPicture
         {
             string selectedPath = SelectFilePath();
 
+            //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_04267.png?ver=1.0.1
+
             //string selectedPath  = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource\\assets\\gameui4\\window-sheet\\y_common-sheet.json";
             //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
             //Console.WriteLine("selectedPath:", selectedPath);
@@ -1148,6 +1222,44 @@ namespace zy_cutPicture
                 {
                     // 恢复按钮状态
                     btn_cut1.Enabled = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("未选择任何目录", "提示",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "JSON文件|*.json|所有文件|*.*";
+                //saveFileDialog.FileName = fileName;
+                saveFileDialog.Title = "选择保存位置";
+                // 禁用按钮防止重复点击
+
+            }
+        }
+
+        private async void btn_icon1_Click(object sender, EventArgs e)
+        {
+            string selectedPath = SelectSaveDirectory();
+
+            if (selectedPath != null)
+            {
+                btn_resv.Enabled = false;
+                try
+                {
+                    // 调用异步方法
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_(selectedPath));
+                    MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"加载配置失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // 恢复按钮状态
+                    btn_resv.Enabled = true;
                 }
             }
             else
@@ -1282,6 +1394,17 @@ namespace zy_cutPicture
         [JsonProperty("h")]
         public int H { get; set; }
     }
-    
+
+    public class Res_Custom
+    {
+        [JsonProperty("monster")]
+        public Dictionary<string, Res_Custom_sub> Monsters { get; set; }
+    }
+    public class Res_Custom_sub
+    {
+        [JsonProperty("head")]
+        public string Head { get; set; }
+    }
+
     #endregion
 }
