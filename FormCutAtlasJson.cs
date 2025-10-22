@@ -1332,7 +1332,24 @@ namespace zy_cutPicture
             });
         }
 
+        private void btn_help_Click(object sender, EventArgs e)
+        {
+            string targetUrl = "https://share.note.youdao.com/s/NvMOTG5"; // 替换为你要打开的 URL
 
+            try
+            {
+                // 关键代码：调用系统默认浏览器打开 URL
+                Process.Start(new ProcessStartInfo(targetUrl)
+                {
+                    UseShellExecute = true // 确保以Shell方式启动，适配不同系统
+                });
+            }
+            catch (Exception ex)
+            {
+                // 异常处理：如 URL 格式错误、无默认浏览器等
+                MessageBox.Show($"打开链接失败：{ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 
 

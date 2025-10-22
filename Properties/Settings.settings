@@ -24,7 +24,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="resVersion_diwang" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">1.28929.3</Value>
     </Setting>
   </Settings>
 </SettingsFile>

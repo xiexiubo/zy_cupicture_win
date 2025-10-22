@@ -173,6 +173,16 @@ namespace zy_cutPicture.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        public static System.Drawing.Bitmap 问号 {
+            get {
+                object obj = ResourceManager.GetObject("问号", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         public static System.Drawing.Bitmap 魔术棒 {
             get {
                 object obj = ResourceManager.GetObject("魔术棒", resourceCulture);
