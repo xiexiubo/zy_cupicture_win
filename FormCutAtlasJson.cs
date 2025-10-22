@@ -1,216 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using zy_cutPicture.Properties;
 
 namespace zy_cutPicture
 {
     public partial class FormCutAtlasJson : Form
     {
         public static FormCutAtlasJson Instance;
+        public static bool IsDebug = false;
         public FormCutAtlasJson()
         {
             InitializeComponent();
-            Instance=this;
-        }
-               
-
-        private void UpdateFileList()
-        {
-            fileListBox.Items.Clear();
-            foreach (var file in currentFiles)
-            {
-                fileListBox.Items.Add(Path.GetFileName(file));
-            }
+            Instance = this;
+            Reset();
         }
 
-     
-
-        private void DisplayFileContent(string filePath)
+        public void Reset() 
         {
-            // 隐藏所有预览控件
-            imagePreview.Visible = false;
-            textPreview.Visible = false;
-
-            try
-            {
-                string extension = Path.GetExtension(filePath).ToLowerInvariant();
-
-                switch (extension)
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                    case ".gif":
-                    case ".bmp":
-                        DisplayImage(filePath);
-                        break;
-                    case ".json":
-                        DisplayJson(filePath);
-                        break;
-                    default:
-                        DisplayText(filePath);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"无法显示文件内容: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            this.img_1.Visible = false;
+            this.img_2.Visible = false;
+            this.img_3.Visible = false;
+            this.img_4.Visible = false;
+            this.img_5.Visible = false;
+            this.img_6.Visible = false;
+            this.txt_dir.Text = Settings.Default.saveDir_diwang;
+            this.txt_resVer.Text = Settings.Default.resVersion_diwang;
+            this.listStr.Clear();
+            this.logTextBox.Clear();
         }
-
-        private void DisplayImage(string filePath)
+        List<string> listStr = new List<string>();
+        public void AddLog(string message)
         {
-            try
-            {
-                using (var tempImage = Image.FromFile(filePath))
-                {
-                    imagePreview.Image = new Bitmap(tempImage);
-                }
-                imagePreview.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                textPreview.Text = $"无法加载图片: {ex.Message}";
-                textPreview.Visible = true;
-            }
+            AddLog(message, Color.Black);
         }
-
-        private void DisplayJson(string filePath)
+        public void AddLog(string message, Color color)
         {
-            try
+            listStr.Add(message);
+            logTextBox.Invoke(new Action(() =>
             {
-                string jsonText = File.ReadAllText(filePath, Encoding.UTF8);
-
-                // 美化JSON格式
-                try
-                {
-                    object jsonObj = JsonConvert.DeserializeObject(jsonText);
-                    string formattedJson = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-                    textPreview.Text = formattedJson;
-                }
-                catch
-                {
-                    // 如果JSON格式不正确，显示原始文本
-                    textPreview.Text = jsonText;
-                }
-
-                textPreview.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                textPreview.Text = $"无法读取JSON文件: {ex.Message}";
-                textPreview.Visible = true;
-            }
-        }
-
-        private void DisplayText(string filePath)
-        {
-            try
-            {
-                textPreview.Text = File.ReadAllText(filePath, Encoding.UTF8);
-                textPreview.Visible = true;
-            }
-            catch (Exception ex)
-            {
-                textPreview.Text = $"无法读取文件: {ex.Message}";
-                textPreview.Visible = true;
-            }
-        }
-
-        /// <summary>
-        /// 导出
-        /// </summary>
-        private void button2_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < currentFiles.Length; i++)
-            {
-                var filePath = currentFiles[i];
-                if (Path.GetExtension(filePath) != ".json")
-                    continue;
-
-                string jsonText = File.ReadAllText(filePath, Encoding.UTF8);
-
-                // 美化JSON格式
-                try
-                {
-                    object jsonObj = JsonConvert.DeserializeObject(jsonText);
-                    string formattedJson = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-                    textPreview.Text = formattedJson;
-                }
-                catch (Exception ex)
-                {
-                   
-                }
-                Console.WriteLine(currentFiles[i], Path.GetExtension(filePath));
-            }
-
+                logTextBox.SelectionStart = logTextBox.TextLength;
+                logTextBox.SelectionColor = color;
+                logTextBox.AppendText(message + Environment.NewLine);
+                logTextBox.ScrollToCaret();
+            }));
 
         }
-
-        private void openFilesButton_Click_1(object sender, EventArgs e)
+        public void listClear()
         {
-            using (var openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Multiselect = true;
-                openFileDialog.Filter = "所有支持的文件|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.json|图片文件|*.jpg;*.jpeg;*.png;*.gif;*.bmp|JSON文件|*.json|所有文件|*.*";
-                openFileDialog.Title = "选择文件";
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    currentFiles = openFileDialog.FileNames;
-                    UpdateFileList();
-                }
-            }
-        }
-
-        private void fileListBox_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            if (fileListBox.SelectedIndex >= 0 && fileListBox.SelectedIndex < currentFiles.Length)
-            {
-                string filePath = currentFiles[fileListBox.SelectedIndex];
-                DisplayFileContent(filePath);
-            }
-        }
-        /// <summary>
-        /// 转换为XML
-        /// </summary>
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(textPreview.Text))
-                {
-                    MessageBox.Show("没有可转换的JSON内容", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // 尝试解析JSON
-                JToken jsonToken = JToken.Parse(textPreview.Text);
-
-                // 转换为XML
-                var xmlElement = JsonConvert.DeserializeXNode(jsonToken.ToString(), "Root");
-                string xmlString = xmlElement.ToString(SaveOptions.None);
-
-                // 显示转换结果
-                textPreview.Text = xmlString;
-                MessageBox.Show("转换完成！", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"转换失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            listStr.Clear();
+            logTextBox.Clear();
         }
 
         public class AllManifest_Value
@@ -220,11 +68,13 @@ namespace zy_cutPicture
         }  
         
         //配置图片资源下载
-        static async void DoneRes_AllManifest(string directory)
+        static async Task DoneRes_AllManifest(string directory)
         {
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.24591.2.json?v=20250530185809?qufu_version=20";
+                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.28929.3.json?v=20251017185057?qufu_version=30";
+                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest{Instance.txt_resVer.Text}.json?v=20251017185057?qufu_version=30";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -240,6 +90,7 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     Dictionary<string, AllManifest_Value> config = JsonConvert.DeserializeObject<Dictionary<string, AllManifest_Value>>(json);
                     Console.WriteLine($"文件num: {config.Keys.Count}");
+                    Instance.AddLog($"DoneRes_AllManifest下载 num: {config.Keys.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -251,24 +102,31 @@ namespace zy_cutPicture
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/resource/{kvp.Value.v.Substring(0, 2)}/{kvp.Value.v}_{kvp.Value.s}{Path.GetExtension(kvp.Key)}";
                         string filePath = Path.Combine(directory, kvp.Key);
-                        Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        await DownloadFileAsync(subUrl, filePath);
+                        Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
+                        Instance.AddLog($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                        DownloadFileAsync(subUrl, filePath);
                         downCount++;
+                        if (downCount >= 3&& IsDebug)
+                        break;
                     }
+                    
                     Console.WriteLine($"文件数： {config.Keys.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误1: {ex.Message}", Color.Red);
             }
         }
         public class cfgItem_Value
@@ -286,12 +144,14 @@ namespace zy_cutPicture
             [JsonProperty("item")]
             public Dictionary<string, cfgItem_Value> Items { get; set; }
         }
-        static async void DoneRes_Item(string directory)
+        static async Task DoneRes_Item(string directory)
         {
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.24591.2.json?v=20250530185809";
-
+                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.28929.3.json?v=20251017185057";
+                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/1config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                       
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -308,6 +168,7 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     ItemRoot config = JsonConvert.DeserializeObject<ItemRoot>(json);
                     Console.WriteLine($"文件num: {config.Items.Count}");
+                    Instance.AddLog($"-----物品图标下载:{config.Items.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -321,24 +182,31 @@ namespace zy_cutPicture
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/tool/{v.Value.Prop19}.png";
                         string filePath = Path.Combine(directory, $"resource/icon/tool/{v.Value.Prop19}.png");
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        await DownloadFileAsync(subUrl, filePath);
+                        Instance.AddLog($"{downCount}/{config.Items.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                        DownloadFileAsync(subUrl, filePath);
                         downCount++;
+                        if (downCount >= 3 && IsDebug)
+                            break;
 
                     }
+                    
                     Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误2: {ex.Message}", Color.Red);
             }
         }
 
@@ -369,12 +237,14 @@ namespace zy_cutPicture
             [JsonProperty("standy")]
             public long StandY { get; set; }
         }
-        static async void DoneRes_Model(string directory)
+        static async Task DoneRes_Model(string directory)
         {
             try
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
+                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
+                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -392,6 +262,7 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     ModelInfoWrapper config = JsonConvert.DeserializeObject<ModelInfoWrapper>(json);
                     Console.WriteLine($"文件num: {config.ModelInfo.Count}");
+                    Instance.AddLog($"-----模型资源下载:{config.ModelInfo.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -411,28 +282,35 @@ namespace zy_cutPicture
                                 string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
                                 string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
                                 Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                                await DownloadFileAsync(subUrl+".png", filePath + ".png");
-                                await DownloadFileAsync(subUrl + ".json", filePath + ".json");
+                                Instance.AddLog($"{downCount}/{config.ModelInfo.Count* v.Value.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                                DownloadFileAsync(subUrl+".png", filePath + ".png");
+                                 DownloadFileAsync(subUrl + ".json", filePath + ".json");
                             }
                             
                             downCount++;
-
+                           
                         }
+                        if (downCount >= 3 && IsDebug)
+                            break;
                     }
+                    
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
             }
         }
         public class VersionInfo
@@ -447,7 +325,7 @@ namespace zy_cutPicture
         /// 版本表资源下载
         /// </summary>
         /// <param name="directory"></param>
-        static async void DoneRes_Resversion(string directory)
+        static async Task DoneRes_Resversion(string directory)
         {
             try
             {
@@ -470,6 +348,7 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     VersionInfo config = JsonConvert.DeserializeObject<VersionInfo>(json);
                     Console.WriteLine($"文件num: {config.AdditionalData.Count}");
+                    Instance.AddLog($"-----版本表资源下载:{config.AdditionalData.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -481,32 +360,46 @@ namespace zy_cutPicture
                     {
                     ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
                     //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                    https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
+                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
                         if (!m.Key.Contains(".")) continue;
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Key}";
                         string filePath = Path.Combine(directory, $"resource/{m.Key}");
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        //await 
-                            DownloadFileAsync(subUrl, filePath);
+                        //await
+                        Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                        DownloadFileAsync(subUrl, filePath);
+
+                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Value}/{m.Key}";
+                        filePath = Path.Combine(directory, $"resource/{m.Value}/{m.Key}");
+                        Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
+                        Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                           //await 
+                           DownloadFileAsync(subUrl, filePath);
 
                         downCount++;
+                        if (downCount >= 3 && IsDebug)
+                            break;
+                        break;
                     }
-
+                    
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误4: {ex.Message}", Color.Red);
             }
         }
 
@@ -515,10 +408,10 @@ namespace zy_cutPicture
 
   
     /// <summary>
-    /// 版本表资源下载
+    /// 怪物头像下载
     /// </summary>
     /// <param name="directory"></param>
-    static async void DoneRes_(string directory)
+        static async Task DoneRes_head(string directory)
         {
             try
             {
@@ -526,6 +419,7 @@ namespace zy_cutPicture
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809";//modelinfo
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.25209.2.json?v=20250620170332";
+                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20250620170332";
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -542,6 +436,7 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     Res_Custom config = JsonConvert.DeserializeObject<Res_Custom>(json);
                     Console.WriteLine($"文件num: {config.Monsters.Count}");
+                    Instance.AddLog($"-----怪物头像:{config.Monsters.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -555,35 +450,42 @@ namespace zy_cutPicture
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00086.png?ver=1.0.1
-                       
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00139.png?ver=1.0.1
+
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/{m.Value.Head}.png?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/icon/head/{m.Key}.png");
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
+                        Instance.AddLog($"{downCount}/{config.Monsters.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
                         //await 
                         DownloadFileAsync(subUrl, filePath);
 
                         downCount++;
+                        if (downCount >= 3 && IsDebug)
+                            break;
                     }
-
+                    
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误5: {ex.Message}", Color.Red);
             }
         }
 
         // 递归处理目录及其子目录
-        static async void ProcessDirectory(string directoryPath)
+        static async Task ProcessDirectory(string directoryPath)
         {
             // 检查目录是否存在
             if (!Directory.Exists(directoryPath))
@@ -604,7 +506,7 @@ namespace zy_cutPicture
                     if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
                     {
                         // 处理JSON文件
-                        ProcessJsonFile(filePath);
+                      await ProcessJsonFile(filePath);
                     }
                 }
 
@@ -612,29 +514,39 @@ namespace zy_cutPicture
                 string[] subDirectories = Directory.GetDirectories(directoryPath);
                 foreach (string subDirectory in subDirectories)
                 {
-                    ProcessDirectory(subDirectory);
+                   await ProcessDirectory(subDirectory);
                 }
             }
             catch (UnauthorizedAccessException)
             {
                 Console.WriteLine($"访问被拒绝: {directoryPath}");
+                Instance.AddLog($"访问被拒绝: {directoryPath}", Color.Red);
             }
             catch (PathTooLongException)
             {
                 Console.WriteLine($"路径太长: {directoryPath}");
+                Instance.AddLog($"路径太长: {directoryPath}", Color.Red);
             }
             catch (DirectoryNotFoundException)
             {
                 Console.WriteLine($"目录未找到: {directoryPath}");
+                Instance.AddLog($"目录未找到: {directoryPath}", Color.Red);
             }
             catch (IOException ex)
             {
                 Console.WriteLine($"处理目录时发生IO错误: {directoryPath}, 错误: {ex.Message}");
+                Instance.AddLog($"处理目录时发生IO错误: {directoryPath}, 错误: {ex.Message}", Color.Red);
             }
-        }
 
-        private static bool ProcessJsonFile(string jsonPath)
-        {
+        }
+        
+        private static async Task<bool> ProcessJsonFile(string jsonPath)
+        {            
+            if (!File.Exists(jsonPath.Replace(".json", ".png"))) 
+            {
+                Instance.AddLog($"-----切图不存在路径:{jsonPath.Replace(".json", ".png")}", Color.Yellow);
+                return false;
+            }
             try
             {
                 string jsonText = File.ReadAllText(jsonPath, Encoding.UTF8);
@@ -647,6 +559,7 @@ namespace zy_cutPicture
                         return false;
                     }
                     Console.WriteLine($"-----文件名:{jsonPath}");
+                    Instance.AddLog($"-----切图路径:{jsonPath}", Color.Green);
                     if (jsonText.Contains("frameRate"))
                     {
                         McConfig data = JsonConvert.DeserializeObject<McConfig>(jsonText);
@@ -715,16 +628,17 @@ namespace zy_cutPicture
                                    
                                     //Instance.lb_tip.Text = $"mc path: {path}";
                                     Console.WriteLine($"mc path: {path}");
+                                    Instance.AddLog($"mc path: {path}", Color.Black);
                                     // 创建保存目录（如果不存在）
                                     string directory = Path.GetDirectoryName(path);
-                                    if (!Directory.Exists(directory))
-                                    {
-                                        Directory.CreateDirectory(directory);
-                                    }
-                                    croppedBitmap.Save(path);
+                                    //if (!Directory.Exists(directory))
+                                    //{
+                                    //    Directory.CreateDirectory(directory);
+                                    //}
+                                    //croppedBitmap.Save(path);
 
                                     //update directory
-                                    path = path.Replace("resource", "resource_update");
+                                    path = path.Replace("resource", "resource_cut");
                                     directory = Path.GetDirectoryName(path);
                                     if (!Directory.Exists(directory))
                                     {
@@ -732,6 +646,7 @@ namespace zy_cutPicture
                                     }
                                     croppedBitmap.Save(path);
                                     croppedBitmap.Dispose();
+                                    await Task.Delay(5);
                                 }
                                 return true;
                             }
@@ -788,6 +703,7 @@ namespace zy_cutPicture
 
                                 }
                                 Console.WriteLine($"model path: {Path.GetFileName(path) } bitmap:{bitmap}, OffX:{(int)(fr.OffX - minX)}, OffY:{(int)(fr.OffY - minY)}, rect:{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},W:{maxW}, H:{maxH}");
+                                Instance.AddLog($"model path: {Path.GetFileName(path)} bitmap:{bitmap}, OffX:{(int)(fr.OffX - minX)}, OffY:{(int)(fr.OffY - minY)}, rect:{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},W:{maxW}, H:{maxH}", Color.Black);
                                 // 创建与裁剪区域大小相同的新Bitmap
                                 Bitmap croppedBitmap = new Bitmap(maxW, maxH);
 
@@ -805,20 +721,22 @@ namespace zy_cutPicture
                                 //Console.WriteLine($"model path: {path} bitmap:{bitmap}, fr.OffX:{fr.OffX}, fr.OffY:{fr.OffY}, new Rectangle(fr.X, fr.Y, fr.W, fr.H):{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},fr.SourceW:{fr.SourceW}, fr.SourceH:{fr.SourceH}");
                                 // 创建保存目录（如果不存在）
                                 string directory = Path.GetDirectoryName(path);
-                                if (!Directory.Exists(directory))
-                                {
-                                    Directory.CreateDirectory(directory);
-                                }
-                                croppedBitmap.Save(path);
-                                //update directory
-                                //path = path.Replace("resource", "resource_update");
-                                //directory = Path.GetDirectoryName(path);
                                 //if (!Directory.Exists(directory))
                                 //{
                                 //    Directory.CreateDirectory(directory);
                                 //}
                                 //croppedBitmap.Save(path);
+
+                                //update directory
+                                path = path.Replace("resource", "resource_cut");
+                                directory = Path.GetDirectoryName(path);
+                                if (!Directory.Exists(directory))
+                                {
+                                    Directory.CreateDirectory(directory);
+                                }
+                                croppedBitmap.Save(path);
                                 croppedBitmap.Dispose();
+                                await Task.Delay(5);
                             }
                             return true;
                         }
@@ -849,14 +767,25 @@ namespace zy_cutPicture
                               
                                 //Instance.lb_tip.Text = $"ui model path: {path}";
                                 Console.WriteLine($"ui path: {path}");
+                                Instance.AddLog($"ui path: {path}", Color.Black);
                                 // 创建保存目录（如果不存在）
                                 string directory = Path.GetDirectoryName(path);
+                                //if (!Directory.Exists(directory))
+                                //{
+                                //    Directory.CreateDirectory(directory);
+                                //}
+                                //croppedBitmap.Save(path);
+
+                                path = path.Replace("resource", "resource_cut");
+                                directory = Path.GetDirectoryName(path);
                                 if (!Directory.Exists(directory))
                                 {
                                     Directory.CreateDirectory(directory);
                                 }
                                 croppedBitmap.Save(path);
+
                                 croppedBitmap.Dispose();
+                                await Task.Delay(5);
                             }
                             return true;
                         }
@@ -868,11 +797,13 @@ namespace zy_cutPicture
             catch (JsonSerializationException ex)
             {
                 Console.WriteLine($"JSON解析错误: {ex.Message}");
+                Instance.AddLog($"JSON解析错误: {ex.Message}", Color.Red);
                 return false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误6: {ex.Message}", Color.Red);
                 return false;
             }
             return true;
@@ -1004,7 +935,7 @@ namespace zy_cutPicture
         }
         private async void btn_allmanifest_Click(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            string selectedPath = this.txt_dir.Text;
 
             if (selectedPath != null)
             {
@@ -1012,7 +943,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(selectedPath));
+                    Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(selectedPath)).Wait();
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1042,7 +973,7 @@ namespace zy_cutPicture
 
         private async void btn_itemdown_Click(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            string selectedPath = this.txt_dir.Text;
 
             if (selectedPath != null)
             {
@@ -1050,7 +981,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_Item(selectedPath));
+                    Task.Run(() => FormCutAtlasJson.DoneRes_Item(selectedPath)).Wait();
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1080,7 +1011,7 @@ namespace zy_cutPicture
 
         private async void btn_model_Click(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            string selectedPath = this.txt_dir.Text;
 
             if (selectedPath != null)
             {
@@ -1088,7 +1019,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_Model(selectedPath));
+                    Task.Run(() => FormCutAtlasJson.DoneRes_Model(selectedPath)).Wait(); ;
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1118,7 +1049,7 @@ namespace zy_cutPicture
 
         private async void btn_resv_Click(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            string selectedPath = this.txt_dir.Text;
 
             if (selectedPath != null)
             {
@@ -1126,7 +1057,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(selectedPath));
+                    Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(selectedPath)).Wait(); ;
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1153,10 +1084,51 @@ namespace zy_cutPicture
 
             }
         }
+        /// <summary>
+        /// 下载怪头像
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void btn_icon1_Click(object sender, EventArgs e)
+        {
+            string selectedPath = this.txt_dir.Text;
 
+            if (selectedPath != null)
+            {
+                btn_resv.Enabled = false;
+                try
+                {
+                    // 调用异步方法
+                    Task.Run(() => FormCutAtlasJson.DoneRes_head(selectedPath)).Wait(); ;
+                    MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"加载配置失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // 恢复按钮状态
+                    btn_resv.Enabled = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("未选择任何目录", "提示",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "JSON文件|*.json|所有文件|*.*";
+                //saveFileDialog.FileName = fileName;
+                saveFileDialog.Title = "选择保存位置";
+                // 禁用按钮防止重复点击
+
+            }
+        }
         private  async void btn_cut_Click(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            string selectedPath = this.txt_dir.Text;
             //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
 
             if (selectedPath != null)
@@ -1165,7 +1137,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => ProcessDirectory(selectedPath));
+                    Task.Run(() => ProcessDirectory(selectedPath)).Wait(); ;
                    // MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1239,43 +1211,92 @@ namespace zy_cutPicture
             }
         }
 
-        private async void btn_icon1_Click(object sender, EventArgs e)
+       
+        /// <summary>
+        /// 自动区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ck_00_CheckedChanged(object sender, EventArgs e)
         {
-            string selectedPath = SelectSaveDirectory();
+            this.ck_01.Checked = !this.ck_00.Checked;
 
-            if (selectedPath != null)
-            {
-                btn_resv.Enabled = false;
-                try
-                {
-                    // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_(selectedPath));
-                    MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"加载配置失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    // 恢复按钮状态
-                    btn_resv.Enabled = true;
-                }
-            }
-            else
-            {
-                MessageBox.Show("未选择任何目录", "提示",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Filter = "JSON文件|*.json|所有文件|*.*";
-                //saveFileDialog.FileName = fileName;
-                saveFileDialog.Title = "选择保存位置";
-                // 禁用按钮防止重复点击
-
-            }
+            this.groupBox1.Visible = this.ck_00.Checked;
+            this.groupBox2.Visible = this.ck_01.Checked;
         }
+        /// <summary>
+        /// 手动区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ck_01_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ck_00.Checked = !this.ck_01.Checked;
+
+            this.groupBox1.Visible = this.ck_00.Checked;
+            this.groupBox2.Visible = this.ck_01.Checked;
+
+        }
+
+        /// <summary>
+        /// 浏览
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+           this.txt_dir.Text = SelectSaveDirectory();
+        }
+
+        private void txt_dir_TextChanged(object sender, EventArgs e)
+        {
+            Settings.Default.saveDir_diwang = this.txt_dir.Text;
+            Console.WriteLine($"保存目录修改{this.txt_dir.Text}");
+            Settings.Default.Save();
+        }
+        private void txt_resVer_TextChanged(object sender, EventArgs e)
+        {
+            Settings.Default.resVersion_diwang = this.txt_resVer.Text;
+            Settings.Default.Save();
+        }
+        /// <summary>
+        /// 一键开始
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void btn_onekey_Click(object sender, EventArgs e)
+        {
+
+           await Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(this.txt_dir.Text)) ;
+            AddLog($"完成 下载Allmanifest",Color.Green);
+           this.img_1.Visible = true;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Item(this.txt_dir.Text)) ;
+            AddLog($"完成 下载Items图标", Color.Green);
+            this.img_2.Visible = true;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Model(this.txt_dir.Text)) ;
+            AddLog($"完成 下载Models序列图资源", Color.Green);
+            this.img_3.Visible = true;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(this.txt_dir.Text)) ;
+            AddLog($"完成 下载版本资源图", Color.Green);
+            this.img_4.Visible = true;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_head(this.txt_dir.Text)) ;
+            AddLog($"完成 下载怪物头像图", Color.Green);
+            this.img_5.Visible = true;
+            await Task.Run(() => FormCutAtlasJson.ProcessDirectory(this.txt_dir.Text)) ;
+            AddLog($"完成 图集切割", Color.Green);
+            this.img_6.Visible = true ;
+            AddLog($"--------------全部资源下载处理完成！！", Color.Green);
+
+            // 启动资源管理器并指定目录
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"\"{this.txt_dir.Text}\"", // 使用引号包裹路径，处理包含空格的路径
+                UseShellExecute = true
+            });
+        }
+
+     
     }
 
 

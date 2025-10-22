@@ -94,5 +94,29 @@ namespace zy_cutPicture.Properties {
                 this["expand"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string saveDir_diwang {
+            get {
+                return ((string)(this["saveDir_diwang"]));
+            }
+            set {
+                this["saveDir_diwang"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string resVersion_diwang {
+            get {
+                return ((string)(this["resVersion_diwang"]));
+            }
+            set {
+                this["resVersion_diwang"] = value;
+            }
+        }
     }
 }
