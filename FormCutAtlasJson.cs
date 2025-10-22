@@ -18,6 +18,7 @@ namespace zy_cutPicture
     {
         public static FormCutAtlasJson Instance;
         public static bool IsDebug = false;
+        private static int DebugLimitCount = 100;
         public FormCutAtlasJson()
         {
             InitializeComponent();
@@ -104,9 +105,9 @@ namespace zy_cutPicture
                         string filePath = Path.Combine(directory, kvp.Key);
                         Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
-                        DownloadFileAsync(subUrl, filePath);
+                        await DownloadFileAsync(subUrl, filePath);
                         downCount++;
-                        if (downCount >= 3&& IsDebug)
+                        if (downCount >= DebugLimitCount && IsDebug)
                         break;
                     }
                     
@@ -183,9 +184,9 @@ namespace zy_cutPicture
                         string filePath = Path.Combine(directory, $"resource/icon/tool/{v.Value.Prop19}.png");
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Items.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
-                        DownloadFileAsync(subUrl, filePath);
+                        await DownloadFileAsync(subUrl, filePath);
                         downCount++;
-                        if (downCount >= 3 && IsDebug)
+                        if (downCount >= DebugLimitCount && IsDebug)
                             break;
 
                     }
@@ -284,13 +285,13 @@ namespace zy_cutPicture
                                 Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                                 Instance.AddLog($"{downCount}/{config.ModelInfo.Count* v.Value.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
                                 DownloadFileAsync(subUrl+".png", filePath + ".png");
-                                 DownloadFileAsync(subUrl + ".json", filePath + ".json");
+                                await DownloadFileAsync(subUrl + ".json", filePath + ".json");
                             }
                             
                             downCount++;
                            
                         }
-                        if (downCount >= 3 && IsDebug)
+                        if (downCount >= DebugLimitCount && IsDebug)
                             break;
                     }
                     
@@ -375,10 +376,10 @@ namespace zy_cutPicture
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
                            //await 
-                           DownloadFileAsync(subUrl, filePath);
+                           await DownloadFileAsync(subUrl, filePath);
 
                         downCount++;
-                        if (downCount >= 3 && IsDebug)
+                        if (downCount >= DebugLimitCount && IsDebug)
                             break;
                         break;
                     }
@@ -457,10 +458,10 @@ namespace zy_cutPicture
                         Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Monsters.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
                         //await 
-                        DownloadFileAsync(subUrl, filePath);
+                        await DownloadFileAsync(subUrl, filePath);
 
                         downCount++;
-                        if (downCount >= 3 && IsDebug)
+                        if (downCount >= DebugLimitCount && IsDebug)
                             break;
                     }
                     
@@ -1266,26 +1267,55 @@ namespace zy_cutPicture
         /// <param name="e"></param>
         private async void btn_onekey_Click(object sender, EventArgs e)
         {
+            // 记录总开始时间
+            var totalStartTime = DateTime.Now;
+            AddLog($"开始执行全部任务，开始时间：{totalStartTime:yyyy-MM-dd HH:mm:ss}", Color.Blue);
 
-           await Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(this.txt_dir.Text)) ;
-            AddLog($"完成 下载Allmanifest",Color.Green);
-           this.img_1.Visible = true;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_Item(this.txt_dir.Text)) ;
-            AddLog($"完成 下载Items图标", Color.Green);
+            // 下载Allmanifest
+            var step1Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(this.txt_dir.Text));
+            var step1End = DateTime.Now;
+            AddLog($"完成 下载Allmanifest，耗时：{(step1End - step1Start).TotalSeconds:F2}秒", Color.Green);
+            this.img_1.Visible = true;
+
+            // 下载Items图标
+            var step2Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Item(this.txt_dir.Text));
+            var step2End = DateTime.Now;
+            AddLog($"完成 下载Items图标，耗时：{(step2End - step2Start).TotalSeconds:F2}秒", Color.Green);
             this.img_2.Visible = true;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_Model(this.txt_dir.Text)) ;
-            AddLog($"完成 下载Models序列图资源", Color.Green);
+
+            // 下载Models序列图资源
+            var step3Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Model(this.txt_dir.Text));
+            var step3End = DateTime.Now;
+            AddLog($"完成 下载Models序列图资源，耗时：{(step3End - step3Start).TotalSeconds:F2}秒", Color.Green);
             this.img_3.Visible = true;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(this.txt_dir.Text)) ;
-            AddLog($"完成 下载版本资源图", Color.Green);
+
+            // 下载版本资源图
+            var step4Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(this.txt_dir.Text));
+            var step4End = DateTime.Now;
+            AddLog($"完成 下载版本资源图，耗时：{(step4End - step4Start).TotalSeconds:F2}秒", Color.Green);
             this.img_4.Visible = true;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_head(this.txt_dir.Text)) ;
-            AddLog($"完成 下载怪物头像图", Color.Green);
+
+            // 下载怪物头像图
+            var step5Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_head(this.txt_dir.Text));
+            var step5End = DateTime.Now;
+            AddLog($"完成 下载怪物头像图，耗时：{(step5End - step5Start).TotalSeconds:F2}秒", Color.Green);
             this.img_5.Visible = true;
-            await Task.Run(() => FormCutAtlasJson.ProcessDirectory(this.txt_dir.Text)) ;
-            AddLog($"完成 图集切割", Color.Green);
-            this.img_6.Visible = true ;
-            AddLog($"--------------全部资源下载处理完成！！", Color.Green);
+
+            // 图集切割
+            var step6Start = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.ProcessDirectory(this.txt_dir.Text));
+            var step6End = DateTime.Now;
+            AddLog($"完成 图集切割，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
+            this.img_6.Visible = true;
+
+            // 总耗时统计
+            var totalEndTime = DateTime.Now;
+            AddLog($"--------------全部资源下载处理完成！！总耗时：{(totalEndTime - totalStartTime).TotalHours:F2}小时，结束时间：{totalEndTime:yyyy-MM-dd HH:mm:ss}", Color.Green);
 
             // 启动资源管理器并指定目录
             Process.Start(new ProcessStartInfo
@@ -1296,7 +1326,7 @@ namespace zy_cutPicture
             });
         }
 
-     
+
     }
 
 
