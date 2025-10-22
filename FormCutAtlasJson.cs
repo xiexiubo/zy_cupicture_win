@@ -100,7 +100,14 @@ namespace zy_cutPicture
                     int downCount = 0;
                     foreach (var kvp in config)
                     {
-                        //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
+                        // 检查v的长度是否足够
+                        if (string.IsNullOrEmpty(kvp.Value.v) || kvp.Value.v.Length < 2)
+                        {
+                            Instance.AddLog($"跳过无效条目 {kvp.Key}：v的长度不足2", Color.Yellow);
+                            continue;
+                        }
+
+                        // 安全截取子串
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/resource/{kvp.Value.v.Substring(0, 2)}/{kvp.Value.v}_{kvp.Value.s}{Path.GetExtension(kvp.Key)}";
                         string filePath = Path.Combine(directory, kvp.Key);
                         Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
@@ -108,9 +115,9 @@ namespace zy_cutPicture
                         await DownloadFileAsync(subUrl, filePath);
                         downCount++;
                         if (downCount >= DebugLimitCount && IsDebug)
-                        break;
+                            break;
                     }
-                    
+
                     Console.WriteLine($"文件数： {config.Keys.Count}  下载数： {downCount}");
                 }
             }
@@ -381,7 +388,6 @@ namespace zy_cutPicture
                         downCount++;
                         if (downCount >= DebugLimitCount && IsDebug)
                             break;
-                        break;
                     }
                     
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
@@ -944,7 +950,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(selectedPath)).Wait();
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_AllManifest(selectedPath));
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -982,7 +988,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => FormCutAtlasJson.DoneRes_Item(selectedPath)).Wait();
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_Item(selectedPath));
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1020,7 +1026,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => FormCutAtlasJson.DoneRes_Model(selectedPath)).Wait(); ;
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_Model(selectedPath));
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1058,7 +1064,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(selectedPath)).Wait(); ;
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(selectedPath));
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1100,7 +1106,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => FormCutAtlasJson.DoneRes_head(selectedPath)).Wait(); ;
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_head(selectedPath)) ;
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -1138,7 +1144,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    Task.Run(() => ProcessDirectory(selectedPath)).Wait(); ;
+                    await Task.Run(() => ProcessDirectory(selectedPath)) ;
                    // MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
