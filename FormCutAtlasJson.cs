@@ -1207,7 +1207,7 @@ namespace zy_cutPicture
         }
         private  async void btn_cut_Click(object sender, EventArgs e)
         {
-            string selectedPath = this.txt_dir.Text;
+            string selectedPath = Path.Combine(this.txt_dir.Text, "resource");
             //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
 
             if (selectedPath != null)
@@ -1403,7 +1403,7 @@ namespace zy_cutPicture
             {
                 // 图集切割
                 var step6Start = DateTime.Now;
-                await Task.Run(() => FormCutAtlasJson.ProcessDirectory(this.txt_dir.Text));
+                await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(this.txt_dir.Text, "resource")));
                 var step6End = DateTime.Now;
                 AddLog($"完成 图集切割，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_6.Visible = true;
