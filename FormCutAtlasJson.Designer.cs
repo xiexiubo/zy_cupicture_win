@@ -40,6 +40,12 @@ namespace zy_cutPicture
             this.btn_onekey = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.img_1 = new System.Windows.Forms.PictureBox();
+            this.img_2 = new System.Windows.Forms.PictureBox();
+            this.img_3 = new System.Windows.Forms.PictureBox();
+            this.img_4 = new System.Windows.Forms.PictureBox();
+            this.img_5 = new System.Windows.Forms.PictureBox();
+            this.img_6 = new System.Windows.Forms.PictureBox();
             this.ck_6 = new System.Windows.Forms.CheckBox();
             this.ck_5 = new System.Windows.Forms.CheckBox();
             this.ck_4 = new System.Windows.Forms.CheckBox();
@@ -54,6 +60,9 @@ namespace zy_cutPicture
             this.btn_icon1 = new System.Windows.Forms.Button();
             this.btn_cut1 = new System.Windows.Forms.Button();
             this.btn_cut = new System.Windows.Forms.Button();
+            this.previewPanel = new System.Windows.Forms.Panel();
+            this.logTextBox = new System.Windows.Forms.RichTextBox();
+            this.imagePreview = new System.Windows.Forms.PictureBox();
             this.txt_resVer = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lb_dir = new System.Windows.Forms.Label();
@@ -63,27 +72,18 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.img_1 = new System.Windows.Forms.PictureBox();
-            this.img_2 = new System.Windows.Forms.PictureBox();
-            this.img_3 = new System.Windows.Forms.PictureBox();
-            this.img_4 = new System.Windows.Forms.PictureBox();
-            this.img_5 = new System.Windows.Forms.PictureBox();
-            this.img_6 = new System.Windows.Forms.PictureBox();
-            this.previewPanel = new System.Windows.Forms.Panel();
-            this.logTextBox = new System.Windows.Forms.RichTextBox();
-            this.imagePreview = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_6)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             this.SuspendLayout();
@@ -169,6 +169,66 @@ namespace zy_cutPicture
             this.label1.Size = new System.Drawing.Size(41, 16);
             this.label1.TabIndex = 7;
             this.label1.Text = "下载";
+            // 
+            // img_1
+            // 
+            this.img_1.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_1.Location = new System.Drawing.Point(173, 31);
+            this.img_1.Name = "img_1";
+            this.img_1.Size = new System.Drawing.Size(20, 20);
+            this.img_1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_1.TabIndex = 20;
+            this.img_1.TabStop = false;
+            // 
+            // img_2
+            // 
+            this.img_2.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_2.Location = new System.Drawing.Point(126, 63);
+            this.img_2.Name = "img_2";
+            this.img_2.Size = new System.Drawing.Size(20, 20);
+            this.img_2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_2.TabIndex = 21;
+            this.img_2.TabStop = false;
+            // 
+            // img_3
+            // 
+            this.img_3.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_3.Location = new System.Drawing.Point(167, 94);
+            this.img_3.Name = "img_3";
+            this.img_3.Size = new System.Drawing.Size(20, 20);
+            this.img_3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_3.TabIndex = 22;
+            this.img_3.TabStop = false;
+            // 
+            // img_4
+            // 
+            this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_4.Location = new System.Drawing.Point(150, 127);
+            this.img_4.Name = "img_4";
+            this.img_4.Size = new System.Drawing.Size(20, 20);
+            this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_4.TabIndex = 23;
+            this.img_4.TabStop = false;
+            // 
+            // img_5
+            // 
+            this.img_5.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_5.Location = new System.Drawing.Point(132, 161);
+            this.img_5.Name = "img_5";
+            this.img_5.Size = new System.Drawing.Size(20, 20);
+            this.img_5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_5.TabIndex = 24;
+            this.img_5.TabStop = false;
+            // 
+            // img_6
+            // 
+            this.img_6.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_6.Location = new System.Drawing.Point(124, 216);
+            this.img_6.Name = "img_6";
+            this.img_6.Size = new System.Drawing.Size(20, 20);
+            this.img_6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_6.TabIndex = 25;
+            this.img_6.TabStop = false;
             // 
             // ck_6
             // 
@@ -340,6 +400,36 @@ namespace zy_cutPicture
             this.btn_cut.UseVisualStyleBackColor = true;
             this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
             // 
+            // previewPanel
+            // 
+            this.previewPanel.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
+            this.previewPanel.Controls.Add(this.logTextBox);
+            this.previewPanel.Controls.Add(this.imagePreview);
+            this.previewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.previewPanel.Location = new System.Drawing.Point(0, 0);
+            this.previewPanel.Name = "previewPanel";
+            this.previewPanel.Size = new System.Drawing.Size(648, 442);
+            this.previewPanel.TabIndex = 1;
+            // 
+            // logTextBox
+            // 
+            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logTextBox.Location = new System.Drawing.Point(0, 0);
+            this.logTextBox.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.logTextBox.Name = "logTextBox";
+            this.logTextBox.Size = new System.Drawing.Size(648, 442);
+            this.logTextBox.TabIndex = 1;
+            this.logTextBox.Text = "";
+            // 
+            // imagePreview
+            // 
+            this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagePreview.Location = new System.Drawing.Point(0, 0);
+            this.imagePreview.Name = "imagePreview";
+            this.imagePreview.Size = new System.Drawing.Size(648, 442);
+            this.imagePreview.TabIndex = 0;
+            this.imagePreview.TabStop = false;
+            // 
             // txt_resVer
             // 
             this.txt_resVer.Location = new System.Drawing.Point(76, 35);
@@ -420,6 +510,7 @@ namespace zy_cutPicture
             // 
             // btn_help
             // 
+            this.btn_help.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_help.Image = global::zy_cutPicture.Properties.Resources.问号;
             this.btn_help.Location = new System.Drawing.Point(813, 5);
             this.btn_help.Name = "btn_help";
@@ -427,96 +518,6 @@ namespace zy_cutPicture
             this.btn_help.TabIndex = 21;
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
-            // 
-            // img_1
-            // 
-            this.img_1.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_1.Location = new System.Drawing.Point(173, 31);
-            this.img_1.Name = "img_1";
-            this.img_1.Size = new System.Drawing.Size(20, 20);
-            this.img_1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_1.TabIndex = 20;
-            this.img_1.TabStop = false;
-            // 
-            // img_2
-            // 
-            this.img_2.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_2.Location = new System.Drawing.Point(126, 63);
-            this.img_2.Name = "img_2";
-            this.img_2.Size = new System.Drawing.Size(20, 20);
-            this.img_2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_2.TabIndex = 21;
-            this.img_2.TabStop = false;
-            // 
-            // img_3
-            // 
-            this.img_3.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_3.Location = new System.Drawing.Point(167, 94);
-            this.img_3.Name = "img_3";
-            this.img_3.Size = new System.Drawing.Size(20, 20);
-            this.img_3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_3.TabIndex = 22;
-            this.img_3.TabStop = false;
-            // 
-            // img_4
-            // 
-            this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_4.Location = new System.Drawing.Point(150, 127);
-            this.img_4.Name = "img_4";
-            this.img_4.Size = new System.Drawing.Size(20, 20);
-            this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_4.TabIndex = 23;
-            this.img_4.TabStop = false;
-            // 
-            // img_5
-            // 
-            this.img_5.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_5.Location = new System.Drawing.Point(132, 161);
-            this.img_5.Name = "img_5";
-            this.img_5.Size = new System.Drawing.Size(20, 20);
-            this.img_5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_5.TabIndex = 24;
-            this.img_5.TabStop = false;
-            // 
-            // img_6
-            // 
-            this.img_6.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_6.Location = new System.Drawing.Point(124, 216);
-            this.img_6.Name = "img_6";
-            this.img_6.Size = new System.Drawing.Size(20, 20);
-            this.img_6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_6.TabIndex = 25;
-            this.img_6.TabStop = false;
-            // 
-            // previewPanel
-            // 
-            this.previewPanel.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
-            this.previewPanel.Controls.Add(this.logTextBox);
-            this.previewPanel.Controls.Add(this.imagePreview);
-            this.previewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.previewPanel.Location = new System.Drawing.Point(0, 0);
-            this.previewPanel.Name = "previewPanel";
-            this.previewPanel.Size = new System.Drawing.Size(648, 442);
-            this.previewPanel.TabIndex = 1;
-            // 
-            // logTextBox
-            // 
-            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logTextBox.Location = new System.Drawing.Point(0, 0);
-            this.logTextBox.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
-            this.logTextBox.Name = "logTextBox";
-            this.logTextBox.Size = new System.Drawing.Size(648, 442);
-            this.logTextBox.TabIndex = 1;
-            this.logTextBox.Text = "";
-            // 
-            // imagePreview
-            // 
-            this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imagePreview.Location = new System.Drawing.Point(0, 0);
-            this.imagePreview.Name = "imagePreview";
-            this.imagePreview.Size = new System.Drawing.Size(648, 442);
-            this.imagePreview.TabIndex = 0;
-            this.imagePreview.TabStop = false;
             // 
             // FormCutAtlasJson
             // 
@@ -541,13 +542,13 @@ namespace zy_cutPicture
             this.splitContainer.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_6)).EndInit();
+            this.groupBox2.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
             this.ResumeLayout(false);
