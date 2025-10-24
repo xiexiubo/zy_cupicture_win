@@ -113,7 +113,7 @@ namespace zy_cutPicture
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/resource/{kvp.Value.v.Substring(0, 2)}/{kvp.Value.v}_{kvp.Value.s}{Path.GetExtension(kvp.Key)}";
                         string filePath = Path.Combine(directory, kvp.Key);
                         //Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
-                        Instance.AddLog($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{kvp.Key}", Color.Black);
+                        Instance.AddLog($"{downCount}/{config.Count} ALLMan subUrl: {subUrl}  filePath:{kvp.Key}", Color.Black);
                         
                         DownloadFileAsync(subUrl, filePath);
                         downCount++;
@@ -200,7 +200,7 @@ namespace zy_cutPicture
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/tool/{v.Value.Prop19}.png";
                         string filePath = Path.Combine(directory, $"resource/icon/tool/{v.Value.Prop19}.png");
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        Instance.AddLog($"{downCount}/{config.Items.Count} subUrl: {subUrl}  filePath:icon/tool/{v.Value.Prop19}.png", Color.Black);
+                        Instance.AddLog($"{downCount}/{config.Items.Count} Item subUrl: {subUrl}  filePath:icon/tool/{v.Value.Prop19}.png", Color.Black);
                         DownloadFileAsync(subUrl, filePath);
                         downCount++;
                         strCurr = v.Value.Prop19;
@@ -295,7 +295,7 @@ namespace zy_cutPicture
                     foreach (var v in config.ModelInfo)
                     {
                         countM++;
-                        int downCount = 0;
+                        int downCount = 1;
                         foreach (var m in v.Value)
                         {
                             ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
@@ -310,7 +310,7 @@ namespace zy_cutPicture
                                 string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
                                 //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                                 if (i == 0)
-                                    Instance.AddLog($"{downCount}/{v.Value.Count} {countM}/{config.ModelInfo} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}", Color.Black);
+                                    Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
                                 DownloadFileAsync(subUrl + ".png", filePath + ".png");
                                 DownloadFileAsync(subUrl + ".json", filePath + ".json");
                             }
@@ -395,13 +395,19 @@ namespace zy_cutPicture
                     ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
                     //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
                     //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
-                        if (!m.Key.Contains(".")) continue;
+                        if (!m.Key.Contains("."))
+                        {
+                            Console.WriteLine($"版本 是文件夹不是文件: {m.Key} ");
+                            downCount++;
+                            continue;
+                        }
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Key}";
                         string filePath = Path.Combine(directory, $"resource/{m.Key}");
 
                         if (File.Exists(filePath))
                         {
+                            Console.WriteLine($"版本 文件已经存在: {m.Key} ");
                             downCount++;
                             continue;
                         }
@@ -415,7 +421,7 @@ namespace zy_cutPicture
                         //filePath = Path.Combine(directory, $"resource/{m.Value}/{m.Key}");
                         
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
+                        Instance.AddLog($"{downCount}/{config.AdditionalData.Count} 版本资源 subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
                            //await 
                         DownloadFileAsync(subUrl, filePath);
 
