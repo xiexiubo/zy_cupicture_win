@@ -72,6 +72,8 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
+            this.img_7 = new System.Windows.Forms.PictureBox();
+            this.ck_7 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -86,6 +88,7 @@ namespace zy_cutPicture
             this.groupBox2.SuspendLayout();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_7)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -112,6 +115,8 @@ namespace zy_cutPicture
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.img_7);
+            this.groupBox1.Controls.Add(this.ck_7);
             this.groupBox1.Controls.Add(this.btn_onekey);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
@@ -142,7 +147,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_onekey.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btn_onekey.Font = new System.Drawing.Font("黑体", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btn_onekey.Location = new System.Drawing.Point(13, 259);
+            this.btn_onekey.Location = new System.Drawing.Point(13, 313);
             this.btn_onekey.Name = "btn_onekey";
             this.btn_onekey.Size = new System.Drawing.Size(182, 62);
             this.btn_onekey.TabIndex = 19;
@@ -154,7 +159,7 @@ namespace zy_cutPicture
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(3, 191);
+            this.label2.Location = new System.Drawing.Point(3, 245);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(58, 16);
             this.label2.TabIndex = 8;
@@ -203,7 +208,7 @@ namespace zy_cutPicture
             // img_4
             // 
             this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_4.Location = new System.Drawing.Point(150, 127);
+            this.img_4.Location = new System.Drawing.Point(150, 188);
             this.img_4.Name = "img_4";
             this.img_4.Size = new System.Drawing.Size(20, 20);
             this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -213,7 +218,7 @@ namespace zy_cutPicture
             // img_5
             // 
             this.img_5.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_5.Location = new System.Drawing.Point(132, 161);
+            this.img_5.Location = new System.Drawing.Point(132, 127);
             this.img_5.Name = "img_5";
             this.img_5.Size = new System.Drawing.Size(20, 20);
             this.img_5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -223,7 +228,7 @@ namespace zy_cutPicture
             // img_6
             // 
             this.img_6.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_6.Location = new System.Drawing.Point(124, 216);
+            this.img_6.Location = new System.Drawing.Point(124, 270);
             this.img_6.Name = "img_6";
             this.img_6.Size = new System.Drawing.Size(20, 20);
             this.img_6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -235,7 +240,7 @@ namespace zy_cutPicture
             this.ck_6.AutoSize = true;
             this.ck_6.Checked = true;
             this.ck_6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_6.Location = new System.Drawing.Point(24, 216);
+            this.ck_6.Location = new System.Drawing.Point(24, 270);
             this.ck_6.Name = "ck_6";
             this.ck_6.Size = new System.Drawing.Size(120, 16);
             this.ck_6.TabIndex = 6;
@@ -247,7 +252,7 @@ namespace zy_cutPicture
             this.ck_5.AutoSize = true;
             this.ck_5.Checked = true;
             this.ck_5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_5.Location = new System.Drawing.Point(25, 162);
+            this.ck_5.Location = new System.Drawing.Point(25, 128);
             this.ck_5.Name = "ck_5";
             this.ck_5.Size = new System.Drawing.Size(108, 16);
             this.ck_5.TabIndex = 4;
@@ -259,7 +264,7 @@ namespace zy_cutPicture
             this.ck_4.AutoSize = true;
             this.ck_4.Checked = true;
             this.ck_4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_4.Location = new System.Drawing.Point(25, 129);
+            this.ck_4.Location = new System.Drawing.Point(25, 190);
             this.ck_4.Name = "ck_4";
             this.ck_4.Size = new System.Drawing.Size(126, 16);
             this.ck_4.TabIndex = 3;
@@ -519,6 +524,29 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
+            // img_7
+            // 
+            this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_7.Location = new System.Drawing.Point(140, 159);
+            this.img_7.Name = "img_7";
+            this.img_7.Size = new System.Drawing.Size(20, 20);
+            this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_7.TabIndex = 27;
+            this.img_7.TabStop = false;
+            this.img_7.Visible = false;
+            // 
+            // ck_7
+            // 
+            this.ck_7.AutoSize = true;
+            this.ck_7.Checked = true;
+            this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ck_7.Location = new System.Drawing.Point(25, 160);
+            this.ck_7.Name = "ck_7";
+            this.ck_7.Size = new System.Drawing.Size(120, 16);
+            this.ck_7.TabIndex = 26;
+            this.ck_7.Text = "下载map图miniMap";
+            this.ck_7.UseVisualStyleBackColor = true;
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 581);
@@ -551,6 +579,7 @@ namespace zy_cutPicture
             this.groupBox2.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_7)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -595,5 +624,7 @@ namespace zy_cutPicture
         private PictureBox img_2;
         private ToolTip toolTip1;
         private Button btn_help;
+        private PictureBox img_7;
+        private CheckBox ck_7;
     }
 }

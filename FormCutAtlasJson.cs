@@ -415,7 +415,7 @@ namespace zy_cutPicture
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         //await
                         //Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
-                        DownloadFileAsync(subUrl, filePath);
+                        DownloadFileAsync(subUrl, filePath, true);
 
                         subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Value}/{m.Key}";
                         //filePath = Path.Combine(directory, $"resource/{m.Value}/{m.Key}");
@@ -423,7 +423,7 @@ namespace zy_cutPicture
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.AdditionalData.Count} 版本资源 subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
                            //await 
-                        DownloadFileAsync(subUrl, filePath);
+                        DownloadFileAsync(subUrl, filePath,true);
 
                         downCount++;
                         if (downCount >= DebugLimitCount && IsDebug)
@@ -546,6 +546,189 @@ namespace zy_cutPicture
                 Instance.AddLog($"发生错误5: {ex.Message}", Color.Red);
             }
         }
+
+
+
+        // 定义与JSON结构对应的类
+        class Root_map
+        {
+            [JsonProperty("map")]
+            public Dictionary<string, Cfg_Map> Items { get; set; }
+        }
+
+        public class Cfg_Map
+        {
+            [JsonProperty("id")]
+            public long Id { get; set; }
+
+            [JsonProperty("img")]
+            public long img { get; set; }
+
+            [JsonProperty("fmap")] 
+            public string fmap { get; set; }
+
+            [JsonProperty("data")]
+            public long data { get; set; }
+
+            [JsonProperty("name")]
+            public string name { get; set; }
+            
+            [JsonProperty("width")]
+            public int width { get; set; }
+            public int height { get; set; }
+
+          
+        }
+        static async Task DoneRes_Map(string directory)
+        {
+            try
+            {
+                //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    //if (!response.IsSuccessStatusCode) 
+                    //{
+                    //    return;
+                    //}
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+
+                    // 反序列化为配置对象
+                    Root_map config = JsonConvert.DeserializeObject<Root_map>(json);
+                    Console.WriteLine($"文件num: {config.Items.Count}");
+                    Instance.AddLog($"-----Map 资源下载:{config.Items.Count}", Color.Green);
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+
+                  
+                        int downCount = 1;
+                        int downCountInfact = 1;
+                    string strCurr = "";
+                    foreach (var m in config.Items)
+                    {
+                        if (strCurr == m.Value.img.ToString()) 
+                        {
+                            downCount++;
+                            continue;
+                        }
+                       
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
+
+                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                        string filePath = Path.Combine(directory, $"resource/minimap/{m.Value.img}.jpg");
+
+                        int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
+
+
+                        //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
+                        Instance.AddLog($"{downCount}/{config.Items.Count } map {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
+                        DownloadFileAsync(subUrl, filePath);
+
+                        var dir2= Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                        // 创建保存目录（如果不存在）
+                        if (Directory.Exists(dir2))
+                        {
+                            if (!Directory.EnumerateFileSystemEntries(dir2).Any()) 
+                            {
+                                Directory.Delete(dir2);
+                            }
+                        }
+
+
+                        // if (File.Exists(filePath))
+                        {
+                            bool success = false;
+                            int ck_num = 5;
+                            for (int i = 1; countTiles >= i; i++)
+                            {
+                                if (i > ck_num && !success)
+                                {
+                                    break;
+                                }
+                                //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/5286/114.jpg?ver=1.0.1
+                                subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                filePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                if (i % 10 == 1)
+                                    Instance.AddLog($"{i}/{countTiles} mapTile subUrl: {subUrl}  filePath:resource/map/{m.Value.Id}/{i}.jpg", Color.Black);
+
+                                if (i <= ck_num)
+                                {
+                                    bool b = await DownloadFileAsync(subUrl, filePath);
+                                    success = b || success;
+                                }
+                                else 
+                                {
+                                    DownloadFileAsync(subUrl, filePath);
+                                }
+                                
+                            }
+                        }
+
+                        ////四方向
+                        //for (int i = 0; i < 5; i++)
+                        //{
+                        //    string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
+                        //    string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
+                        //    //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
+                        //    if (i == 0)
+                        //        Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
+                        //    DownloadFileAsync(subUrl + ".png", filePath + ".png");
+                        //    DownloadFileAsync(subUrl + ".json", filePath + ".json");
+                        //}
+                        strCurr = m.Value.img.ToString();
+                        //if (downCount % 5 == 1)
+                        {
+                            await Task.Delay(1);
+                        }
+
+                        downCount++;
+                        downCountInfact++;
+                        if (downCount >= DebugLimitCount && IsDebug)
+                            break;
+
+                    }
+
+
+
+
+                    //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
+            }
+        }
+
+
+
+
+
         static int iPro = 0;
         // 递归处理目录及其子目录
         static void ProcessDirectory(string directoryPath)
@@ -887,22 +1070,23 @@ namespace zy_cutPicture
 
         }
         // 下载文件并保存到指定目录
-        private async static Task<bool> DownloadFileAsync(string url, string savePath)
+        private async static Task<bool> DownloadFileAsync(string url, string savePath,bool isDeletExists=false)
         {
             try
             {
 
                 if (File.Exists(savePath)) 
                 {
-                    return true;
+                    if (isDeletExists)
+                    {
+                        File.Delete(savePath);
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
-                // 创建保存目录（如果不存在）
-                string directory = Path.GetDirectoryName(savePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-
+              
                 using (var httpClient = new HttpClient())
                 {
                     // 设置超时时间（可选）
@@ -912,7 +1096,7 @@ namespace zy_cutPicture
                     using (HttpResponseMessage response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
                     {
                         // 确保请求成功
-                       // response.EnsureSuccessStatusCode();
+                        //response.EnsureSuccessStatusCode();
 
 
                         // 修改为：不主动抛出异常，改为手动判断状态码
@@ -922,6 +1106,14 @@ namespace zy_cutPicture
                             Console.WriteLine($"请求失败: {url}，状态码: {response.StatusCode}");
                             return false; // 直接返回，不继续处理，也不抛出异常
                         }
+                        // 创建保存目录（如果不存在）
+                        string directory = Path.GetDirectoryName(savePath);
+                        if (!Directory.Exists(directory))
+                        {
+                            Directory.CreateDirectory(directory);
+                        }
+
+
                         // 获取文件总大小（用于进度显示）
                         long? contentLength = response.Content.Headers.ContentLength;
 
@@ -960,6 +1152,7 @@ namespace zy_cutPicture
             catch (HttpRequestException ex)
             {
                 //MessageBox.Show($"下载失败: 网络错误 - {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Instance.AddLog($"下载失败: 网络错误 - {ex.Message}   {url}",Color.Red);
                 Console.WriteLine($"下载失败: 网络错误 - {ex.Message}  {url}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
@@ -967,12 +1160,14 @@ namespace zy_cutPicture
             {
                 //MessageBox.Show("下载已取消或超时", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Console.WriteLine($"下载已取消或超时    {url}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Instance.AddLog($"下载已取消或超时    {url}", Color.Red);
                 return false;
             }
             catch (Exception ex)
             {
                // MessageBox.Show($"下载失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Console.WriteLine($"下载失败: {ex.Message}     {url}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Instance.AddLog($"下载失败: {ex.Message}     {url}", Color.Red);
                 return false;
             }
         }
@@ -1383,6 +1578,25 @@ namespace zy_cutPicture
                 var step3End = DateTime.Now;
                 AddLog($"完成 下载Models序列图资源，耗时：{(step3End - step3Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_3.Visible = true;
+            }         
+
+            if (this.ck_5.Checked)
+            {
+                // 下载怪物头像图
+                var step5Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_head(this.txt_dir.Text));
+                var step5End = DateTime.Now;
+                AddLog($"完成 下载怪物头像图，耗时：{(step5End - step5Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_5.Visible = true;
+            }
+            if (this.ck_7.Checked)
+            {
+                // 下载怪物头像图
+                var step6Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_Map(this.txt_dir.Text));
+                var step6End = DateTime.Now;
+                AddLog($"完成 下载地图，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_7.Visible = true;
             }
 
             if (this.ck_4.Checked)
@@ -1395,16 +1609,8 @@ namespace zy_cutPicture
                 this.img_4.Visible = true;
             }
 
-            if (this.ck_5.Checked)
-            {
-                // 下载怪物头像图
-                var step5Start = DateTime.Now;
-                await Task.Run(() => FormCutAtlasJson.DoneRes_head(this.txt_dir.Text));
-                var step5End = DateTime.Now;
-                AddLog($"完成 下载怪物头像图，耗时：{(step5End - step5Start).TotalSeconds:F2}秒", Color.Green);
-                this.img_5.Visible = true;
-            }
 
+            //--------------------------以下切图-----------------------------------------------------
             if (this.ck_6.Checked)
             {
                 // 图集切割
