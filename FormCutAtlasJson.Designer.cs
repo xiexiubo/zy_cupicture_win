@@ -37,6 +37,8 @@ namespace zy_cutPicture
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.img_7 = new System.Windows.Forms.PictureBox();
+            this.ck_7 = new System.Windows.Forms.CheckBox();
             this.btn_onekey = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -72,13 +74,14 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.img_7 = new System.Windows.Forms.PictureBox();
-            this.ck_7 = new System.Windows.Forms.CheckBox();
+            this.img_8 = new System.Windows.Forms.PictureBox();
+            this.ck_8 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_3)).BeginInit();
@@ -88,7 +91,7 @@ namespace zy_cutPicture
             this.groupBox2.SuspendLayout();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_8)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -115,6 +118,8 @@ namespace zy_cutPicture
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.img_8);
+            this.groupBox1.Controls.Add(this.ck_8);
             this.groupBox1.Controls.Add(this.img_7);
             this.groupBox1.Controls.Add(this.ck_7);
             this.groupBox1.Controls.Add(this.btn_onekey);
@@ -140,6 +145,29 @@ namespace zy_cutPicture
             this.groupBox1.Size = new System.Drawing.Size(213, 442);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
+            // 
+            // img_7
+            // 
+            this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_7.Location = new System.Drawing.Point(140, 159);
+            this.img_7.Name = "img_7";
+            this.img_7.Size = new System.Drawing.Size(20, 20);
+            this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_7.TabIndex = 27;
+            this.img_7.TabStop = false;
+            this.img_7.Visible = false;
+            // 
+            // ck_7
+            // 
+            this.ck_7.AutoSize = true;
+            this.ck_7.Checked = true;
+            this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ck_7.Location = new System.Drawing.Point(25, 160);
+            this.ck_7.Name = "ck_7";
+            this.ck_7.Size = new System.Drawing.Size(120, 16);
+            this.ck_7.TabIndex = 26;
+            this.ck_7.Text = "下载map图miniMap";
+            this.ck_7.UseVisualStyleBackColor = true;
             // 
             // btn_onekey
             // 
@@ -208,7 +236,7 @@ namespace zy_cutPicture
             // img_4
             // 
             this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_4.Location = new System.Drawing.Point(150, 188);
+            this.img_4.Location = new System.Drawing.Point(150, 212);
             this.img_4.Name = "img_4";
             this.img_4.Size = new System.Drawing.Size(20, 20);
             this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -264,7 +292,7 @@ namespace zy_cutPicture
             this.ck_4.AutoSize = true;
             this.ck_4.Checked = true;
             this.ck_4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_4.Location = new System.Drawing.Point(25, 190);
+            this.ck_4.Location = new System.Drawing.Point(25, 214);
             this.ck_4.Name = "ck_4";
             this.ck_4.Size = new System.Drawing.Size(126, 16);
             this.ck_4.TabIndex = 3;
@@ -524,28 +552,26 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
-            // img_7
+            // img_8
             // 
-            this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_7.Location = new System.Drawing.Point(140, 159);
-            this.img_7.Name = "img_7";
-            this.img_7.Size = new System.Drawing.Size(20, 20);
-            this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_7.TabIndex = 27;
-            this.img_7.TabStop = false;
-            this.img_7.Visible = false;
+            this.img_8.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_8.Location = new System.Drawing.Point(83, 183);
+            this.img_8.Name = "img_8";
+            this.img_8.Size = new System.Drawing.Size(20, 20);
+            this.img_8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_8.TabIndex = 29;
+            this.img_8.TabStop = false;
+            this.img_8.Visible = false;
             // 
-            // ck_7
+            // ck_8
             // 
-            this.ck_7.AutoSize = true;
-            this.ck_7.Checked = true;
-            this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_7.Location = new System.Drawing.Point(25, 160);
-            this.ck_7.Name = "ck_7";
-            this.ck_7.Size = new System.Drawing.Size(120, 16);
-            this.ck_7.TabIndex = 26;
-            this.ck_7.Text = "下载map图miniMap";
-            this.ck_7.UseVisualStyleBackColor = true;
+            this.ck_8.AutoSize = true;
+            this.ck_8.Location = new System.Drawing.Point(25, 186);
+            this.ck_8.Name = "ck_8";
+            this.ck_8.Size = new System.Drawing.Size(60, 16);
+            this.ck_8.TabIndex = 28;
+            this.ck_8.Text = "合大图";
+            this.ck_8.UseVisualStyleBackColor = true;
             // 
             // FormCutAtlasJson
             // 
@@ -570,6 +596,7 @@ namespace zy_cutPicture
             this.splitContainer.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_3)).EndInit();
@@ -579,7 +606,7 @@ namespace zy_cutPicture
             this.groupBox2.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.img_8)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -626,5 +653,7 @@ namespace zy_cutPicture
         private Button btn_help;
         private PictureBox img_7;
         private CheckBox ck_7;
+        private PictureBox img_8;
+        private CheckBox ck_8;
     }
 }

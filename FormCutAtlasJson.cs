@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -10,10 +13,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImageMagick;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using zy_cutPicture.Properties;
-
 namespace zy_cutPicture
 {
     public partial class FormCutAtlasJson : Form
@@ -28,7 +31,7 @@ namespace zy_cutPicture
             Reset();
         }
 
-        public void Reset() 
+        public void Reset()
         {
             this.img_1.Visible = false;
             this.img_2.Visible = false;
@@ -65,19 +68,19 @@ namespace zy_cutPicture
         }
 
         public class AllManifest_Value
-        { 
+        {
             public string v { get; set; }// 版本号或哈希值
             public int s { get; set; }// 大小（字节）
-        }  
-        
+        }
+
         //配置图片资源下载
         static async Task DoneRes_AllManifest(string directory)
         {
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.24591.2.json?v=20250530185809?qufu_version=20";
-                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.28929.3.json?v=20251017185057?qufu_version=30";
-                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest{Instance.txt_resVer.Text}.json?v=20251017185057?qufu_version=30";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.28929.3.json?v=20251017185057?qufu_version=30";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest{Instance.txt_resVer.Text}.json?v=20251017185057?qufu_version=30";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -114,7 +117,7 @@ namespace zy_cutPicture
                         string filePath = Path.Combine(directory, kvp.Key);
                         //Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Count} ALLMan subUrl: {subUrl}  filePath:{kvp.Key}", Color.Black);
-                        
+
                         DownloadFileAsync(subUrl, filePath);
                         downCount++;
                         if (downCount >= DebugLimitCount && IsDebug)
@@ -146,7 +149,7 @@ namespace zy_cutPicture
 
             [JsonProperty("19")]
             public string Prop19 { get; set; }
-            
+
 
         }
         // 定义与JSON结构对应的类
@@ -160,9 +163,9 @@ namespace zy_cutPicture
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.24591.2.json?v=20250530185809";
-                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.28929.3.json?v=20251017185057";
-                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/1config{Instance.txt_resVer.Text}.json?v=20251017185057";
-                       
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/1config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -189,7 +192,7 @@ namespace zy_cutPicture
                     string strCurr = "";
                     foreach (var v in config.Items)
                     {
-                        if (v.Value.Prop19==strCurr) 
+                        if (v.Value.Prop19 == strCurr)
                         {
                             downCount++;
                             continue;
@@ -208,7 +211,7 @@ namespace zy_cutPicture
                             break;
 
                     }
-                    
+
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
@@ -262,8 +265,8 @@ namespace zy_cutPicture
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
-                       url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
-                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -315,19 +318,19 @@ namespace zy_cutPicture
                                 DownloadFileAsync(subUrl + ".json", filePath + ".json");
                             }
 
-                            if (downCount % 5 == 1) 
+                            if (downCount % 5 == 1)
                             {
                                 await Task.Delay(1);
                             }
 
                             downCount++;
-                           
+
                         }
                         await Task.Delay(1);
                         if (downCount >= DebugLimitCount && IsDebug)
                             break;
                     }
-                    
+
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
@@ -392,9 +395,9 @@ namespace zy_cutPicture
 
                     foreach (var m in config.AdditionalData)
                     {
-                    ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
-                    //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
+                        ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
+                        //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
                         if (!m.Key.Contains("."))
                         {
                             Console.WriteLine($"版本 是文件夹不是文件: {m.Key} ");
@@ -419,17 +422,17 @@ namespace zy_cutPicture
 
                         subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Value}/{m.Key}";
                         //filePath = Path.Combine(directory, $"resource/{m.Value}/{m.Key}");
-                        
+
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.AdditionalData.Count} 版本资源 subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
-                           //await 
-                        DownloadFileAsync(subUrl, filePath,true);
+                        //await 
+                        DownloadFileAsync(subUrl, filePath, true);
 
                         downCount++;
                         if (downCount >= DebugLimitCount && IsDebug)
                             break;
                     }
-                    
+
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
@@ -450,14 +453,14 @@ namespace zy_cutPicture
             }
         }
 
-      
-    
 
-  
-    /// <summary>
-    /// 怪物头像下载
-    /// </summary>
-    /// <param name="directory"></param>
+
+
+
+        /// <summary>
+        /// 怪物头像下载
+        /// </summary>
+        /// <param name="directory"></param>
         static async Task DoneRes_head(string directory)
         {
             try
@@ -466,7 +469,7 @@ namespace zy_cutPicture
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809";//modelinfo
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.25209.2.json?v=20250620170332";
-                       url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20250620170332";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20250620170332";
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -505,14 +508,14 @@ namespace zy_cutPicture
                             downCount++;
                             continue;
                         }
-                    ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
-                    //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00086.png?ver=1.0.1
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00139.png?ver=1.0.1
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00050.png?ver=1.0.1
+                        ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
+                        //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/124013.png?ver=1.0.1
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00086.png?ver=1.0.1
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00139.png?ver=1.0.1
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_00050.png?ver=1.0.1
 
-                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_4274.png?ver=1.0.1
+                        //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_4274.png?ver=1.0.1
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/{m.Value.Head}.png?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/icon/head/{m.Value.Head}.png");
@@ -526,7 +529,7 @@ namespace zy_cutPicture
                         if (downCount >= DebugLimitCount && IsDebug)
                             break;
                     }
-                    
+
                     //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
@@ -564,7 +567,7 @@ namespace zy_cutPicture
             [JsonProperty("img")]
             public long img { get; set; }
 
-            [JsonProperty("fmap")] 
+            [JsonProperty("fmap")]
             public string fmap { get; set; }
 
             [JsonProperty("data")]
@@ -572,15 +575,103 @@ namespace zy_cutPicture
 
             [JsonProperty("name")]
             public string name { get; set; }
-            
+
             [JsonProperty("width")]
             public int width { get; set; }
             public int height { get; set; }
 
-          
+
         }
+        /// <summary>
+        /// 计算24位像素图像的内存占用
+        /// </summary>
+        /// <param name="width">图像宽度（像素）</param>
+        /// <param name="height">图像高度（像素）</param>
+        /// <param name="depthOrFrames">深度（3D纹理）或帧数（视频序列），默认1</param>
+        /// <returns>格式化的内存占用字符串</returns>
+        public static string Calculate24BitImageMemory(int width, int height, int depthOrFrames = 1)
+        {
+            if (width <= 0 || height <= 0 || depthOrFrames <= 0)
+                throw new ArgumentException("宽度、高度和深度/帧数必须大于0");
+
+            // 核心计算
+            long totalBytes = (long)width * height * depthOrFrames * 3; // 24位 = 3字节/像素
+
+            // 单位转换和格式化
+            if (totalBytes >= 1024L * 1024 * 1024)
+                return $"{totalBytes / (1024.0 * 1024 * 1024):F2} GB";
+            if (totalBytes >= 1024L * 1024)
+                return $"{totalBytes / (1024.0 * 1024):F2} MB";
+            if (totalBytes >= 1024)
+                return $"{totalBytes / 1024.0:F2} KB";
+
+            return $"{totalBytes} Bytes";
+        }
+        static Dictionary<int, Size> dicConst = new Dictionary<int, Size>()
+        {
+            { 154, new Size(512 * 93, 256 * 100) },
+            { 1025, new Size(512 * 5, 256 * 7) },
+            { 2701, new Size(512 * 13, 256 * 20) },
+            { 4902, new Size(512 * 9, 256 * 11) },
+            { 5002, new Size(512 * 37, 256 * 50) },
+            { 5003, new Size(512 * 37, 256 * 50) },
+            { 5005, new Size(512 * 37, 256 * 50) },
+            { 5562, new Size(512 * 14, 256 * 23) },
+            { 5563, new Size(512 * 26, 256 * 35) },
+            { 5564, new Size(512 * 14, 256 * 19) },
+            { 5565, new Size(512 * 12, 256 * 17) },
+            //{ 5564, new Size(512*5,256*7) }, // 注释掉的重复键
+            { 5566, new Size(512 * 18, 256 * 30) },
+            { 5567, new Size(512 * 7, 256 * 10) },
+            { 5568, new Size(512 * 7, 256 * 10) },
+            { 5569, new Size(512 * 7, 256 * 10) },
+            { 5570, new Size(512 * 10, 256 * 13) },
+            { 5571, new Size(512 * 15, 256 * 23) },
+            { 5572, new Size(512 * 15, 256 * 20) },
+            { 5573, new Size(512 * 5, 256 * 8) },
+            { 5574, new Size(512 * 19, 256 * 23) },
+            { 5592, new Size(512 * 22, 256 * 31) },
+            { 6110, new Size(512 * 21, 256 * 28) },
+            { 6211, new Size(512 * 16, 256 * 25) },
+            { 6213, new Size(512 * 19, 256 * 25) },
+            { 6217, new Size(512 * 37, 256 * 50) },
+            { 6224, new Size(512 * 28, 256 * 50) },
+            { 6242, new Size(512 * 28, 256 * 37) },
+            { 6259, new Size(512 * 9, 256 * 12) },
+            { 9401, new Size(512 * 37, 256 * 65) },
+            //{ 12558, new Size(512*18,256*7) }, // 注释掉的重复键
+            { 12558, new Size(512 * 6, 256 * 8) },
+            { 12574, new Size(512 * 7, 256 * 11) },
+            { 12582, new Size(512 * 7, 256 * 10) },
+            { 20000, new Size(512 * 20, 256 * 27) },
+            { 150000, new Size(512 * 8, 256 * 16) }
+        };
+
+
+
         static async Task DoneRes_Map(string directory)
         {
+
+            if (Environment.Is64BitOperatingSystem)
+            {
+                Console.WriteLine("系统是64位，支持更大的内存分配");
+                Instance.AddLog("系统是64位，支持更大的内存分配");
+            }
+            else
+            {
+                Console.WriteLine("系统是32位，内存分配有限制");
+                Instance.AddLog("系统是32位，内存分配有限制");
+            }
+
+            Process currentProcess = Process.GetCurrentProcess();
+
+            // 获取系统内存信息
+            PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            float availableRam = ramCounter.NextValue();
+
+            //Console.WriteLine("=== 系统内存信息 ===");
+            //Console.WriteLine($"可用内存: {availableRam:F2} MB");
+            Instance.AddLog($"可用内存: {availableRam / 1024:F2} GB");            
             try
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
@@ -614,35 +705,40 @@ namespace zy_cutPicture
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
                     }
 
-                  
-                        int downCount = 1;
-                        int downCountInfact = 1;
+
+                    int downCount = 1;
+                    int downCountInfact = 1;
                     string strCurr = "";
                     foreach (var m in config.Items)
                     {
-                        if (strCurr == m.Value.img.ToString()) 
+                        //break;
+                        if (m.Value.Id != 202)
                         {
                             downCount++;
                             continue;
                         }
-                       
+
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/minimap/{m.Value.img}.jpg");
 
                         int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
-
+                        Size size;
+                        if (dicConst.TryGetValue((int)m.Value.Id, out size)) 
+                        {
+                            countTiles = size.Width*size.Height/512/256;
+                        }
 
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                        Instance.AddLog($"{downCount}/{config.Items.Count } map {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
+                        Instance.AddLog($"{downCount}/{config.Items.Count} map {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
                         DownloadFileAsync(subUrl, filePath);
 
-                        var dir2= Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                        var dir2 = Path.Combine(directory, $"resource/map/{m.Value.Id}");
                         // 创建保存目录（如果不存在）
                         if (Directory.Exists(dir2))
                         {
-                            if (!Directory.EnumerateFileSystemEntries(dir2).Any()) 
+                            if (!Directory.EnumerateFileSystemEntries(dir2).Any())
                             {
                                 Directory.Delete(dir2);
                             }
@@ -670,26 +766,43 @@ namespace zy_cutPicture
                                     bool b = await DownloadFileAsync(subUrl, filePath);
                                     success = b || success;
                                 }
-                                else 
+                                else
                                 {
-                                    DownloadFileAsync(subUrl, filePath);
+                                   await DownloadFileAsync(subUrl, filePath);
                                 }
-                                
+
                             }
+                            //转换为png
+                            bool isPNG = false;
+                            if (isPNG)
+                            {
+                                await Task.Delay(1000);
+                                for (int i = 1; countTiles >= i; i++)
+                                {
+
+                                    string jpgFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                    string pngFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.png");
+
+                                    try
+                                    {
+                                        // 打开JPG文件
+                                        using (Image image = Image.FromFile(jpgFilePath))
+                                        {
+                                            // 保存为PNG格式
+                                            image.Save(pngFilePath, ImageFormat.Png);
+                                            Console.WriteLine("转换成功！");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"转换失败: {ex.Message}");
+                                    }
+
+                                }
+                            }
+
                         }
 
-                        ////四方向
-                        //for (int i = 0; i < 5; i++)
-                        //{
-                        //    string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
-                        //    string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
-                        //    //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                        //    if (i == 0)
-                        //        Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
-                        //    DownloadFileAsync(subUrl + ".png", filePath + ".png");
-                        //    DownloadFileAsync(subUrl + ".json", filePath + ".json");
-                        //}
-                        strCurr = m.Value.img.ToString();
                         //if (downCount % 5 == 1)
                         {
                             await Task.Delay(1);
@@ -701,16 +814,11 @@ namespace zy_cutPicture
                             break;
 
                     }
-
-
-
-
-                    //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
                 }
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Console.WriteLine($"HTTP请求错误: {ex.Message} ");
                 Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
             }
             catch (JsonException ex)
@@ -726,9 +834,700 @@ namespace zy_cutPicture
         }
 
 
+        static async Task DoneRes_MapCombine(string directory)
+        {           
+            string errorlist = "";
+            if (Environment.Is64BitOperatingSystem)
+            {
+                Console.WriteLine("系统是64位，支持更大的内存分配");
+                Instance.AddLog("系统是64位，支持更大的内存分配");
+            }
+            else
+            {
+                Console.WriteLine("系统是32位，内存分配有限制");
+                Instance.AddLog("系统是32位，内存分配有限制");
+            }
+
+            Process currentProcess = Process.GetCurrentProcess();
+
+            // 获取系统内存信息
+            PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            float availableRam = ramCounter.NextValue();
+
+            //Console.WriteLine("=== 系统内存信息 ===");
+            //Console.WriteLine($"可用内存: {availableRam:F2} MB");
+            Instance.AddLog($"可用内存: {availableRam / 1024:F2} GB");
+
+
+            
+            try
+            {
+                //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    //if (!response.IsSuccessStatusCode) 
+                    //{
+                    //    return;
+                    //}
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+
+                    // 反序列化为配置对象
+                    Root_map config = JsonConvert.DeserializeObject<Root_map>(json);
+                    Console.WriteLine($"文件num: {config.Items.Count}");
+                    Instance.AddLog($"-----Map 资源下载:{config.Items.Count}", Color.Green);
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+  
+                    await Task.Delay(15);
+
+                    int errorCount = 0;
+                    int caseINT = 3;
+                    #region //合图方案一，bitmap 一般图4K
+                    if (caseINT == 1)
+                    {
+                        foreach (var m in config.Items)
+                        {
+                            //if (m.Value.Id != 6242) { continue; }
+                            //if (
+                            //    //m.Value.Id != 103 &&
+                            //    m.Value.Id != 154 &&
+                            //    m.Value.Id != 5267 &&
+                            //    m.Value.Id != 5417 &&
+                            //    m.Value.Id != 5418 &&
+                            //    //m.Value.Id != 6227 &&
+                            //    m.Value.Id != 7149 &&
+                            //    m.Value.Id != 7151 &&
+                            //    //m.Value.Id != 8053 &&
+                            //    m.Value.Id != 8074 &&
+                            //    m.Value.Id != 8075 &&
+                            //    //m.Value.Id != 8078 &&
+                            //    m.Value.Id != 9221 &&
+                            //    m.Value.Id != 9401
+                            //    )
+                            //{
+
+                            //    continue;
+                            //}
+                            await Task.Delay(1);
+
+                            //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
+
+                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+
+                            int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
+                            int newWidth = (int)(m.Value.width);
+                            int newHeight = (int)(m.Value.height);
+
+                            Size size;
+                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            {
+                                countTiles = size.Width * size.Height / 512 / 256;
+                                newWidth = size.Width;
+                                newHeight = size.Height;
+                            }
+                            //if (newWidth > 10000) continue;
+                            if (!Directory.Exists(mapDir)) continue;
 
 
 
+
+
+                            int xCount = (int)(Math.Ceiling((double)newWidth / 512));
+                            int yCount = (int)(Math.Ceiling((double)newHeight / 256));
+
+                           
+                           
+                            if (File.Exists(outputPath))
+                            {
+                                if (!JpegChecker.IsLossyJpeg(outputPath))
+                                {
+                                    Instance.AddLog($"已有的大图有损，删除后继续 {outputPath}");
+                                    File.Delete(outputPath);
+                                }
+                                else
+                                {
+                                    Instance.AddLog($"已经生成的大图，跳过 {outputPath}");
+                                    continue;
+                                }
+
+                            }
+
+
+
+
+                            Instance.AddLog($"{iPro} map合图({countTiles}个切片图({Calculate24BitImageMemory(newWidth, newHeight)})，（{newWidth},{newHeight}）) {mapDir} ", Color.Black);
+
+                            try
+                            {
+                                Instance.AddLog($"有损资源下载中{mapDir}... ", Color.Black);
+                                //int totalFiles = files.Length;
+                                // 有损资源下载
+                                for (int i = 1; i <= countTiles; i++)
+                                {
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                   
+                                    try
+                                    {
+                                        if (!JpegChecker.IsLossyJpeg(file))
+                                        {
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
+                                            Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
+
+                                            // 下载文件并覆盖
+                                            await DownloadFileAsync(urlFile2, file, true);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // 单个文件处理失败不中断整体循环
+                                        Instance.AddLog($"处理文件 {file} 失败: {ex.Message}", Color.Orange);
+                                        continue;
+                                    }
+
+                                    // 每处理100个文件强制回收一次内存（根据实际情况调整频率）
+                                    if (i % 1000 == 0 && i > 0)
+                                    {
+                                        GC.Collect(); // 强制回收托管内存
+                                        GC.WaitForPendingFinalizers(); // 等待非托管资源释放
+                                        Instance.AddLog($"已处理 {i} 个文件，触发内存回收", Color.Gray);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Instance.AddLog($"有损资源处理错误: {ex.Message}", Color.Red);
+                            }
+
+                            //合图
+                            try
+                            {
+                                Console.WriteLine($"newWidth: {newWidth}   newHeight:{newHeight}");
+                                Instance.AddLog($"newWidth: {newWidth}   newHeight:{newHeight}", Color.Brown);
+                                using (Bitmap outBmp = new Bitmap(newWidth, newHeight, PixelFormat.Format24bppRgb))
+                                using (Graphics g = Graphics.FromImage(outBmp))
+                                {
+
+
+                                    //设置高质量绘制
+                                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+                                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;// System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                                    g.Clear(Color.Black); // 清除画布
+
+                                    // 处理每个文件
+                                    for (int i = 1; i <= countTiles; i++)
+                                    {
+                                        string tilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                       
+                                        using (FileStream tileFs = new FileStream(tilePath, FileMode.Open, FileAccess.Read))
+                                        using (Image imgagetile = Image.FromStream(tileFs))
+                                        {
+                                            // 计算切片位置
+                                            int srcX = ((i - 1) % xCount) * 512;
+                                            int srcY = ((i - 1) / xCount) * 256;
+
+                                            // 确保不超出目标图像边界
+                                            int drawWidth = Math.Min(imgagetile.Width, newWidth - srcX);
+                                            int drawHeight = Math.Min(imgagetile.Height, newHeight - srcY);
+
+                                            if (drawWidth > 0 && drawHeight > 0)
+                                            {
+                                                g.DrawImage(imgagetile, new Rectangle(srcX, srcY, drawWidth, drawHeight));
+                                            }
+                                        }
+
+
+                                    }
+                                    // 保存合并后的图片
+                                    string outputDir = Path.GetDirectoryName(outputPath);
+                                    if (!Directory.Exists(outputDir))
+                                    {
+                                        Directory.CreateDirectory(outputDir);
+                                    }
+
+                                    outBmp.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                    Instance.AddLog($"图片已保存: {outputPath}", Color.Green);
+
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorCount++;
+                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.Id} ({newWidth},{newHeight})");
+                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})", Color.Red);
+                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})";
+                            }
+                            //break;
+                            Console.WriteLine($"--------合图---------------------");
+                            //await Task.Delay(1);
+                        }
+                        //Console.WriteLine($"文件数： {config.Items.Count}  下载数： {downCount}");
+                    }
+                    #endregion
+
+                    #region // 合图方案二 大图
+                    if (caseINT == 2)
+                    {
+                        // 合图（内存映射方案）
+                        foreach (var m in config.Items)
+                        {
+                            //if (
+                            //    //m.Value.Id != 103 &&
+                            //    m.Value.Id != 154 &&
+                            //    m.Value.Id != 5267 &&
+                            //    m.Value.Id != 5417 &&
+                            //    m.Value.Id != 5418 &&
+                            //    //m.Value.Id != 6227 &&
+                            //    m.Value.Id != 7149 &&
+                            //    m.Value.Id != 7151 &&
+                            //    //m.Value.Id != 8053 &&
+                            //    m.Value.Id != 8074 &&
+                            //    m.Value.Id != 8075 &&
+                            //    //m.Value.Id != 8078 &&
+                            //    m.Value.Id != 9221 &&
+                            //    m.Value.Id != 9401
+                            //    )
+                            //{
+
+                            //    continue;
+                            //}
+
+                            await Task.Delay(1);
+
+                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+
+                            int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
+                            int newWidth = (int)(m.Value.width);
+                            int newHeight = (int)(m.Value.height);
+
+                            Size size;
+                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            {
+                                countTiles = size.Width * size.Height / 512 / 256;
+                                newWidth = size.Width;
+                                newHeight = size.Height;
+                            }
+
+                            if (!Directory.Exists(mapDir)) continue;
+
+                            int xCount = (int)(Math.Ceiling((double)newWidth / 512));
+                            int yCount = (int)(Math.Ceiling((double)newHeight / 256));
+
+                           
+                            if (File.Exists(outputPath))
+                            {
+                                if (!JpegChecker.IsLossyJpeg(outputPath))
+                                {
+                                    Instance.AddLog($"已有的大图有损，删除后继续 {outputPath}");
+                                    File.Delete(outputPath);
+                                }
+                                else
+                                {
+                                    Instance.AddLog($"已经生成的大图，跳过 {outputPath}");
+                                    continue;
+                                }
+
+                            }
+
+
+
+                            Instance.AddLog($"{iPro} map合图({countTiles}个切片图({Calculate24BitImageMemory(newWidth, newHeight)})，（{newWidth},{newHeight}）) {mapDir} ", Color.Black);
+
+                            try
+                            {
+                                Instance.AddLog($"有损资源下载中{mapDir}... ", Color.Black);
+                                
+                                // 有损资源下载
+                                for (int i = 1; i <= countTiles; i++)
+                                {
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");                                  
+
+                                    try
+                                    {
+
+                                        if (!JpegChecker.IsLossyJpeg(file))
+                                        {
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
+                                            Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
+
+                                            // 下载文件并覆盖
+                                            await DownloadFileAsync(urlFile2, file, true);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // 单个文件处理失败不中断整体循环
+                                        Instance.AddLog($"处理文件 {file} 失败: {ex.Message}", Color.Orange);
+                                        continue;
+                                    }
+
+                                    // 每处理100个文件强制回收一次内存（根据实际情况调整频率）
+                                    if (i % 1000 == 0 && i > 0)
+                                    {
+                                        GC.Collect(); // 强制回收托管内存
+                                        GC.WaitForPendingFinalizers(); // 等待非托管资源释放
+                                        Instance.AddLog($"已处理 {i} 个文件，触发内存回收", Color.Gray);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Instance.AddLog($"有损资源处理错误: {ex.Message}", Color.Red);
+                            }
+
+                            try
+                            {
+                                Console.WriteLine($"newWidth: {newWidth}   newHeight:{newHeight}");
+                                Instance.AddLog($"newWidth: {newWidth}   newHeight:{newHeight}", Color.Brown);
+
+                                // 计算24位图像所需字节数 (宽 × 高 × 3字节/像素)
+                                long imageDataSize = (long)newWidth * newHeight * 3;
+                                string tempMapFile = Path.GetTempFileName();
+
+                                try
+                                {
+                                    // 创建内存映射文件
+                                    using (var mmf = MemoryMappedFile.CreateFromFile(
+                                        tempMapFile,
+                                        FileMode.Create,
+                                        null,
+                                        imageDataSize,
+                                        MemoryMappedFileAccess.ReadWrite))
+                                    {
+                                        // 获取内存映射视图访问器
+                                        using (var accessor = mmf.CreateViewAccessor(0, imageDataSize, MemoryMappedFileAccess.ReadWrite))
+                                        {
+                                            // 初始化内存区域为黑色
+                                            byte[] blackBuffer = new byte[4096];
+                                            for (int i = 0; i < blackBuffer.Length; i++)
+                                            {
+                                                blackBuffer[i] = 0; // 初始化黑色(0,0,0)
+                                            }
+
+                                            long remaining = imageDataSize;
+                                            long position = 0;
+                                            while (remaining > 0)
+                                            {
+                                                int writeSize = (int)Math.Min(remaining, blackBuffer.Length);
+                                                accessor.WriteArray(position, blackBuffer, 0, writeSize);
+                                                position += writeSize;
+                                                remaining -= writeSize;
+                                            }
+
+                                            // 处理每个切片
+                                            for (int i = 1; i <= countTiles; i++)
+                                            {
+                                                string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+
+                                                // 计算切片位置
+                                                int srcX = ((i - 1) % xCount) * 512;
+                                                int srcY = ((i - 1) / xCount) * 256;
+
+                                                // 读取切片图像并锁定像素
+                                                using (var tileBmp = new Bitmap(file))
+                                                {
+                                                    Rectangle tileRect = new Rectangle(0, 0, tileBmp.Width, tileBmp.Height);
+                                                    System.Drawing.Imaging.BitmapData tileData = tileBmp.LockBits(
+                                                        tileRect,
+                                                        System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                                                        System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+                                                    try
+                                                    {
+                                                        // 确保不超出目标图像边界
+                                                        int drawWidth = Math.Min(tileBmp.Width, newWidth - srcX);
+                                                        int drawHeight = Math.Min(tileBmp.Height, newHeight - srcY);
+
+                                                        if (drawWidth <= 0 || drawHeight <= 0)
+                                                            continue;
+
+                                                        // 每行像素的字节数
+                                                        int tileStride = tileData.Stride;
+                                                        IntPtr tileScan0 = tileData.Scan0;
+
+                                                        // 复制每行像素数据到内存映射区域
+                                                        for (int y = 0; y < drawHeight; y++)
+                                                        {
+                                                            long destRowOffset = (srcY + y) * newWidth * 3 + srcX * 3;
+                                                            if (destRowOffset + drawWidth * 3 > imageDataSize)
+                                                                break;
+
+                                                            // 复制一行像素数据到临时缓冲区
+                                                            byte[] rowBuffer = new byte[drawWidth * 3];
+                                                            System.Runtime.InteropServices.Marshal.Copy(tileScan0 + y * tileStride, rowBuffer, 0, drawWidth * 3);
+
+                                                            // 显式指定类型参数为 byte，将缓冲区数据写入内存映射区域
+                                                            accessor.WriteArray<byte>(destRowOffset, rowBuffer, 0, drawWidth * 3);
+                                                        }
+                                                    }
+                                                    finally
+                                                    {
+                                                        tileBmp.UnlockBits(tileData);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // 从内存映射文件创建Bitmap并保存
+                                    using (var finalBmp = new Bitmap(newWidth, newHeight, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+                                    {
+                                        Rectangle rect = new Rectangle(0, 0, newWidth, newHeight);
+                                        System.Drawing.Imaging.BitmapData bmpData = finalBmp.LockBits(
+                                            rect,
+                                            System.Drawing.Imaging.ImageLockMode.WriteOnly,
+                                            finalBmp.PixelFormat);
+
+                                        try
+                                        {
+                                            // 从临时文件读取数据到Bitmap
+                                            using (var fs = new FileStream(tempMapFile, FileMode.Open, FileAccess.Read))
+                                            {
+                                                byte[] buffer = new byte[bmpData.Stride * newHeight];
+                                                fs.Read(buffer, 0, buffer.Length);
+                                                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, bmpData.Scan0, buffer.Length);
+                                            }
+                                        }
+                                        finally
+                                        {
+                                            finalBmp.UnlockBits(bmpData);
+                                        }
+
+                                        // 保存最终图像
+                                        string outputDir = Path.GetDirectoryName(outputPath);
+                                        if (!Directory.Exists(outputDir))
+                                            Directory.CreateDirectory(outputDir);
+
+                                        finalBmp.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                        Instance.AddLog($"图片已保存: {outputPath}", Color.Green);
+                                    }
+                                }
+                                finally
+                                {
+                                    // 清理临时文件
+                                    if (File.Exists(tempMapFile))
+                                    {
+                                        File.Delete(tempMapFile);
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorCount++;
+                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.Id} ({newWidth},{newHeight})");
+                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})", Color.Red);
+                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})";
+                            }
+
+                            Console.WriteLine($"--------合图完成---------------------");
+                        }
+                    }
+                    #endregion
+
+
+                    #region //合图方案三  超大图
+                    if (caseINT == 3)
+                    {
+                        int index = 0;
+                        foreach (var m in config.Items)
+                        {
+                            //if (m.Value.Id!= 6242) { continue; }
+                            index++;
+
+                            //if (
+                            //    //m.Value.Id != 103 &&
+                            //    m.Value.Id != 154 &&
+                            //    m.Value.Id != 5267 &&
+                            //    m.Value.Id != 5417 &&
+                            //    m.Value.Id != 5418 &&
+                            //    //m.Value.Id != 6227 &&
+                            //    m.Value.Id != 7149 &&
+                            //    m.Value.Id != 7151 &&
+                            //    //m.Value.Id != 8053 &&
+                            //    m.Value.Id != 8074 &&
+                            //    m.Value.Id != 8075 &&
+                            //    //m.Value.Id != 8078 &&
+                            //    m.Value.Id != 9221 &&
+                            //    m.Value.Id != 9401
+                            //    )
+                            //{
+
+                            //    continue;
+                            //}
+                            GC.Collect();
+                                await Task.Delay(1);
+
+                                //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
+
+                                string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                                string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                                string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+
+                                int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
+                                int newWidth = (int)(m.Value.width);
+                                int newHeight = (int)(m.Value.height);
+
+                                Size size;
+                                if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                                {
+                                    countTiles = size.Width * size.Height / 512 / 256;
+                                    newWidth = size.Width;
+                                    newHeight = size.Height;
+                                }
+                                //if (newWidth > 10000) continue;
+                                if (!Directory.Exists(mapDir)) continue;
+                            if (File.Exists(outputPath)) 
+                            {
+                                if (!JpegChecker.IsLossyJpeg(outputPath))
+                                {
+                                    Instance.AddLog($"已有的大图有损，删除后继续 {outputPath}");
+                                    File.Delete(outputPath);
+                                }
+                                else 
+                                {
+                                    Instance.AddLog($"已经生成的大图，跳过 {outputPath}");
+                                    continue;
+                                }
+                              
+                            }
+
+
+                                int xCount = (int)(Math.Ceiling((double)newWidth / 512));
+                                int yCount = (int)(Math.Ceiling((double)newHeight / 256));
+
+                              
+                                Instance.AddLog($"{iPro} map合图({countTiles}个切片图({Calculate24BitImageMemory(newWidth, newHeight)})，（{newWidth},{newHeight}）) {mapDir} ", Color.Black);
+
+                            try
+                            {
+                                Instance.AddLog($"有损资源下载中{mapDir}... ", Color.Black);
+                                
+                                // 有损资源下载
+                                for (int i = 1; i <= countTiles; i++)
+                                {
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+
+                                    try
+                                    {
+
+                                        if (!JpegChecker.IsLossyJpeg(file))
+                                        {
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
+                                            Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
+
+                                            // 下载文件并覆盖
+                                            await DownloadFileAsync(urlFile2, file, true);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // 单个文件处理失败不中断整体循环
+                                        Instance.AddLog($"处理文件 {file} 失败: {ex.Message}", Color.Orange);
+                                        continue;
+                                    }
+
+                                    // 每处理100个文件强制回收一次内存（根据实际情况调整频率）
+                                    if (i % 1000 == 0 && i > 0)
+                                    {
+                                        GC.Collect(); // 强制回收托管内存
+                                        GC.WaitForPendingFinalizers(); // 等待非托管资源释放
+                                        Instance.AddLog($"已处理 {i} 个文件，触发内存回收", Color.Gray);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Instance.AddLog($"有损资源处理错误: {ex.Message}", Color.Red);
+                            }
+
+
+                            try
+                            {
+                                using (var magickImage = new MagickImage(MagickColors.Black, newWidth, newHeight))
+                                {
+                                    for (int i = 1; i <= countTiles; i++)
+                                    {
+                                        string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+
+
+                                        using (var tile = new ImageMagick.MagickImage(file))
+                                        {
+                                            int x = ((i - 1) % xCount) * 512;
+                                            int y = ((i - 1) / xCount) * 256;
+
+                                            magickImage.Composite(tile, x, y, ImageMagick.CompositeOperator.Over);
+                                            if (i % 100 == 1)
+                                                Instance.AddLog($"ImageMagick处理切片: {file}/{countTiles}", Color.Black);
+                                            Console.WriteLine($"ImageMagick处理切片: {file}");
+
+                                            //// 每处理100个文件强制回收一次内存（根据实际情况调整频率）
+                                            if (i % 500 == 0 && i > 0)
+                                            {
+                                                GC.Collect(); // 强制回收托管内存
+                                                GC.WaitForPendingFinalizers(); // 等待非托管资源释放
+                                                Instance.AddLog($"已合并 {i}/{countTiles} 个切图，触发内存回收", Color.Gray);
+                                            }
+                                        }
+                                    }
+                                   
+                                    magickImage.Write(outputPath,MagickFormat.Jpg);
+                                }
+                                iPro++;
+                                Instance.AddLog($"({index}/{config.Items.Count})图片已保存: {outputPath}", Color.Green);
+                               
+                            }
+                            catch (Exception ex)
+                            {
+                                Instance.AddLog($"ImageMagick处理错误: {ex.Message}", Color.Red);
+                            }
+                            //return;
+                        }
+
+                       
+                    }
+                    #endregion
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message} ");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
+            }
+            Instance.AddLog(errorlist,Color.Red);
+        }
+
+        
         static int iPro = 0;
         // 递归处理目录及其子目录
         static void ProcessDirectory(string directoryPath)
@@ -1597,6 +2396,16 @@ namespace zy_cutPicture
                 var step6End = DateTime.Now;
                 AddLog($"完成 下载地图，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_7.Visible = true;
+            }
+
+            if (this.ck_8.Checked)
+            {
+                // 下载怪物头像图
+                var step7Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text));
+                var step7End = DateTime.Now;
+                AddLog($"完成 合并地图成大图，耗时：{(step7End - step7Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_8.Visible = true;
             }
 
             if (this.ck_4.Checked)
