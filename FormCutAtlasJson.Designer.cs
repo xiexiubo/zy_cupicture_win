@@ -37,6 +37,8 @@ namespace zy_cutPicture
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.img_8 = new System.Windows.Forms.PictureBox();
+            this.ck_8 = new System.Windows.Forms.CheckBox();
             this.img_7 = new System.Windows.Forms.PictureBox();
             this.ck_7 = new System.Windows.Forms.CheckBox();
             this.btn_onekey = new System.Windows.Forms.Button();
@@ -74,13 +76,16 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.img_8 = new System.Windows.Forms.PictureBox();
-            this.ck_8 = new System.Windows.Forms.CheckBox();
+            this.btn_map = new System.Windows.Forms.Button();
+            this.btn_com1 = new System.Windows.Forms.Button();
+            this.btn_com2 = new System.Windows.Forms.Button();
+            this.btn_com3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).BeginInit();
@@ -91,7 +96,6 @@ namespace zy_cutPicture
             this.groupBox2.SuspendLayout();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_8)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -104,8 +108,8 @@ namespace zy_cutPicture
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.groupBox1);
             this.splitContainer.Panel1.Controls.Add(this.groupBox2);
+            this.splitContainer.Panel1.Controls.Add(this.groupBox1);
             // 
             // splitContainer.Panel2
             // 
@@ -146,10 +150,31 @@ namespace zy_cutPicture
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             // 
+            // img_8
+            // 
+            this.img_8.Image = global::zy_cutPicture.Properties.Resources.勾选;
+            this.img_8.Location = new System.Drawing.Point(83, 210);
+            this.img_8.Name = "img_8";
+            this.img_8.Size = new System.Drawing.Size(20, 20);
+            this.img_8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.img_8.TabIndex = 29;
+            this.img_8.TabStop = false;
+            this.img_8.Visible = false;
+            // 
+            // ck_8
+            // 
+            this.ck_8.AutoSize = true;
+            this.ck_8.Location = new System.Drawing.Point(25, 213);
+            this.ck_8.Name = "ck_8";
+            this.ck_8.Size = new System.Drawing.Size(60, 16);
+            this.ck_8.TabIndex = 28;
+            this.ck_8.Text = "合大图";
+            this.ck_8.UseVisualStyleBackColor = true;
+            // 
             // img_7
             // 
             this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_7.Location = new System.Drawing.Point(140, 159);
+            this.img_7.Location = new System.Drawing.Point(140, 156);
             this.img_7.Name = "img_7";
             this.img_7.Size = new System.Drawing.Size(20, 20);
             this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -162,7 +187,7 @@ namespace zy_cutPicture
             this.ck_7.AutoSize = true;
             this.ck_7.Checked = true;
             this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_7.Location = new System.Drawing.Point(25, 160);
+            this.ck_7.Location = new System.Drawing.Point(25, 157);
             this.ck_7.Name = "ck_7";
             this.ck_7.Size = new System.Drawing.Size(120, 16);
             this.ck_7.TabIndex = 26;
@@ -236,7 +261,7 @@ namespace zy_cutPicture
             // img_4
             // 
             this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_4.Location = new System.Drawing.Point(150, 212);
+            this.img_4.Location = new System.Drawing.Point(150, 184);
             this.img_4.Name = "img_4";
             this.img_4.Size = new System.Drawing.Size(20, 20);
             this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -292,7 +317,7 @@ namespace zy_cutPicture
             this.ck_4.AutoSize = true;
             this.ck_4.Checked = true;
             this.ck_4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_4.Location = new System.Drawing.Point(25, 214);
+            this.ck_4.Location = new System.Drawing.Point(25, 186);
             this.ck_4.Name = "ck_4";
             this.ck_4.Size = new System.Drawing.Size(126, 16);
             this.ck_4.TabIndex = 3;
@@ -337,6 +362,10 @@ namespace zy_cutPicture
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btn_com3);
+            this.groupBox2.Controls.Add(this.btn_com2);
+            this.groupBox2.Controls.Add(this.btn_com1);
+            this.groupBox2.Controls.Add(this.btn_map);
             this.groupBox2.Controls.Add(this.btn_allmanifest);
             this.groupBox2.Controls.Add(this.btn_itemdown);
             this.groupBox2.Controls.Add(this.btn_model);
@@ -404,7 +433,7 @@ namespace zy_cutPicture
             // 
             this.btn_icon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_icon1.Location = new System.Drawing.Point(8, 175);
+            this.btn_icon1.Location = new System.Drawing.Point(8, 172);
             this.btn_icon1.Name = "btn_icon1";
             this.btn_icon1.Size = new System.Drawing.Size(187, 30);
             this.btn_icon1.TabIndex = 14;
@@ -414,7 +443,7 @@ namespace zy_cutPicture
             // 
             // btn_cut1
             // 
-            this.btn_cut1.Location = new System.Drawing.Point(8, 257);
+            this.btn_cut1.Location = new System.Drawing.Point(8, 356);
             this.btn_cut1.Name = "btn_cut1";
             this.btn_cut1.Size = new System.Drawing.Size(73, 30);
             this.btn_cut1.TabIndex = 13;
@@ -425,7 +454,7 @@ namespace zy_cutPicture
             // btn_cut
             // 
             this.btn_cut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_cut.Location = new System.Drawing.Point(118, 257);
+            this.btn_cut.Location = new System.Drawing.Point(118, 356);
             this.btn_cut.Name = "btn_cut";
             this.btn_cut.Size = new System.Drawing.Size(77, 30);
             this.btn_cut.TabIndex = 11;
@@ -552,26 +581,56 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
-            // img_8
+            // btn_map
             // 
-            this.img_8.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_8.Location = new System.Drawing.Point(83, 183);
-            this.img_8.Name = "img_8";
-            this.img_8.Size = new System.Drawing.Size(20, 20);
-            this.img_8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.img_8.TabIndex = 29;
-            this.img_8.TabStop = false;
-            this.img_8.Visible = false;
+            this.btn_map.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_map.Location = new System.Drawing.Point(8, 206);
+            this.btn_map.Name = "btn_map";
+            this.btn_map.Size = new System.Drawing.Size(187, 30);
+            this.btn_map.TabIndex = 15;
+            this.btn_map.Text = "下载地图";
+            this.btn_map.UseVisualStyleBackColor = true;
+            this.btn_map.Click += new System.EventHandler(this.btn_map_Click);
             // 
-            // ck_8
+            // btn_com1
             // 
-            this.ck_8.AutoSize = true;
-            this.ck_8.Location = new System.Drawing.Point(25, 186);
-            this.ck_8.Name = "ck_8";
-            this.ck_8.Size = new System.Drawing.Size(60, 16);
-            this.ck_8.TabIndex = 28;
-            this.ck_8.Text = "合大图";
-            this.ck_8.UseVisualStyleBackColor = true;
+            this.btn_com1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com1.Location = new System.Drawing.Point(25, 243);
+            this.btn_com1.Name = "btn_com1";
+            this.btn_com1.Size = new System.Drawing.Size(170, 30);
+            this.btn_com1.TabIndex = 16;
+            this.btn_com1.Text = "   合地图方案一(补)";
+            this.btn_com1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com1.UseVisualStyleBackColor = true;
+            this.btn_com1.Click += new System.EventHandler(this.btn_com1_Click);
+            // 
+            // btn_com2
+            // 
+            this.btn_com2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com2.Location = new System.Drawing.Point(25, 276);
+            this.btn_com2.Name = "btn_com2";
+            this.btn_com2.Size = new System.Drawing.Size(170, 30);
+            this.btn_com2.TabIndex = 17;
+            this.btn_com2.Text = "   合地图方案二";
+            this.btn_com2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com2.UseVisualStyleBackColor = true;
+            this.btn_com2.Click += new System.EventHandler(this.btn_com2_Click);
+            // 
+            // btn_com3
+            // 
+            this.btn_com3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com3.Location = new System.Drawing.Point(25, 312);
+            this.btn_com3.Name = "btn_com3";
+            this.btn_com3.Size = new System.Drawing.Size(170, 30);
+            this.btn_com3.TabIndex = 18;
+            this.btn_com3.Text = "   合地图方案三（默认）";
+            this.btn_com3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com3.UseVisualStyleBackColor = true;
+            this.btn_com3.Click += new System.EventHandler(this.btn_com3_Click);
             // 
             // FormCutAtlasJson
             // 
@@ -596,6 +655,7 @@ namespace zy_cutPicture
             this.splitContainer.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.img_8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_2)).EndInit();
@@ -606,7 +666,6 @@ namespace zy_cutPicture
             this.groupBox2.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_8)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -655,5 +714,9 @@ namespace zy_cutPicture
         private CheckBox ck_7;
         private PictureBox img_8;
         private CheckBox ck_8;
+        private Button btn_com3;
+        private Button btn_com2;
+        private Button btn_com1;
+        private Button btn_map;
     }
 }

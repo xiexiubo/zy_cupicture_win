@@ -712,11 +712,11 @@ namespace zy_cutPicture
                     foreach (var m in config.Items)
                     {
                         //break;
-                        if (m.Value.Id != 202)
-                        {
-                            downCount++;
-                            continue;
-                        }
+                        //if (m.Value.Id != 202)
+                        //{
+                        //    downCount++;
+                        //    continue;
+                        //}
 
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
@@ -768,7 +768,7 @@ namespace zy_cutPicture
                                 }
                                 else
                                 {
-                                   await DownloadFileAsync(subUrl, filePath);
+                                    DownloadFileAsync(subUrl, filePath);
                                 }
 
                             }
@@ -833,8 +833,13 @@ namespace zy_cutPicture
             }
         }
 
-
-        static async Task DoneRes_MapCombine(string directory)
+        /// <summary>
+        /// 合成地图
+        /// </summary>
+        /// <param name="directory">保存目录</param>
+        /// <param name="type">全图方案1 通用但大图不行， 2 一般 3 大图用，有部分会出错</param>
+        /// <returns></returns>
+        static async Task DoneRes_MapCombine(string directory,int type=3)
         {           
             string errorlist = "";
             if (Environment.Is64BitOperatingSystem)
@@ -848,7 +853,7 @@ namespace zy_cutPicture
                 Instance.AddLog("系统是32位，内存分配有限制");
             }
 
-            Process currentProcess = Process.GetCurrentProcess();
+          
 
             // 获取系统内存信息
             PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
@@ -896,7 +901,7 @@ namespace zy_cutPicture
                     await Task.Delay(15);
 
                     int errorCount = 0;
-                    int caseINT = 3;
+                    int caseINT = type;
                     #region //合图方案一，bitmap 一般图4K
                     if (caseINT == 1)
                     {
@@ -2396,17 +2401,7 @@ namespace zy_cutPicture
                 var step6End = DateTime.Now;
                 AddLog($"完成 下载地图，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_7.Visible = true;
-            }
-
-            if (this.ck_8.Checked)
-            {
-                // 下载怪物头像图
-                var step7Start = DateTime.Now;
-                await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text));
-                var step7End = DateTime.Now;
-                AddLog($"完成 合并地图成大图，耗时：{(step7End - step7Start).TotalSeconds:F2}秒", Color.Green);
-                this.img_8.Visible = true;
-            }
+            }           
 
             if (this.ck_4.Checked)
             {
@@ -2418,7 +2413,15 @@ namespace zy_cutPicture
                 this.img_4.Visible = true;
             }
 
-
+            if (this.ck_8.Checked)
+            {
+                // 合成地图 大图
+                var step7Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text));
+                var step7End = DateTime.Now;
+                AddLog($"完成 合并地图成大图，耗时：{(step7End - step7Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_8.Visible = true;
+            }
             //--------------------------以下切图-----------------------------------------------------
             if (this.ck_6.Checked)
             {
@@ -2460,6 +2463,42 @@ namespace zy_cutPicture
                 // 异常处理：如 URL 格式错误、无默认浏览器等
                 MessageBox.Show($"打开链接失败：{ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        private async void btn_map_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Map(this.txt_dir.Text));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 地图下载，耗时：{(stepEnd - stepStart).TotalMinutes:F2}秒", Color.Green);
+
+        }
+        private async void btn_com1_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text,1));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 方案一全图，耗时：{(stepEnd - stepStart).TotalMinutes:F2}秒", Color.Green);
+
+        }
+
+
+
+        private async void btn_com2_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text, 2));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 方案二全图，耗时：{(stepEnd - stepStart).TotalMinutes:F2}秒", Color.Green);
+
+        }
+
+        private async void btn_com3_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text, 3));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 方案三全图，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
+
         }
     }
 
