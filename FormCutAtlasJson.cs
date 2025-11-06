@@ -5,11 +5,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,6 +20,7 @@ using ImageMagick;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using zy_cutPicture.Properties;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace zy_cutPicture
 {
     public partial class FormCutAtlasJson : Form
@@ -731,10 +735,12 @@ namespace zy_cutPicture
                         }
 
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                        Instance.AddLog($"{downCount}/{config.Items.Count} map {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
+                        Instance.AddLog($"{downCount}/{config.Items.Count} minimap {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
                         DownloadFileAsync(subUrl, filePath);
+                        
 
                         var dir2 = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                        Instance.AddLog($"dir2 {dir2}", Color.Black);
                         // 创建保存目录（如果不存在）
                         if (Directory.Exists(dir2))
                         {
@@ -744,27 +750,44 @@ namespace zy_cutPicture
                             }
                         }
 
-
+                        bool isContinue = false;
                         // if (File.Exists(filePath))
                         {
                             bool success = false;
                             int ck_num = 5;
                             for (int i = 1; countTiles >= i; i++)
-                            {
+                            { 
                                 if (i > ck_num && !success)
                                 {
+                                    isContinue = true;
+                                    Instance.AddLog($"大于五个不存在地图跳过 {m.Value.Id}");
                                     break;
                                 }
                                 //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/5286/114.jpg?ver=1.0.1
                                 subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
                                 filePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                if (!JpegChecker.IsLossyJpeg(filePath))
+                                {
+                                    Instance.AddLog($"碎图不存在 或者有损 删除后继续下载 {filePath}");
+                                    if(File.Exists(filePath))
+                                        File.Delete(filePath);
+                                }
+                                else
+                                {
+                                    Instance.AddLog($"碎图已经存在跳过下载 {filePath}");
+                                    success=true;
+                                    continue;
+                                }
+
                                 if (i % 10 == 1)
-                                    Instance.AddLog($"{i}/{countTiles} mapTile subUrl: {subUrl}  filePath:resource/map/{m.Value.Id}/{i}.jpg", Color.Black);
+                                    Instance.AddLog($"{i}/{countTiles} mapTile 下载 subUrl: {subUrl}  filePath:resource/map/{m.Value.Id}/{i}.jpg", Color.Black);
 
                                 if (i <= ck_num)
                                 {
                                     bool b = await DownloadFileAsync(subUrl, filePath);
                                     success = b || success;
+                                    if(!b)
+                                        Instance.AddLog($"下载失败 {subUrl}");
                                 }
                                 else
                                 {
@@ -772,16 +795,37 @@ namespace zy_cutPicture
                                 }
 
                             }
+
+                            if (isContinue) 
+                            {
+                                downCount++;
+                                downCountInfact++;
+                                continue;
+                            }
+
                             //转换为png
-                            bool isPNG = false;
+                            bool isPNG = true;
                             if (isPNG)
                             {
+                                Instance.AddLog($"转换png: {m.Value.Id}", Color.Black);
                                 await Task.Delay(1000);
                                 for (int i = 1; countTiles >= i; i++)
                                 {
 
                                     string jpgFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
                                     string pngFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.png");
+                                    if (File.Exists(pngFilePath))
+                                    {
+                                        if (File.Exists(jpgFilePath))
+                                            File.Delete(jpgFilePath);
+                                        Instance.AddLog($"删除jpg: {jpgFilePath}", Color.Black);
+                                        continue;
+                                    }
+                                    else if (!File.Exists(jpgFilePath)) 
+                                    {
+                                        Instance.AddLog($"转换png: {m.Value.Id}   不存在 {jpgFilePath}  count:{countTiles}", Color.Red);
+                                        continue;
+                                    }
 
                                     try
                                     {
@@ -791,13 +835,20 @@ namespace zy_cutPicture
                                             // 保存为PNG格式
                                             image.Save(pngFilePath, ImageFormat.Png);
                                             Console.WriteLine("转换成功！");
+                                            Instance.AddLog($"转换成功: {pngFilePath}", Color.Black);
                                         }
                                     }
                                     catch (Exception ex)
                                     {
                                         Console.WriteLine($"转换失败: {ex.Message}");
+                                        Instance.AddLog($"转换失败: {pngFilePath}", Color.Black);
                                     }
-
+                                    if (File.Exists(jpgFilePath))
+                                    {
+                                        File.Delete(jpgFilePath);
+                                        //Instance.AddLog($"删除jpg: {jpgFilePath}", Color.Black);
+                                        continue;
+                                    }
                                 }
                             }
 
@@ -814,7 +865,7 @@ namespace zy_cutPicture
                             break;
 
                     }
-                }
+                } 
             }
             catch (HttpRequestException ex)
             {
@@ -1532,7 +1583,417 @@ namespace zy_cutPicture
             Instance.AddLog(errorlist,Color.Red);
         }
 
-        
+
+        #region DoneRes_MapData
+        static async Task DoneRes_MapData(string directory)
+        {
+            Dictionary<int, byte[]> mapDatas = new Dictionary<int, byte[]>();
+            Root_map config = null;
+            using (var httpClient = new HttpClient())
+            {
+                var url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                // 发送HTTP请求并获取响应
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                // 确保请求成功
+                response.EnsureSuccessStatusCode();
+                //if (!response.IsSuccessStatusCode) 
+                //{
+                //    return;
+                //}
+
+                // 读取响应内容
+                string json = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"文件num: {json}");
+
+                // 反序列化为配置对象
+                config = JsonConvert.DeserializeObject<Root_map>(json);
+                Console.WriteLine($"文件num: {config.Items.Count}");
+                Instance.AddLog($"-----Map conifg:{config.Items.Count}", Color.Green);
+                if (config == null)
+                {
+                    throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                }               
+            }
+
+            await Task.Delay(15);
+            try
+            {
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/map1.29318.3.dat?ver=1.0.1";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/map{Instance.txt_resVer.Text}.dat?ver=1.0.1";
+                Instance.AddLog($"下载map.data");
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    // 读取响应内容
+                    byte[] compressedData = await response.Content.ReadAsByteArrayAsync();
+                    Console.WriteLine($"下载的压缩数据大小: {compressedData.Length}字节");
+
+                    using (MemoryStream compressedStream = new MemoryStream(compressedData))
+                    using (MemoryStream decompressedStream = new MemoryStream())
+                    {
+                        Instance.AddLog($"尝试不同的解压方法");
+                        // 尝试不同的解压方法
+                        byte[] data;
+                        try
+                        {
+                            // 方法1: 尝试GZip解压
+                            compressedStream.Position = 0;
+                            using (GZipStream decompressionStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+                            {
+                                decompressionStream.CopyTo(decompressedStream);
+                            }
+                            data = decompressedStream.ToArray();
+                        }
+                        catch (Exception ex1)
+                        {
+                            Console.WriteLine($"GZip解压失败: {ex1.Message}, 尝试Deflate解压");
+
+                            // 方法2: 尝试Deflate解压
+                            try
+                            {
+                                compressedStream.Position = 0;
+                                decompressedStream.SetLength(0);
+                                using (DeflateStream decompressionStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+                                {
+                                    decompressionStream.CopyTo(decompressedStream);
+                                }
+                                data = decompressedStream.ToArray();
+                            }
+                            catch (Exception ex2)
+                            {
+                                Console.WriteLine($"Deflate解压也失败: {ex2.Message}, 尝试原始数据");
+                                // 方法3: 可能数据已经是解压状态
+                                data = compressedData;
+                            }
+                        }
+
+                        Console.WriteLine($"解压后的地图文件大小为{data.Length}字节");
+
+                        // 使用MemoryStream读取数据，尝试不同的字节序
+                        using (MemoryStream stream = new MemoryStream(data))
+                        {
+                            // 方法1: 尝试小端序
+                            short count = ReadShort(stream, false);
+                            Console.WriteLine($"小端序读取的地图数量：{count}");
+
+                            // 如果读取到负数，尝试大端序
+                            if (count < 0)
+                            {
+                                stream.Position = 0;
+                                count = ReadShort(stream, true);
+                                Console.WriteLine($"大端序读取的地图数量：{count}");
+                            }
+
+                            // 如果还是负数，可能是数据格式问题
+                            if (count < 0)
+                            {
+                                Console.WriteLine("警告：地图数量为负数，可能数据格式有误");
+                                // 可以尝试继续处理或者直接返回
+                                return;
+                            }
+
+                            // 使用正确的字节序读取剩余数据
+                            bool useBigEndian = true; // 根据上面的测试确定
+                            Instance.AddLog($"地图数据量：{count}");
+                            for (int j = 0; j < count; j++)
+                            {
+                                int key = ReadInt(stream, useBigEndian);
+                                int dataLength = ReadInt(stream, useBigEndian);
+
+                                if (dataLength < 0 || dataLength > stream.Length - stream.Position)
+                                {
+                                    Console.WriteLine($"错误的数据长度: {dataLength}，位置: {stream.Position}");
+                                    break;
+                                }
+
+                                byte[] da = new byte[dataLength];
+                                int bytesRead = stream.Read(da, 0, dataLength);
+
+                                if (bytesRead != dataLength)
+                                {
+                                    Console.WriteLine($"读取数据不完整，期望: {dataLength}，实际: {bytesRead}");
+                                    break;
+                                }
+
+                                // 存储地图数据
+                                if (!mapDatas.ContainsKey(key))
+                                {
+                                    mapDatas.Add(key, da);
+                                    if (j < 10) // 只打印前10个避免输出太多
+                                        Console.WriteLine($"解析并存储地图 ID：{key}，数据长度：{dataLength} 字节");
+
+                                    if (key == 200) 
+                                    {
+
+                                        string s = "";
+
+                                         int _colCount;
+                                         int _rowCount;
+                                         int[][] _mapIndex;
+                                         Dictionary<int, bool> _coverDic = new Dictionary<int, bool>();
+                                         Dictionary<int, bool> _safeDic = new Dictionary<int, bool>();
+                                         List<short[]> stallageArea=new List<short[]>();
+                                         List<short[]> guajiArea = new List<short[]>();
+                                         List<short[]> safeArea = new List<short[]>();
+
+                                        using (MemoryStream stream2 = new MemoryStream(da))
+                                        using (BinaryReader reader = new BinaryReader(stream2))
+                                        {
+                                            // 设置小端序
+                                            // BinaryReader默认就是小端序，所以不需要特别设置
+
+                                            // 跳过第一个int（可能是版本号或其他标识）
+                                            reader.ReadInt32();
+
+                                            int MAP_GRID_WIDTH = 48;
+                                            int MAP_GRID_HEIGHT = 32;
+                                            int mapWidth = config.Items[key.ToString()].width;
+                                            int mapHeight = config.Items[key.ToString()].height;
+                                            Size size;
+                                            if (dicConst.TryGetValue((int)key, out size))
+                                            {
+                                                mapWidth = size.Width;
+                                                mapHeight = size.Height;
+                                            }
+                                            // 计算网格行列数
+                                            int cols = (int)Math.Ceiling(mapWidth / (double)MAP_GRID_WIDTH);
+                                            int rows = (int)Math.Ceiling(mapHeight / (double)MAP_GRID_HEIGHT);
+
+                                            _colCount = cols - 1;
+                                            _rowCount = rows - 1;
+
+                                            // 定义标志位常量
+                                            const byte FLAG_N = 8;  // 1000
+                                            const byte FLAG_O = 4;  // 0100  
+                                            const byte FLAG_S = 2;  // 0010
+
+                                            bool l = true;
+                                            byte d = 0;
+                                            byte u = 0;
+                                            int c = 0;
+
+                                            _mapIndex = new int[rows][];
+
+                                            // 读取地图网格数据
+                                            for (int p = 0; p < rows; p++)
+                                            {
+                                                int[] gridRow = new int[cols];
+
+                                                for (int f = 0; f < cols; f++)
+                                                {
+                                                    if (l)
+                                                    {
+                                                        d = reader.ReadByte();
+                                                        if (d > 127) // 处理有符号byte转无符号
+                                                            d = (byte)(d + 256);
+                                                        l = false;
+                                                        u = (byte)(d >> 4); // 取高4位
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        u = (byte)(d & 0x0F); // 取低4位
+                                                        l = true;
+                                                    }
+
+                                                    int a = (f << 16) + p; // 生成唯一索引
+
+                                                    // 解析标志位
+                                                    if ((u & FLAG_N) > 0)
+                                                        gridRow[f] = 1;
+                                                    else
+                                                        gridRow[f] = 0;
+
+                                                    if ((u & FLAG_O) > 0)
+                                                        _coverDic[a] = true;
+
+                                                    if ((u & FLAG_S) > 0)
+                                                        _safeDic[a] = true;
+                                                    s += gridRow[f];
+                                                    c++;
+                                                }
+                                                s += "\n";
+                                                _mapIndex[p] = gridRow;
+                                                if(p%100==0)
+                                                Instance.AddLog($"----读取二进制格子数据{p+1}/{rows}");
+                                            }
+
+                                            // 读取摊位区域
+                                            short h = reader.ReadInt16();
+                                            if (h > 0)
+                                            {
+                                                stallageArea = new List<short[]>();
+                                                for (int m = 0; m < h; m++)
+                                                {
+                                                    short x = reader.ReadInt16();
+                                                    short y = reader.ReadInt16();
+                                                    stallageArea.Add(new short[] { x, y });
+                                                }
+                                            }
+
+                                            // 读取挂机区域
+                                            short v = reader.ReadInt16();
+                                            if (v > 0)
+                                            {
+                                                guajiArea = new List<short[]>();
+                                                for (int y = 0; y < v; y++)
+                                                {
+                                                    short x = reader.ReadInt16();
+                                                    short yCoord = reader.ReadInt16();
+                                                    guajiArea.Add(new short[] { x, yCoord });
+                                                }
+                                            }
+
+                                            // 读取安全区域
+                                            short _ = reader.ReadInt16();
+                                            if (_ > 0)
+                                            {
+                                                safeArea = new List<short[]>();
+                                                for (int b = 0; b < _; b++)
+                                                {
+                                                    short x = reader.ReadInt16();
+                                                    short y = reader.ReadInt16();
+                                                    safeArea.Add(new short[] { x, y });
+                                                }
+                                            }
+                                            Console.WriteLine($"地图 {key} 解析完成:pos {reader.BaseStream.Position}- length {reader.BaseStream.Length}");
+                                        }
+
+
+
+
+                                        Console.WriteLine($"地图 {key} 解析完成");
+                                        Console.WriteLine($"  - 网格: {_rowCount + 1}x{_colCount + 1}");
+                                        Console.WriteLine($"  - 摊位区域: {stallageArea?.Count ?? 0}");
+                                        Console.WriteLine($"  - 挂机区域: {guajiArea?.Count ?? 0}");
+                                        Console.WriteLine($"  - 安全区域: {safeArea?.Count ?? 0}");
+                                        Console.Write(s);
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"警告：地图 ID {key} 已存在，跳过重复数据");
+                                }
+                            }
+                        }
+                    }
+
+                    Console.WriteLine($"完成mapdata解读 : {mapDatas.Count}");
+                    Instance.AddLog($"完成mapdata解读 : {mapDatas.Count}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误6: {ex.Message}", Color.Red);
+            }
+        }
+
+        //public bool SaveAsBinary(string binaryFilePath)
+        //{
+        //    try
+        //    {
+        //        using (var fs = new FileStream(binaryFilePath, FileMode.Create, FileAccess.Write))
+        //        using (var writer = new BinaryWriter(fs))
+        //        {
+        //            //头文件 
+        //            writer.Write(mapData.Width);
+        //            writer.Write(mapData.Height);
+
+        //            byte[] titleBytes = new byte[16];
+        //            Encoding.ASCII.GetBytes("传奇地图").CopyTo(titleBytes, 0);
+        //            writer.Write(titleBytes);
+
+        //            writer.Write(DateTime.Now.ToOADate());
+        //            writer.Write(new byte[24]);
+
+
+        //            int elementSize = 12;
+        //            long columnSize = elementSize * mapData.Height;
+
+        //            for (int x = 0; x < mapData.Width; x++)
+        //            {
+        //                long position = 52 + (columnSize * x);
+        //                writer.BaseStream.Seek(position, SeekOrigin.Begin);
+
+        //                for (int y = 0; y < mapData.Height; y++)
+        //                {
+        //                    //WriteMapCell(writer, mapData.Matrix[y][x]);
+        //                    writer.Write(cell.BkImg);
+        //                    writer.Write(cell.MidImg);
+        //                    //writer.Write(cell.FrImg);
+        //                    writer.Write((ushort)((cell.BkImg >= 32768 ? 32768 : 0) + ints));
+        //                    writer.Write(cell.DoorIndex);
+        //                    writer.Write(cell.DoorOffset);
+        //                    writer.Write(cell.AniFrame);
+        //                    writer.Write(cell.AniTick);
+        //                    //writer.Write(cell.Area);
+        //                    writer.Write((byte)27);
+        //                    writer.Write(cell.Light);
+        //                }
+        //            }
+
+        //            long fileSize = fs.Length;
+        //            Console.WriteLine($"成功保存为二进制: {binaryFilePath}");
+        //            Console.WriteLine($"生成文件大小: {fileSize} 字节");
+        //            return true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"保存二进制文件时出错: {ex.Message}");
+        //        return false;
+        //    }
+        //}
+
+        // 辅助方法：读取short，支持大端序和小端序
+        private static short ReadShort(Stream stream, bool bigEndian)
+        {
+            byte[] buffer = new byte[2];
+            int bytesRead = stream.Read(buffer, 0, 2);
+            if (bytesRead != 2)
+                throw new EndOfStreamException("无法读取足够的short数据");
+
+            if (bigEndian)
+            {
+                return (short)((buffer[0] << 8) | buffer[1]);
+            }
+            else
+            {
+                return (short)((buffer[1] << 8) | buffer[0]);
+            }
+        }
+
+        // 辅助方法：读取int，支持大端序和小端序
+        private static int ReadInt(Stream stream, bool bigEndian)
+        {
+            byte[] buffer = new byte[4];
+            int bytesRead = stream.Read(buffer, 0, 4);
+            if (bytesRead != 4)
+                throw new EndOfStreamException("无法读取足够的int数据");
+
+            if (bigEndian)
+            {
+                return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3];
+            }
+            else
+            {
+                return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
+            }
+        }
+#endregion
+
+
         static int iPro = 0;
         // 递归处理目录及其子目录
         static void ProcessDirectory(string directoryPath)
@@ -2421,6 +2882,15 @@ namespace zy_cutPicture
                 var step7End = DateTime.Now;
                 AddLog($"完成 合并地图成大图，耗时：{(step7End - step7Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_8.Visible = true;
+            }
+            if (this.ck_9.Checked)
+            {
+                // 生成.map
+                var step9Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_MapData(this.txt_dir.Text));
+                var step9End = DateTime.Now;
+                AddLog($"完成 解读生成.map，耗时：{(step9End - step9Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_9.Visible = true;
             }
             //--------------------------以下切图-----------------------------------------------------
             if (this.ck_6.Checked)

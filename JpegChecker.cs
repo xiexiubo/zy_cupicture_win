@@ -4,6 +4,11 @@ namespace zy_cutPicture
 {
     public static class JpegChecker
     {
+        /// <summary>
+        /// ture 是有效果正常的文件  false 不存在或者是有损文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public static bool IsLossyJpeg(string filePath)
         {
             try

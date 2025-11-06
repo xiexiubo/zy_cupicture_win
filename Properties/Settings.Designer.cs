@@ -109,7 +109,7 @@ namespace zy_cutPicture.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.28929.3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.29318.4")]
         public string resVersion_diwang {
             get {
                 return ((string)(this["resVersion_diwang"]));
