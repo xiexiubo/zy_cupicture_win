@@ -804,7 +804,7 @@ namespace zy_cutPicture
                             }
 
                             //转换为png
-                            bool isPNG = true;
+                            bool isPNG = false;
                             if (isPNG)
                             {
                                 Instance.AddLog($"转换png: {m.Value.Id}", Color.Black);
@@ -1724,10 +1724,11 @@ namespace zy_cutPicture
                                 if (!mapDatas.ContainsKey(key))
                                 {
                                     mapDatas.Add(key, da);
-                                    if (j < 10) // 只打印前10个避免输出太多
+                                    //if (j < 10) // 只打印前10个避免输出太多
                                         Console.WriteLine($"解析并存储地图 ID：{key}，数据长度：{dataLength} 字节");
-
-                                    if (key == 200) 
+                                    Instance.AddLog($"解析并存储地图 ID：{key}，数据长度：{dataLength} 字节");
+                                    var mapPath = Path.Combine(directory, $"resource_cut/map/{key}.map");
+                                    if (key == 202) 
                                     {
 
                                         string s = "";
@@ -1820,9 +1821,13 @@ namespace zy_cutPicture
                                                 s += "\n";
                                                 _mapIndex[p] = gridRow;
                                                 if(p%100==0)
-                                                Instance.AddLog($"----读取二进制格子数据{p+1}/{rows}");
+                                                Instance.AddLog($"----读取二进制格子数据 rows{rows} cols {cols} {_mapIndex.Length}{_mapIndex[0].Length}  {p+1}/{rows}");                                                
                                             }
-
+                                            Instance.AddLog($"开始生成 map文件{mapPath}");
+                                            if (SaveAsBinary(mapPath, _mapIndex))
+                                            {
+                                                Instance.AddLog($"成功生成 map文件{mapPath}");
+                                            }
                                             // 读取摊位区域
                                             short h = reader.ReadInt16();
                                             if (h > 0)
@@ -1899,62 +1904,94 @@ namespace zy_cutPicture
             }
         }
 
-        //public bool SaveAsBinary(string binaryFilePath)
-        //{
-        //    try
-        //    {
-        //        using (var fs = new FileStream(binaryFilePath, FileMode.Create, FileAccess.Write))
-        //        using (var writer = new BinaryWriter(fs))
-        //        {
-        //            //头文件 
-        //            writer.Write(mapData.Width);
-        //            writer.Write(mapData.Height);
+        public static bool SaveAsBinary(string binaryFilePath, int[][] mapGrid)
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName( binaryFilePath );
+                if (!Directory.Exists(dir)) 
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                using (var fs = new FileStream(binaryFilePath, FileMode.Create, FileAccess.Write))
+                using (var writer = new BinaryWriter(fs))
+                {
+                    ushort width = (ushort)mapGrid[0].Length;
+                    ushort height = (ushort)mapGrid.Length;
+                    //头文件 
+                    //宽
+                    writer.Write(width);
+                    //高
+                    writer.Write(height);
+                    byte[] titleBytes = new byte[16];
+                    Encoding.ASCII.GetBytes("传奇地图").CopyTo(titleBytes, 0);
+                    //标题
+                    writer.Write(titleBytes);
+                    //日期
+                    writer.Write(DateTime.Now.ToOADate());
+                    //预留
+                    writer.Write(new byte[24]);
 
-        //            byte[] titleBytes = new byte[16];
-        //            Encoding.ASCII.GetBytes("传奇地图").CopyTo(titleBytes, 0);
-        //            writer.Write(titleBytes);
 
-        //            writer.Write(DateTime.Now.ToOADate());
-        //            writer.Write(new byte[24]);
+                    int elementSize = 12;
+                    long columnSize = elementSize * height;
 
+                    //碰撞  碎图索引
+                    for (int x = 0; x < width; x++)
+                    {
+                        long position = 52 + (columnSize * x);
+                        writer.BaseStream.Seek(position, SeekOrigin.Begin);
 
-        //            int elementSize = 12;
-        //            long columnSize = elementSize * mapData.Height;
+                        for (int y = 0; y < height; y++)
+                        {
+                            var dat = mapGrid[y][x];
+                            int index = y * width + x;
+                            index += 1;
+                            if (index > 32767)
+                            {
+                                Instance.AddLog($"index>32767了   -----{index}");
+                            }
+                            //int index = x * width / 2 + y / 2;
+                            //if ((y / 2f) % 1f > 0 || (x * width / 2f) % 1f > 0)
+                            //{
+                            //    index = 0;
+                            //}
+                            //WriteMapCell(writer, mapData.Matrix[y][x]);
+                            //bg
+                            writer.Write((ushort)(dat > 0 ? 32768 : 0));
+                            //mid
+                            writer.Write((ushort)0);
+                            //writer.Write(cell.FrImg);
+                            //front
+                            writer.Write((ushort)((dat > 0 ? 32768 : 0) + index));
+                            //doorIndex
+                            writer.Write((byte)0);
+                            //doorOffset
+                            writer.Write((byte)0);
+                            //aniframe
+                            writer.Write((byte)0);
+                            //anitick
+                            writer.Write((byte)0);
+                            //writer.Write(cell.Area); area
+                            writer.Write((byte)27);
+                            //light
+                            writer.Write((byte)0);
+                        }
+                    }
 
-        //            for (int x = 0; x < mapData.Width; x++)
-        //            {
-        //                long position = 52 + (columnSize * x);
-        //                writer.BaseStream.Seek(position, SeekOrigin.Begin);
-
-        //                for (int y = 0; y < mapData.Height; y++)
-        //                {
-        //                    //WriteMapCell(writer, mapData.Matrix[y][x]);
-        //                    writer.Write(cell.BkImg);
-        //                    writer.Write(cell.MidImg);
-        //                    //writer.Write(cell.FrImg);
-        //                    writer.Write((ushort)((cell.BkImg >= 32768 ? 32768 : 0) + ints));
-        //                    writer.Write(cell.DoorIndex);
-        //                    writer.Write(cell.DoorOffset);
-        //                    writer.Write(cell.AniFrame);
-        //                    writer.Write(cell.AniTick);
-        //                    //writer.Write(cell.Area);
-        //                    writer.Write((byte)27);
-        //                    writer.Write(cell.Light);
-        //                }
-        //            }
-
-        //            long fileSize = fs.Length;
-        //            Console.WriteLine($"成功保存为二进制: {binaryFilePath}");
-        //            Console.WriteLine($"生成文件大小: {fileSize} 字节");
-        //            return true;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"保存二进制文件时出错: {ex.Message}");
-        //        return false;
-        //    }
-        //}
+                    long fileSize = fs.Length;
+                    Console.WriteLine($"成功保存为二进制: {binaryFilePath}");
+                    Console.WriteLine($"生成文件大小: {fileSize} 字节");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"保存二进制文件时出错: {ex.Message}");
+                Instance.AddLog($"保存二进制文件时出错: {ex.Message}",Color.Red);
+                return false;
+            }
+        }
 
         // 辅助方法：读取short，支持大端序和小端序
         private static short ReadShort(Stream stream, bool bigEndian)
