@@ -314,11 +314,27 @@ namespace zy_cutPicture
                             {
                                 string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
                                 string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
-                                //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
-                                if (i == 0)
+
+                                if (File.Exists(filePath)) 
+                                {
+                                    break;
+                                }
+                                JToken dValue;
+                                if (Dic_Version_AdditionalData.TryGetValue($"model/{m.Value.Id}", out dValue))
+                                {
+                                    //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/1.29542.1/model/120032/120032013.png
+                                    subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
                                     Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
+
+                                }
+
+                                //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
+                                //if (i == 0)
+                                //Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
                                 DownloadFileAsync(subUrl + ".png", filePath + ".png");
                                 DownloadFileAsync(subUrl + ".json", filePath + ".json");
+
+
                             }
 
                             if (downCount % 5 == 1)
@@ -361,6 +377,7 @@ namespace zy_cutPicture
             [JsonExtensionData]
             public Dictionary<string, JToken> AdditionalData { get; set; }
         }
+        static public Dictionary<string, JToken> Dic_Version_AdditionalData { get; set; } = new Dictionary<string, JToken>();
         /// <summary>
         /// 版本表资源下载
         /// </summary>
@@ -395,7 +412,7 @@ namespace zy_cutPicture
                     }
 
                     int downCount = 0;
-
+                    Dic_Version_AdditionalData = config.AdditionalData;
                     foreach (var m in config.AdditionalData)
                     {
                         ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
@@ -674,7 +691,7 @@ namespace zy_cutPicture
 
             //Console.WriteLine("=== 系统内存信息 ===");
             //Console.WriteLine($"可用内存: {availableRam:F2} MB");
-            Instance.AddLog($"可用内存: {availableRam / 1024:F2} GB");            
+            Instance.AddLog($"可用内存: {availableRam / 1024:F2} GB");
             try
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
@@ -714,6 +731,7 @@ namespace zy_cutPicture
                     string strCurr = "";
                     foreach (var m in config.Items)
                     {
+                        //if (m.Value.Id != 5618) { continue; }
                         //break;
                         //if (m.Value.Id != 202)
                         //{
@@ -721,22 +739,29 @@ namespace zy_cutPicture
                         //    continue;
                         //}
 
+                       
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/minimap/{m.Value.img}.jpg");
-
+                        string fileBig = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                        if (File.Exists(fileBig))
+                        {
+                            Instance.AddLog($"跳过已经有大图{fileBig}");
+                            continue;
+                        }
                         int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
                         Size size;
-                        if (dicConst.TryGetValue((int)m.Value.Id, out size)) 
+                        if (dicConst.TryGetValue((int)m.Value.Id, out size))
                         {
-                            countTiles = size.Width*size.Height/512/256;
+                            countTiles = size.Width * size.Height / 512 / 256;
                         }
 
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
                         Instance.AddLog($"{downCount}/{config.Items.Count} minimap {downCountInfact}({countTiles}) subUrl: {subUrl}  filePath:resource/minimap/{m.Value.img}.jpg", Color.Green);
                         DownloadFileAsync(subUrl, filePath);
-                        
+
+
 
                         var dir2 = Path.Combine(directory, $"resource/map/{m.Value.Id}");
                         Instance.AddLog($"dir2 {dir2}", Color.Black);
@@ -754,8 +779,9 @@ namespace zy_cutPicture
                         {
                             bool success = false;
                             int ck_num = 5;
+                            bool isVersion = false;
                             for (int i = 1; countTiles >= i; i++)
-                            { 
+                            {
                                 if (i > ck_num && !success)
                                 {
                                     isContinue = true;
@@ -763,39 +789,60 @@ namespace zy_cutPicture
                                     break;
                                 }
                                 //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/5286/114.jpg?ver=1.0.1
+                                //1.13085.4  //"model/91001": "1.9200.13",  //"map/5279": "1.3842.1",
                                 subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
                                 filePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
                                 if (!JpegChecker.IsLossyJpeg(filePath))
                                 {
-                                    Instance.AddLog($"碎图不存在 或者有损 删除后继续下载 {filePath}");
-                                    if(File.Exists(filePath))
+                                    //Instance.AddLog($"碎图不存在 或者有损 删除后继续下载 {filePath}");
+                                    if (File.Exists(filePath))
                                         File.Delete(filePath);
                                 }
                                 else
                                 {
-                                    Instance.AddLog($"碎图已经存在跳过下载 {filePath}");
-                                    success=true;
+                                    //Instance.AddLog($"碎图已经存在跳过下载 {filePath}");
+                                    success = true;
                                     continue;
                                 }
 
-                                if (i % 10 == 1)
+                                if (i % 1 == 1)
                                     Instance.AddLog($"{i}/{countTiles} mapTile 下载 subUrl: {subUrl}  filePath:resource/map/{m.Value.Id}/{i}.jpg", Color.Black);
 
                                 if (i <= ck_num)
                                 {
                                     bool b = await DownloadFileAsync(subUrl, filePath);
+
+                                    JToken dValue = "";
+                                    if (!b && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.Id}", out dValue))
+                                    {
+                                        isVersion = true;
+                                        Instance.AddLog($"======== {dValue}  {dValue.ToString()}");
+                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                        b = await DownloadFileAsync(subUrl, filePath);
+                                    }
+
                                     success = b || success;
-                                    if(!b)
+                                    if (!b)
                                         Instance.AddLog($"下载失败 {subUrl}");
                                 }
                                 else
                                 {
-                                    DownloadFileAsync(subUrl, filePath);
+
+                                    JToken dValue = "";
+                                    if (isVersion && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.Id}", out dValue))
+                                    {
+                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                        DownloadFileAsync(subUrl, filePath);
+                                    }
+                                    else
+                                    {
+                                        DownloadFileAsync(subUrl, filePath);
+                                    }
                                 }
 
                             }
 
-                            if (isContinue) 
+                            if (isContinue)
                             {
                                 downCount++;
                                 downCountInfact++;
@@ -820,7 +867,7 @@ namespace zy_cutPicture
                                         Instance.AddLog($"删除jpg: {jpgFilePath}", Color.Black);
                                         continue;
                                     }
-                                    else if (!File.Exists(jpgFilePath)) 
+                                    else if (!File.Exists(jpgFilePath))
                                     {
                                         Instance.AddLog($"转换png: {m.Value.Id}   不存在 {jpgFilePath}  count:{countTiles}", Color.Red);
                                         continue;
@@ -864,7 +911,7 @@ namespace zy_cutPicture
                             break;
 
                     }
-                } 
+                }
             }
             catch (HttpRequestException ex)
             {
@@ -890,8 +937,8 @@ namespace zy_cutPicture
         /// <param name="directory">保存目录</param>
         /// <param name="type">全图方案1 通用但大图不行， 2 一般 3 大图用，有部分会出错</param>
         /// <returns></returns>
-        static async Task DoneRes_MapCombine(string directory,int type=3)
-        {           
+        static async Task DoneRes_MapCombine(string directory, int type = 3)
+        {
             string errorlist = "";
             if (Environment.Is64BitOperatingSystem)
             {
@@ -904,7 +951,7 @@ namespace zy_cutPicture
                 Instance.AddLog("系统是32位，内存分配有限制");
             }
 
-          
+
 
             // 获取系统内存信息
             PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
@@ -915,7 +962,7 @@ namespace zy_cutPicture
             Instance.AddLog($"可用内存: {availableRam / 1024:F2} GB");
 
 
-            
+
             try
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
@@ -948,7 +995,7 @@ namespace zy_cutPicture
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
                     }
-  
+
                     await Task.Delay(15);
 
                     int errorCount = 0;
@@ -999,7 +1046,11 @@ namespace zy_cutPicture
                                 newHeight = size.Height;
                             }
                             //if (newWidth > 10000) continue;
-                            if (!Directory.Exists(mapDir)) continue;
+                            if (!Directory.Exists(mapDir))
+                            {
+                                Instance.AddLog($"合大图  碎图未下载  {mapDir}");
+                                continue;
+                            }
 
 
 
@@ -1008,8 +1059,8 @@ namespace zy_cutPicture
                             int xCount = (int)(Math.Ceiling((double)newWidth / 512));
                             int yCount = (int)(Math.Ceiling((double)newHeight / 256));
 
-                           
-                           
+
+
                             if (File.Exists(outputPath))
                             {
                                 if (!JpegChecker.IsLossyJpeg(outputPath))
@@ -1038,7 +1089,7 @@ namespace zy_cutPicture
                                 for (int i = 1; i <= countTiles; i++)
                                 {
                                     string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
-                                   
+
                                     try
                                     {
                                         if (!JpegChecker.IsLossyJpeg(file))
@@ -1091,7 +1142,7 @@ namespace zy_cutPicture
                                     for (int i = 1; i <= countTiles; i++)
                                     {
                                         string tilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
-                                       
+
                                         using (FileStream tileFs = new FileStream(tilePath, FileMode.Open, FileAccess.Read))
                                         using (Image imgagetile = Image.FromStream(tileFs))
                                         {
@@ -1188,7 +1239,7 @@ namespace zy_cutPicture
                             int xCount = (int)(Math.Ceiling((double)newWidth / 512));
                             int yCount = (int)(Math.Ceiling((double)newHeight / 256));
 
-                           
+
                             if (File.Exists(outputPath))
                             {
                                 if (!JpegChecker.IsLossyJpeg(outputPath))
@@ -1211,11 +1262,11 @@ namespace zy_cutPicture
                             try
                             {
                                 Instance.AddLog($"有损资源下载中{mapDir}... ", Color.Black);
-                                
+
                                 // 有损资源下载
                                 for (int i = 1; i <= countTiles; i++)
                                 {
-                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");                                  
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
 
                                     try
                                     {
@@ -1431,53 +1482,53 @@ namespace zy_cutPicture
                             //    continue;
                             //}
                             GC.Collect();
-                                await Task.Delay(1);
+                            await Task.Delay(1);
 
-                                //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
+                            //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
-                                string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
-                                string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
-                                string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
 
-                                int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
-                                int newWidth = (int)(m.Value.width);
-                                int newHeight = (int)(m.Value.height);
+                            int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
+                            int newWidth = (int)(m.Value.width);
+                            int newHeight = (int)(m.Value.height);
 
-                                Size size;
-                                if (dicConst.TryGetValue((int)m.Value.Id, out size))
-                                {
-                                    countTiles = size.Width * size.Height / 512 / 256;
-                                    newWidth = size.Width;
-                                    newHeight = size.Height;
-                                }
-                                //if (newWidth > 10000) continue;
-                                if (!Directory.Exists(mapDir)) continue;
-                            if (File.Exists(outputPath)) 
+                            Size size;
+                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            {
+                                countTiles = size.Width * size.Height / 512 / 256;
+                                newWidth = size.Width;
+                                newHeight = size.Height;
+                            }
+                            //if (newWidth > 10000) continue;
+                            if (!Directory.Exists(mapDir)) continue;
+                            if (File.Exists(outputPath))
                             {
                                 if (!JpegChecker.IsLossyJpeg(outputPath))
                                 {
                                     Instance.AddLog($"已有的大图有损，删除后继续 {outputPath}");
                                     File.Delete(outputPath);
                                 }
-                                else 
+                                else
                                 {
                                     Instance.AddLog($"已经生成的大图，跳过 {outputPath}");
                                     continue;
                                 }
-                              
+
                             }
 
 
-                                int xCount = (int)(Math.Ceiling((double)newWidth / 512));
-                                int yCount = (int)(Math.Ceiling((double)newHeight / 256));
+                            int xCount = (int)(Math.Ceiling((double)newWidth / 512));
+                            int yCount = (int)(Math.Ceiling((double)newHeight / 256));
 
-                              
-                                Instance.AddLog($"{iPro} map合图({countTiles}个切片图({Calculate24BitImageMemory(newWidth, newHeight)})，（{newWidth},{newHeight}）) {mapDir} ", Color.Black);
+
+                            Instance.AddLog($"{iPro} map合图({countTiles}个切片图({Calculate24BitImageMemory(newWidth, newHeight)})，（{newWidth},{newHeight}）) {mapDir} ", Color.Black);
 
                             try
                             {
                                 Instance.AddLog($"有损资源下载中{mapDir}... ", Color.Black);
-                                
+
                                 // 有损资源下载
                                 for (int i = 1; i <= countTiles; i++)
                                 {
@@ -1546,12 +1597,12 @@ namespace zy_cutPicture
                                             }
                                         }
                                     }
-                                   
-                                    magickImage.Write(outputPath,MagickFormat.Jpg);
+
+                                    magickImage.Write(outputPath, MagickFormat.Jpg);
                                 }
                                 iPro++;
                                 Instance.AddLog($"({index}/{config.Items.Count})图片已保存: {outputPath}", Color.Green);
-                               
+
                             }
                             catch (Exception ex)
                             {
@@ -1560,11 +1611,11 @@ namespace zy_cutPicture
                             //return;
                         }
 
-                       
+
                     }
                     #endregion
 
-                   
+
                     //foreach (var m in config.Items)
                     //{
 
@@ -1585,7 +1636,7 @@ namespace zy_cutPicture
                     //    Instance.AddLog($"重新切大图 ({colCount},{rowCount}) {imagePath}");
                     //    CutBigPix(imagePath, outDir, cutSize);
                     //}
-                        
+
 
 
                 }
@@ -1605,9 +1656,9 @@ namespace zy_cutPicture
                 Console.WriteLine($"发生错误: {ex.Message}");
                 Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
             }
-            Instance.AddLog(errorlist,Color.Red);
+            Instance.AddLog(errorlist, Color.Red);
 
-           
+
 
         }
 
@@ -1686,7 +1737,7 @@ namespace zy_cutPicture
         //        }
         //    }
         //}
-        
+
         #endregion
 
 
@@ -1720,7 +1771,7 @@ namespace zy_cutPicture
                 if (config == null)
                 {
                     throw new InvalidOperationException("配置文件内容为空或格式不正确");
-                }               
+                }
             }
 
             await Task.Delay(15);
@@ -1838,9 +1889,9 @@ namespace zy_cutPicture
                                     int MAP_GRID_HEIGHT = 32;
 
                                     Cfg_Map cfg;
-                                    if (!config.Items.TryGetValue(key.ToString(), out cfg)) 
+                                    if (!config.Items.TryGetValue(key.ToString(), out cfg))
                                     {
-                                        Instance.AddLog($"配置表不存在 ID：{key}",Color.Red);
+                                        Instance.AddLog($"配置表不存在 ID：{key}", Color.Red);
                                         continue;
                                     }
                                     int mapWidth = cfg.width;
@@ -1857,23 +1908,23 @@ namespace zy_cutPicture
 
                                     //if (j < 10) // 只打印前10个避免输出太多
                                     Console.WriteLine($"解析并存储地图 ID：{key} ({cols},{rows})，数据长度：{dataLength} 字节");
-                                    Instance.AddLog($"解析并存储地图 ID：{key} ({cols},{rows})，数据长度：{dataLength} 字节"  );
+                                    Instance.AddLog($"解析并存储地图 ID：{key} ({cols},{rows})，数据长度：{dataLength} 字节");
                                     if (cols * rows > 32767)
                                         Instance.AddLog($"({cols} x {rows}={cols * rows}) > 32767", Color.Red);
                                     var mapPath = Path.Combine(directory, $"resource_cut/map/{key}.map");
-                                    if (key == 200) 
+                                    if (key == 200)
                                     {
 
                                         string s = "";
 
-                                         int _colCount;
-                                         int _rowCount;
-                                         int[][] _mapIndex;
-                                         Dictionary<int, bool> _coverDic = new Dictionary<int, bool>();
-                                         Dictionary<int, bool> _safeDic = new Dictionary<int, bool>();
-                                         List<short[]> stallageArea=new List<short[]>();
-                                         List<short[]> guajiArea = new List<short[]>();
-                                         List<short[]> safeArea = new List<short[]>();
+                                        int _colCount;
+                                        int _rowCount;
+                                        int[][] _mapIndex;
+                                        Dictionary<int, bool> _coverDic = new Dictionary<int, bool>();
+                                        Dictionary<int, bool> _safeDic = new Dictionary<int, bool>();
+                                        List<short[]> stallageArea = new List<short[]>();
+                                        List<short[]> guajiArea = new List<short[]>();
+                                        List<short[]> safeArea = new List<short[]>();
 
                                         using (MemoryStream stream2 = new MemoryStream(da))
                                         using (BinaryReader reader = new BinaryReader(stream2))
@@ -1884,7 +1935,7 @@ namespace zy_cutPicture
                                             // 跳过第一个int（可能是版本号或其他标识）
                                             reader.ReadInt32();
 
-                                            
+
 
                                             _colCount = cols - 1;
                                             _rowCount = rows - 1;
@@ -1915,7 +1966,7 @@ namespace zy_cutPicture
                                                             d = (byte)(d + 256);
                                                         l = false;
                                                         u = (byte)(d >> 4); // 取高4位
-                                                        
+
                                                     }
                                                     else
                                                     {
@@ -1941,8 +1992,8 @@ namespace zy_cutPicture
                                                 }
                                                 s += "\n";
                                                 _mapIndex[p] = gridRow;
-                                                if(p%100==0)
-                                                Instance.AddLog($"----读取二进制格子数据 rows{rows} cols {cols} {_mapIndex.Length}{_mapIndex[0].Length}  {p+1}/{rows}");                                                
+                                                if (p % 100 == 0)
+                                                    Instance.AddLog($"----读取二进制格子数据 rows{rows} cols {cols} {_mapIndex.Length}{_mapIndex[0].Length}  {p + 1}/{rows}");
                                             }
                                             Instance.AddLog($"开始生成 map文件{mapPath}");
                                             if (SaveAsBinary(mapPath, _mapIndex))
@@ -2029,8 +2080,8 @@ namespace zy_cutPicture
         {
             try
             {
-                var dir = Path.GetDirectoryName( binaryFilePath );
-                if (!Directory.Exists(dir)) 
+                var dir = Path.GetDirectoryName(binaryFilePath);
+                if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -2098,14 +2149,14 @@ namespace zy_cutPicture
                             writer.Write((byte)27);
                             //light
                             writer.Write((byte)0);
-                            if (elementSize == 14) 
+                            if (elementSize == 14)
                             {
                                 //area bk
                                 writer.Write((byte)0);
                                 //area mid
                                 writer.Write((byte)0);
                             }
-                            
+
                         }
                     }
 
@@ -2118,7 +2169,7 @@ namespace zy_cutPicture
             catch (Exception ex)
             {
                 Console.WriteLine($"保存二进制文件时出错: {ex.Message}");
-                Instance.AddLog($"保存二进制文件时出错: {ex.Message}",Color.Red);
+                Instance.AddLog($"保存二进制文件时出错: {ex.Message}", Color.Red);
                 return false;
             }
         }
@@ -2158,7 +2209,7 @@ namespace zy_cutPicture
                 return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
             }
         }
-#endregion
+        #endregion
 
 
         static int iPro = 0;
@@ -2174,10 +2225,10 @@ namespace zy_cutPicture
 
             try
             {
-               
+
                 // 获取目录下的所有文件
                 string[] files = Directory.GetFiles(directoryPath);
-                if(files.Length > 0)
+                if (files.Length > 0)
                     Instance.AddLog($"{iPro} 切文件夹({files.Length}个) {directoryPath} ", Color.Black);
 
                 // 处理每个文件
@@ -2193,7 +2244,7 @@ namespace zy_cutPicture
                         }
                         iPro++;
 
-                       
+
                         // 处理JSON文件
                         ProcessJsonFile(filePath);
                     }
@@ -2202,7 +2253,7 @@ namespace zy_cutPicture
                 // 递归处理子目录
                 string[] subDirectories = Directory.GetDirectories(directoryPath);
                 foreach (string subDirectory in subDirectories)
-                {                   
+                {
                     ProcessDirectory(subDirectory);
                 }
             }
@@ -2228,10 +2279,10 @@ namespace zy_cutPicture
             }
 
         }
-        
+
         private static bool ProcessJsonFile(string jsonPath)
-        {            
-            if (!File.Exists(jsonPath.Replace(".json", ".png"))) 
+        {
+            if (!File.Exists(jsonPath.Replace(".json", ".png")))
             {
                 Instance.AddLog($"-----切图不存在路径:{jsonPath.Replace(".json", ".png")}", Color.Yellow);
                 return false;
@@ -2257,7 +2308,7 @@ namespace zy_cutPicture
                             //Console.WriteLine($"文件名:{jsonPath}");
                             foreach (var mc in data.Mc)
                             {
-                               
+
 
                                 int maxW = 0; int maxH = 0;
                                 double minX = 5000; double minY = 5000;
@@ -2295,8 +2346,8 @@ namespace zy_cutPicture
                                         //}
                                         FileInfo fileInfo = new FileInfo(path);
                                         if (fileInfo.Length == 0)
-                                        { 
-                                            File.Delete(path); 
+                                        {
+                                            File.Delete(path);
                                         }
                                         else
                                         {
@@ -2314,7 +2365,7 @@ namespace zy_cutPicture
                                         // 将源Bitmap的指定区域绘制到新Bitmap中
                                         g.DrawImage(bitmap, (int)(fr.X - minX), (int)(fr.Y - minY), new Rectangle(data.Res[fr.Res].X, data.Res[fr.Res].Y, data.Res[fr.Res].W, data.Res[fr.Res].H), GraphicsUnit.Pixel);
                                     }
-                                   
+
                                     //Instance.lb_tip.Text = $"mc path: {path}";
                                     //Console.WriteLine($"mc path: {path}");
                                     //Instance.AddLog($"mc path: {path}", Color.Black);
@@ -2365,8 +2416,8 @@ namespace zy_cutPicture
                                 maxW = (int)(maxX - minX);
                                 maxH = (int)(maxY - minY);
 
-                               // maxW = maxW > fr.SourceW? maxW: fr.SourceW;
-                               // maxH = maxH > fr.SourceH? maxH: fr.SourceH;
+                                // maxW = maxW > fr.SourceW? maxW: fr.SourceW;
+                                // maxH = maxH > fr.SourceH? maxH: fr.SourceH;
                             }
                             for (int i = 0; i < data2.Frames.Count; i++)
                             {
@@ -2383,8 +2434,8 @@ namespace zy_cutPicture
                                     //}
                                     FileInfo fileInfo = new FileInfo(path);
                                     if (fileInfo.Length == 0)
-                                    { 
-                                        File.Delete(path); 
+                                    {
+                                        File.Delete(path);
                                     }
                                     else
                                     {
@@ -2394,7 +2445,7 @@ namespace zy_cutPicture
                                 }
                                 //Console.WriteLine($"model path: {Path.GetFileName(path) } bitmap:{bitmap}, OffX:{(int)(fr.OffX - minX)}, OffY:{(int)(fr.OffY - minY)}, rect:{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},W:{maxW}, H:{maxH}");
                                 //Instance.AddLog($"model path: {Path.GetFileName(path)} bitmap:{bitmap}, OffX:{(int)(fr.OffX - minX)}, OffY:{(int)(fr.OffY - minY)}, rect:{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},W:{maxW}, H:{maxH}", Color.Black);
-                                
+
                                 // 创建与裁剪区域大小相同的新Bitmap
                                 Bitmap croppedBitmap = new Bitmap(maxW, maxH);
 
@@ -2403,12 +2454,12 @@ namespace zy_cutPicture
                                 {
                                     // 将源Bitmap的指定区域绘制到新Bitmap中
                                     //g.DrawImage(bitmap, Math.Abs((int)fr.OffX), Math.Abs((int)fr.OffY), new Rectangle(fr.X, fr.Y, fr.W, fr.H), GraphicsUnit.Pixel);
-                                    
-                                    g.DrawImage(bitmap, (int)(fr.OffX-minX), (int)(fr.OffY - minY), new Rectangle(fr.X, fr.Y, fr.W, fr.H), GraphicsUnit.Pixel);
+
+                                    g.DrawImage(bitmap, (int)(fr.OffX - minX), (int)(fr.OffY - minY), new Rectangle(fr.X, fr.Y, fr.W, fr.H), GraphicsUnit.Pixel);
                                 }
 
                                 //Instance.lb_tip.Text = $"model path: {path}";
-                                
+
                                 //Console.WriteLine($"model path: {path} bitmap:{bitmap}, fr.OffX:{fr.OffX}, fr.OffY:{fr.OffY}, new Rectangle(fr.X, fr.Y, fr.W, fr.H):{new Rectangle(fr.X, fr.Y, fr.W, fr.H)},fr.SourceW:{fr.SourceW}, fr.SourceH:{fr.SourceH}");
                                 // 创建保存目录（如果不存在）
                                 string directory = Path.GetDirectoryName(path);
@@ -2454,11 +2505,11 @@ namespace zy_cutPicture
                                     // 将源Bitmap的指定区域绘制到新Bitmap中
                                     g.DrawImage(bitmap, Math.Abs((int)v.Value.OffX), Math.Abs((int)v.Value.OffY), new Rectangle(v.Value.X, v.Value.Y, v.Value.W, v.Value.H), GraphicsUnit.Pixel);
                                 }
-                              
+
                                 //Instance.lb_tip.Text = $"ui model path: {path}";
                                 //Console.WriteLine($"ui path: {path}");
                                 //Instance.AddLog($"ui path: {path}", Color.Black);
-                                
+
                                 // 创建保存目录（如果不存在）
                                 string directory = Path.GetDirectoryName(path);
                                 //if (!Directory.Exists(directory))
@@ -2479,8 +2530,8 @@ namespace zy_cutPicture
                             return true;
                         }
                     }
-                   
-                  
+
+
                 }
             }
             catch (JsonSerializationException ex)
@@ -2502,12 +2553,12 @@ namespace zy_cutPicture
 
         }
         // 下载文件并保存到指定目录
-        private async static Task<bool> DownloadFileAsync(string url, string savePath,bool isDeletExists=false)
+        private async static Task<bool> DownloadFileAsync(string url, string savePath, bool isDeletExists = false)
         {
             try
             {
 
-                if (File.Exists(savePath)) 
+                if (File.Exists(savePath))
                 {
                     if (isDeletExists)
                     {
@@ -2518,7 +2569,7 @@ namespace zy_cutPicture
                         return true;
                     }
                 }
-              
+
                 using (var httpClient = new HttpClient())
                 {
                     // 设置超时时间（可选）
@@ -2584,7 +2635,7 @@ namespace zy_cutPicture
             catch (HttpRequestException ex)
             {
                 //MessageBox.Show($"下载失败: 网络错误 - {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Instance.AddLog($"下载失败: 网络错误 - {ex.Message}   {url}",Color.Red);
+                Instance.AddLog($"下载失败: 网络错误 - {ex.Message}   {url}", Color.Red);
                 Console.WriteLine($"下载失败: 网络错误 - {ex.Message}  {url}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
@@ -2597,7 +2648,7 @@ namespace zy_cutPicture
             }
             catch (Exception ex)
             {
-               // MessageBox.Show($"下载失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"下载失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Console.WriteLine($"下载失败: {ex.Message}     {url}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Instance.AddLog($"下载失败: {ex.Message}     {url}", Color.Red);
                 return false;
@@ -2679,7 +2730,7 @@ namespace zy_cutPicture
                 //saveFileDialog.FileName = fileName;
                 saveFileDialog.Title = "选择保存位置";
                 // 禁用按钮防止重复点击
-              
+
             }
         }
 
@@ -2811,7 +2862,7 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => FormCutAtlasJson.DoneRes_head(selectedPath)) ;
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_head(selectedPath));
                     MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -2838,7 +2889,7 @@ namespace zy_cutPicture
 
             }
         }
-        private  async void btn_cut_Click(object sender, EventArgs e)
+        private async void btn_cut_Click(object sender, EventArgs e)
         {
             string selectedPath = Path.Combine(this.txt_dir.Text, "resource");
             //string selectedPath = "F:\\wa7eDoc\\图片\\download\\xxxxx\\resource";//\\model\\125000";// SelectSaveDirectory();
@@ -2849,8 +2900,8 @@ namespace zy_cutPicture
                 try
                 {
                     // 调用异步方法
-                    await Task.Run(() => ProcessDirectory(selectedPath)) ;
-                   // MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await Task.Run(() => ProcessDirectory(selectedPath));
+                    // MessageBox.Show("配置加载完成", $"{selectedPath} 成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -2877,7 +2928,7 @@ namespace zy_cutPicture
             }
         }
 
-        private async  void btn_cut1_Click(object sender, EventArgs e)
+        private async void btn_cut1_Click(object sender, EventArgs e)
         {
             string selectedPath = SelectFilePath();
 
@@ -2923,7 +2974,7 @@ namespace zy_cutPicture
             }
         }
 
-       
+
         /// <summary>
         /// 自动区
         /// </summary>
@@ -2957,7 +3008,7 @@ namespace zy_cutPicture
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-           this.txt_dir.Text = SelectSaveDirectory();
+            this.txt_dir.Text = SelectSaveDirectory();
         }
 
         private void txt_dir_TextChanged(object sender, EventArgs e)
@@ -3010,7 +3061,7 @@ namespace zy_cutPicture
                 var step3End = DateTime.Now;
                 AddLog($"完成 下载Models序列图资源，耗时：{(step3End - step3Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_3.Visible = true;
-            }         
+            }
 
             if (this.ck_5.Checked)
             {
@@ -3029,7 +3080,7 @@ namespace zy_cutPicture
                 var step6End = DateTime.Now;
                 AddLog($"完成 下载地图，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_7.Visible = true;
-            }           
+            }
 
             if (this.ck_4.Checked)
             {
@@ -3112,7 +3163,7 @@ namespace zy_cutPicture
         private async void btn_com1_Click(object sender, EventArgs e)
         {
             var stepStart = DateTime.Now;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text,1));
+            await Task.Run(() => FormCutAtlasJson.DoneRes_MapCombine(this.txt_dir.Text, 1));
             var stepEnd = DateTime.Now;
             AddLog($"完成 方案一全图，耗时：{(stepEnd - stepStart).TotalMinutes:F2}秒", Color.Green);
 
@@ -3146,19 +3197,19 @@ namespace zy_cutPicture
     {
         [JsonProperty("x")]
         public int X { get; set; }
-       [JsonProperty("y")]
+        [JsonProperty("y")]
         public int Y { get; set; }
-       [JsonProperty("w")]
+        [JsonProperty("w")]
         public int W { get; set; }
-       [JsonProperty("h")]
+        [JsonProperty("h")]
         public int H { get; set; }
-       [JsonProperty("offX")]
+        [JsonProperty("offX")]
         public double OffX { get; set; }
-       [JsonProperty("offY")]
+        [JsonProperty("offY")]
         public double OffY { get; set; }
-       [JsonProperty("sourceW")]
+        [JsonProperty("sourceW")]
         public int SourceW { get; set; }
-       [JsonProperty("sourceH")]
+        [JsonProperty("sourceH")]
         public int SourceH { get; set; }
     }
     /// <summary>
@@ -3168,10 +3219,10 @@ namespace zy_cutPicture
     {
         [JsonProperty("count")]
         public long Count { get; set; }
-       [JsonProperty("file")]
+        [JsonProperty("file")]
         public string File { get; set; }
-       [JsonProperty("frames")]
-        public List< FrameData> Frames { get; set; }
+        [JsonProperty("frames")]
+        public List<FrameData> Frames { get; set; }
 
     }
     /// <summary>
@@ -3179,11 +3230,11 @@ namespace zy_cutPicture
     /// </summary>
     public class JsonDataUI
     {
-       [JsonProperty("file")]
+        [JsonProperty("file")]
         public string File { get; set; }
-       [JsonProperty("frames")]
+        [JsonProperty("frames")]
         public Dictionary<string, FrameData> Frames { get; set; }
-      
+
     }
 
     #region mcdata
