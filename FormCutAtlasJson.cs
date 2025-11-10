@@ -20,7 +20,6 @@ using ImageMagick;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using zy_cutPicture.Properties;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 namespace zy_cutPicture
 {
     public partial class FormCutAtlasJson : Form
@@ -884,6 +883,7 @@ namespace zy_cutPicture
             }
         }
 
+        #region 合成大地图 重切png小图
         /// <summary>
         /// 合成地图
         /// </summary>
@@ -1563,6 +1563,31 @@ namespace zy_cutPicture
                        
                     }
                     #endregion
+
+                   
+                    foreach (var m in config.Items)
+                    {
+
+                        int newWidth = (int)(m.Value.width);
+                        int newHeight = (int)(m.Value.height);
+                        var cutSize = new Size(48, 32);                      
+                        Size size;
+                        if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                        {
+                            newWidth = size.Width;
+                            newHeight = size.Height;
+                        }
+                        int colCount = (int)Math.Ceiling((double)newWidth / cutSize.Width); // 列数（横向切割数）
+                        int rowCount = (int)Math.Ceiling((double)newHeight / cutSize.Height); // 行数（纵向切割数）
+                        if (m.Value.Id != 202) continue;
+                        string outDir = Path.Combine(directory, $"resource_cut/map/{m.Value.Id}");
+                        string imagePath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                        Instance.AddLog($"重新切大图 ({colCount},{rowCount}) {imagePath}");
+                        CutBigPix(imagePath, outDir, cutSize);
+                    }
+                        
+
+
                 }
             }
             catch (HttpRequestException ex)
@@ -1581,7 +1606,88 @@ namespace zy_cutPicture
                 Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
             }
             Instance.AddLog(errorlist,Color.Red);
+
+           
+
         }
+
+        /// <summary>
+        /// 切割大图为指定大小的小图，边缘不足部分用黑色填充
+        /// </summary>
+        /// <param name="pathInput">输入大图路径（支持常见格式：JPG、PNG、BMP等）</param>
+        /// <param name="pathOut">输出小图的文件夹路径（若不存在会自动创建）</param>
+        /// <param name="smSize">小图的目标尺寸（宽度×高度）</param>
+        /// <exception cref="ArgumentException">输入参数无效时抛出</exception>
+        /// <exception cref="Exception">图片处理过程中发生错误时抛出</exception>
+        public static void CutBigPix(string pathInput, string pathOut, Size smSize)
+        {
+            // 输入参数验证
+            if (string.IsNullOrEmpty(pathInput))
+                throw new ArgumentException("输入图片路径不能为空", nameof(pathInput));
+            if (string.IsNullOrEmpty(pathOut))
+                throw new ArgumentException("输出文件夹路径不能为空", nameof(pathOut));
+            if (smSize.Width <= 0 || smSize.Height <= 0)
+                throw new ArgumentException("小图尺寸必须为正整数", nameof(smSize));
+
+            // 创建输出文件夹（若不存在）
+            if (!System.IO.Directory.Exists(pathOut))
+            {
+                System.IO.Directory.CreateDirectory(pathOut);
+            }
+
+            // 读取原始图片（使用using确保资源释放）
+            using (Image originalImage = Image.FromFile(pathInput))
+            {
+                int originalWidth = originalImage.Width;
+                int originalHeight = originalImage.Height;
+
+                // 计算需要切割的行列数（向上取整，确保覆盖整个原图）
+                int colCount = (int)Math.Ceiling((double)originalWidth / smSize.Width); // 列数（横向切割数）
+                int rowCount = (int)Math.Ceiling((double)originalHeight / smSize.Height); // 行数（纵向切割数）
+
+                int imageIndex = 0; // 小图命名索引（从0开始）
+
+                // 遍历每个小图的位置
+                for (int row = 0; row < rowCount; row++)
+                {
+                    for (int col = 0; col < colCount; col++)
+                    {
+                        // 创建新的小图画布（背景为黑色）
+                        using (Bitmap smallBitmap = new Bitmap(smSize.Width, smSize.Height))
+                        using (Graphics g = Graphics.FromImage(smallBitmap))
+                        {
+                            // 设置画布背景为黑色
+                            g.Clear(Color.Black);
+
+                            // 计算当前小图在原图中的位置和实际尺寸
+                            int srcX = col * smSize.Width; // 原图中X坐标起点
+                            int srcY = row * smSize.Height; // 原图中Y坐标起点
+
+                            // 实际要绘制的宽度（避免超出原图范围）
+                            int drawWidth = Math.Min(smSize.Width, originalWidth - srcX);
+                            // 实际要绘制的高度（避免超出原图范围）
+                            int drawHeight = Math.Min(smSize.Height, originalHeight - srcY);
+
+                            // 从原图复制对应区域到小图（目标位 置从(0,0)开始）
+                            g.DrawImage(
+                                originalImage,
+                                new Rectangle(0, 0, drawWidth, drawHeight), // 小图中的绘制区域
+                                new Rectangle(srcX, srcY, drawWidth, drawHeight), // 原图中的源区域
+                                GraphicsUnit.Pixel
+                            );                        
+
+                            // 保存小图（路径格式：输出文件夹/索引.png）
+                            string savePath = System.IO.Path.Combine(pathOut, $"obj28_{imageIndex.ToString("D6")}.png");
+                            smallBitmap.Save(savePath,ImageFormat.Png);
+
+                            imageIndex++; // 索引自增
+                        }
+                    }
+                }
+            }
+        }
+        
+        #endregion
 
 
         #region DoneRes_MapData
@@ -1637,6 +1743,7 @@ namespace zy_cutPicture
                     using (MemoryStream decompressedStream = new MemoryStream())
                     {
                         Instance.AddLog($"尝试不同的解压方法");
+                        Console.WriteLine($"未解压的地图文件大小为{compressedData.Length}字节");
                         // 尝试不同的解压方法
                         byte[] data;
                         try
@@ -1648,6 +1755,7 @@ namespace zy_cutPicture
                                 decompressionStream.CopyTo(decompressedStream);
                             }
                             data = decompressedStream.ToArray();
+                            Console.WriteLine($"GZip解压");
                         }
                         catch (Exception ex1)
                         {
@@ -1724,11 +1832,36 @@ namespace zy_cutPicture
                                 if (!mapDatas.ContainsKey(key))
                                 {
                                     mapDatas.Add(key, da);
+
+
+                                    int MAP_GRID_WIDTH = 48;
+                                    int MAP_GRID_HEIGHT = 32;
+
+                                    Cfg_Map cfg;
+                                    if (!config.Items.TryGetValue(key.ToString(), out cfg)) 
+                                    {
+                                        Instance.AddLog($"配置表不存在 ID：{key}",Color.Red);
+                                        continue;
+                                    }
+                                    int mapWidth = cfg.width;
+                                    int mapHeight = cfg.height;
+                                    Size size;
+                                    if (dicConst.TryGetValue((int)key, out size))
+                                    {
+                                        mapWidth = size.Width;
+                                        mapHeight = size.Height;
+                                    }
+                                    // 计算网格行列数
+                                    int cols = (int)Math.Ceiling(mapWidth / (double)MAP_GRID_WIDTH);
+                                    int rows = (int)Math.Ceiling(mapHeight / (double)MAP_GRID_HEIGHT);
+
                                     //if (j < 10) // 只打印前10个避免输出太多
-                                        Console.WriteLine($"解析并存储地图 ID：{key}，数据长度：{dataLength} 字节");
-                                    Instance.AddLog($"解析并存储地图 ID：{key}，数据长度：{dataLength} 字节");
+                                    Console.WriteLine($"解析并存储地图 ID：{key} ({cols},{rows})，数据长度：{dataLength} 字节");
+                                    Instance.AddLog($"解析并存储地图 ID：{key} ({cols},{rows})，数据长度：{dataLength} 字节"  );
+                                    if (cols * rows > 32767)
+                                        Instance.AddLog($"({cols} x {rows}={cols * rows}) > 32767", Color.Red);
                                     var mapPath = Path.Combine(directory, $"resource_cut/map/{key}.map");
-                                    if (key == 202) 
+                                    if (key == 200) 
                                     {
 
                                         string s = "";
@@ -1751,19 +1884,7 @@ namespace zy_cutPicture
                                             // 跳过第一个int（可能是版本号或其他标识）
                                             reader.ReadInt32();
 
-                                            int MAP_GRID_WIDTH = 48;
-                                            int MAP_GRID_HEIGHT = 32;
-                                            int mapWidth = config.Items[key.ToString()].width;
-                                            int mapHeight = config.Items[key.ToString()].height;
-                                            Size size;
-                                            if (dicConst.TryGetValue((int)key, out size))
-                                            {
-                                                mapWidth = size.Width;
-                                                mapHeight = size.Height;
-                                            }
-                                            // 计算网格行列数
-                                            int cols = (int)Math.Ceiling(mapWidth / (double)MAP_GRID_WIDTH);
-                                            int rows = (int)Math.Ceiling(mapHeight / (double)MAP_GRID_HEIGHT);
+                                            
 
                                             _colCount = cols - 1;
                                             _rowCount = rows - 1;
@@ -1933,7 +2054,7 @@ namespace zy_cutPicture
                     writer.Write(new byte[24]);
 
 
-                    int elementSize = 12;
+                    int elementSize = 14;//12 或者14
                     long columnSize = elementSize * height;
 
                     //碰撞  碎图索引
@@ -1972,10 +2093,19 @@ namespace zy_cutPicture
                             writer.Write((byte)0);
                             //anitick
                             writer.Write((byte)0);
-                            //writer.Write(cell.Area); area
+                            //writer.Write(cell.Area);
+                            //area 
                             writer.Write((byte)27);
                             //light
                             writer.Write((byte)0);
+                            if (elementSize == 14) 
+                            {
+                                //area bk
+                                writer.Write((byte)0);
+                                //area mid
+                                writer.Write((byte)0);
+                            }
+                            
                         }
                     }
 
