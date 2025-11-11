@@ -82,6 +82,7 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
+            this.txt_filter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -125,6 +126,7 @@ namespace zy_cutPicture
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.txt_filter);
             this.groupBox1.Controls.Add(this.img_9);
             this.groupBox1.Controls.Add(this.ck_9);
             this.groupBox1.Controls.Add(this.img_8);
@@ -169,7 +171,7 @@ namespace zy_cutPicture
             // ck_9
             // 
             this.ck_9.AutoSize = true;
-            this.ck_9.Location = new System.Drawing.Point(25, 237);
+            this.ck_9.Location = new System.Drawing.Point(40, 237);
             this.ck_9.Name = "ck_9";
             this.ck_9.Size = new System.Drawing.Size(150, 16);
             this.ck_9.TabIndex = 30;
@@ -180,7 +182,7 @@ namespace zy_cutPicture
             // img_8
             // 
             this.img_8.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_8.Location = new System.Drawing.Point(83, 206);
+            this.img_8.Location = new System.Drawing.Point(94, 206);
             this.img_8.Name = "img_8";
             this.img_8.Size = new System.Drawing.Size(20, 20);
             this.img_8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -191,7 +193,7 @@ namespace zy_cutPicture
             // ck_8
             // 
             this.ck_8.AutoSize = true;
-            this.ck_8.Location = new System.Drawing.Point(25, 209);
+            this.ck_8.Location = new System.Drawing.Point(40, 209);
             this.ck_8.Name = "ck_8";
             this.ck_8.Size = new System.Drawing.Size(60, 16);
             this.ck_8.TabIndex = 28;
@@ -201,7 +203,7 @@ namespace zy_cutPicture
             // img_7
             // 
             this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_7.Location = new System.Drawing.Point(140, 182);
+            this.img_7.Location = new System.Drawing.Point(106, 182);
             this.img_7.Name = "img_7";
             this.img_7.Size = new System.Drawing.Size(20, 20);
             this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -216,9 +218,9 @@ namespace zy_cutPicture
             this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ck_7.Location = new System.Drawing.Point(25, 183);
             this.ck_7.Name = "ck_7";
-            this.ck_7.Size = new System.Drawing.Size(120, 16);
+            this.ck_7.Size = new System.Drawing.Size(90, 16);
             this.ck_7.TabIndex = 26;
-            this.ck_7.Text = "下载map图miniMap";
+            this.ck_7.Text = "下载map碎图";
             this.ck_7.UseVisualStyleBackColor = true;
             // 
             // btn_onekey
@@ -659,6 +661,16 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
+            // txt_filter
+            // 
+            this.txt_filter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_filter.Location = new System.Drawing.Point(122, 182);
+            this.txt_filter.Name = "txt_filter";
+            this.txt_filter.Size = new System.Drawing.Size(81, 21);
+            this.txt_filter.TabIndex = 32;
+            this.txt_filter.Text = "默认不筛选";
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 581);
@@ -748,5 +760,6 @@ namespace zy_cutPicture
         private Button btn_map;
         private PictureBox img_9;
         private CheckBox ck_9;
+        private TextBox txt_filter;
     }
 }
