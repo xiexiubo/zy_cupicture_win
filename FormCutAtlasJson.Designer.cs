@@ -201,7 +201,7 @@ namespace zy_cutPicture
             // img_7
             // 
             this.img_7.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_7.Location = new System.Drawing.Point(140, 156);
+            this.img_7.Location = new System.Drawing.Point(140, 182);
             this.img_7.Name = "img_7";
             this.img_7.Size = new System.Drawing.Size(20, 20);
             this.img_7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -214,7 +214,7 @@ namespace zy_cutPicture
             this.ck_7.AutoSize = true;
             this.ck_7.Checked = true;
             this.ck_7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_7.Location = new System.Drawing.Point(25, 157);
+            this.ck_7.Location = new System.Drawing.Point(25, 183);
             this.ck_7.Name = "ck_7";
             this.ck_7.Size = new System.Drawing.Size(120, 16);
             this.ck_7.TabIndex = 26;
@@ -258,7 +258,7 @@ namespace zy_cutPicture
             // img_1
             // 
             this.img_1.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_1.Location = new System.Drawing.Point(173, 31);
+            this.img_1.Location = new System.Drawing.Point(173, 57);
             this.img_1.Name = "img_1";
             this.img_1.Size = new System.Drawing.Size(20, 20);
             this.img_1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -268,7 +268,7 @@ namespace zy_cutPicture
             // img_2
             // 
             this.img_2.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_2.Location = new System.Drawing.Point(126, 63);
+            this.img_2.Location = new System.Drawing.Point(126, 89);
             this.img_2.Name = "img_2";
             this.img_2.Size = new System.Drawing.Size(20, 20);
             this.img_2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -278,7 +278,7 @@ namespace zy_cutPicture
             // img_3
             // 
             this.img_3.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_3.Location = new System.Drawing.Point(167, 94);
+            this.img_3.Location = new System.Drawing.Point(167, 120);
             this.img_3.Name = "img_3";
             this.img_3.Size = new System.Drawing.Size(20, 20);
             this.img_3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -288,7 +288,7 @@ namespace zy_cutPicture
             // img_4
             // 
             this.img_4.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_4.Location = new System.Drawing.Point(150, 180);
+            this.img_4.Location = new System.Drawing.Point(150, 34);
             this.img_4.Name = "img_4";
             this.img_4.Size = new System.Drawing.Size(20, 20);
             this.img_4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -298,7 +298,7 @@ namespace zy_cutPicture
             // img_5
             // 
             this.img_5.Image = global::zy_cutPicture.Properties.Resources.勾选;
-            this.img_5.Location = new System.Drawing.Point(132, 127);
+            this.img_5.Location = new System.Drawing.Point(132, 153);
             this.img_5.Name = "img_5";
             this.img_5.Size = new System.Drawing.Size(20, 20);
             this.img_5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -332,7 +332,7 @@ namespace zy_cutPicture
             this.ck_5.AutoSize = true;
             this.ck_5.Checked = true;
             this.ck_5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_5.Location = new System.Drawing.Point(25, 128);
+            this.ck_5.Location = new System.Drawing.Point(25, 154);
             this.ck_5.Name = "ck_5";
             this.ck_5.Size = new System.Drawing.Size(108, 16);
             this.ck_5.TabIndex = 4;
@@ -344,7 +344,7 @@ namespace zy_cutPicture
             this.ck_4.AutoSize = true;
             this.ck_4.Checked = true;
             this.ck_4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_4.Location = new System.Drawing.Point(25, 182);
+            this.ck_4.Location = new System.Drawing.Point(25, 36);
             this.ck_4.Name = "ck_4";
             this.ck_4.Size = new System.Drawing.Size(126, 16);
             this.ck_4.TabIndex = 3;
@@ -356,7 +356,7 @@ namespace zy_cutPicture
             this.ck_3.AutoSize = true;
             this.ck_3.Checked = true;
             this.ck_3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_3.Location = new System.Drawing.Point(25, 97);
+            this.ck_3.Location = new System.Drawing.Point(25, 123);
             this.ck_3.Name = "ck_3";
             this.ck_3.Size = new System.Drawing.Size(144, 16);
             this.ck_3.TabIndex = 2;
@@ -368,7 +368,7 @@ namespace zy_cutPicture
             this.ck_2.AutoSize = true;
             this.ck_2.Checked = true;
             this.ck_2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_2.Location = new System.Drawing.Point(25, 65);
+            this.ck_2.Location = new System.Drawing.Point(25, 91);
             this.ck_2.Name = "ck_2";
             this.ck_2.Size = new System.Drawing.Size(102, 16);
             this.ck_2.TabIndex = 1;
@@ -380,7 +380,7 @@ namespace zy_cutPicture
             this.ck_1.AutoSize = true;
             this.ck_1.Checked = true;
             this.ck_1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ck_1.Location = new System.Drawing.Point(25, 35);
+            this.ck_1.Location = new System.Drawing.Point(25, 61);
             this.ck_1.Name = "ck_1";
             this.ck_1.Size = new System.Drawing.Size(150, 16);
             this.ck_1.TabIndex = 0;

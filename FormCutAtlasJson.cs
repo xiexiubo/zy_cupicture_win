@@ -3032,7 +3032,15 @@ namespace zy_cutPicture
             // 记录总开始时间
             var totalStartTime = DateTime.Now;
             AddLog($"开始执行全部任务，开始时间：{totalStartTime:yyyy-MM-dd HH:mm:ss}", Color.Blue);
-
+            if (this.ck_4.Checked)
+            {
+                // 下载版本资源图
+                var step4Start = DateTime.Now;
+                await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(this.txt_dir.Text));
+                var step4End = DateTime.Now;
+                AddLog($"完成 下载版本资源图，耗时：{(step4End - step4Start).TotalSeconds:F2}秒", Color.Green);
+                this.img_4.Visible = true;
+            }
             if (this.ck_1.Checked)
             {
                 // 下载Allmanifest
@@ -3082,15 +3090,7 @@ namespace zy_cutPicture
                 this.img_7.Visible = true;
             }
 
-            if (this.ck_4.Checked)
-            {
-                // 下载版本资源图
-                var step4Start = DateTime.Now;
-                await Task.Run(() => FormCutAtlasJson.DoneRes_Resversion(this.txt_dir.Text));
-                var step4End = DateTime.Now;
-                AddLog($"完成 下载版本资源图，耗时：{(step4End - step4Start).TotalSeconds:F2}秒", Color.Green);
-                this.img_4.Visible = true;
-            }
+        
 
             if (this.ck_8.Checked)
             {
