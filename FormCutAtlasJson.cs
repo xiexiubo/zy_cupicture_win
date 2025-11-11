@@ -732,7 +732,7 @@ namespace zy_cutPicture
                     foreach (var m in config.Items)
                     {
                         int txt_id = 0;
-                        if (!int.TryParse(Instance.txt_filter.Text, out txt_id)}|| m.Value.Id != txt_id) { continue; }
+                        if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
                         //break;
                         //if (m.Value.Id != 202)
                         //{
@@ -1007,7 +1007,7 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)}|| m.Value.Id != txt_id) { continue; }
+                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
                         //if (
                         //    //m.Value.Id != 103 &&
                         //    m.Value.Id != 154 &&
@@ -1198,7 +1198,7 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)}|| m.Value.Id != txt_id) { continue; }
+                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
                             //if (
                             //    //m.Value.Id != 103 &&
                             //    m.Value.Id != 154 &&
@@ -1463,7 +1463,7 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)}|| m.Value.Id != txt_id) { continue; }
+                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
                             index++;
 
                             //if (
