@@ -37,6 +37,7 @@ namespace zy_cutPicture
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txt_filter = new System.Windows.Forms.TextBox();
             this.img_9 = new System.Windows.Forms.PictureBox();
             this.ck_9 = new System.Windows.Forms.CheckBox();
             this.img_8 = new System.Windows.Forms.PictureBox();
@@ -82,7 +83,6 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.txt_filter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -156,6 +156,16 @@ namespace zy_cutPicture
             this.groupBox1.Size = new System.Drawing.Size(213, 442);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
+            // 
+            // txt_filter
+            // 
+            this.txt_filter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt_filter.Location = new System.Drawing.Point(122, 182);
+            this.txt_filter.Name = "txt_filter";
+            this.txt_filter.Size = new System.Drawing.Size(81, 21);
+            this.txt_filter.TabIndex = 32;
+            this.txt_filter.Text = "默认不筛选";
             // 
             // img_9
             // 
@@ -320,8 +330,6 @@ namespace zy_cutPicture
             // ck_6
             // 
             this.ck_6.AutoSize = true;
-            this.ck_6.Checked = true;
-            this.ck_6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ck_6.Location = new System.Drawing.Point(24, 302);
             this.ck_6.Name = "ck_6";
             this.ck_6.Size = new System.Drawing.Size(120, 16);
@@ -660,16 +668,6 @@ namespace zy_cutPicture
             this.btn_help.TabIndex = 21;
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
-            // 
-            // txt_filter
-            // 
-            this.txt_filter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt_filter.Location = new System.Drawing.Point(122, 182);
-            this.txt_filter.Name = "txt_filter";
-            this.txt_filter.Size = new System.Drawing.Size(81, 21);
-            this.txt_filter.TabIndex = 32;
-            this.txt_filter.Text = "默认不筛选";
             // 
             // FormCutAtlasJson
             // 

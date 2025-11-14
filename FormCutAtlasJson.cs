@@ -732,7 +732,11 @@ namespace zy_cutPicture
                     foreach (var m in config.Items)
                     {
                         int txt_id = 0;
-                        if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
+                        if (int.TryParse(Instance.txt_filter.Text, out txt_id))
+                        {
+                            if (m.Value.Id != txt_id)
+                                continue;
+                        }
                         //break;
                         //if (m.Value.Id != 202)
                         //{
@@ -740,7 +744,7 @@ namespace zy_cutPicture
                         //    continue;
                         //}
 
-                       
+
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
@@ -991,9 +995,11 @@ namespace zy_cutPicture
                     // 反序列化为配置对象
                     Root_map config = JsonConvert.DeserializeObject<Root_map>(json);
                     Console.WriteLine($"文件num: {config.Items.Count}");
-                    Instance.AddLog($"-----Map 资源下载:{config.Items.Count}", Color.Green);
+                    Instance.AddLog($"-----Map 资源下载:{config.Items.Count}  {type}", Color.Green);
                     if (config == null)
                     {
+                        Instance.AddLog($"-----配置文件内容为空或格式不正确", Color.Red);
+                        return ;
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
                     }
 
@@ -1007,28 +1013,32 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
-                        //if (
-                        //    //m.Value.Id != 103 &&
-                        //    m.Value.Id != 154 &&
-                        //    m.Value.Id != 5267 &&
-                        //    m.Value.Id != 5417 &&
-                        //    m.Value.Id != 5418 &&
-                        //    //m.Value.Id != 6227 &&
-                        //    m.Value.Id != 7149 &&
-                        //    m.Value.Id != 7151 &&
-                        //    //m.Value.Id != 8053 &&
-                        //    m.Value.Id != 8074 &&
-                        //    m.Value.Id != 8075 &&
-                        //    //m.Value.Id != 8078 &&
-                        //    m.Value.Id != 9221 &&
-                        //    m.Value.Id != 9401
-                        //    )
-                        //{
+                            if (int.TryParse(Instance.txt_filter.Text, out txt_id))
+                            {
+                                if (m.Value.Id != txt_id)
+                                    continue;
+                            }
+                            //if (
+                            //    //m.Value.Id != 103 &&
+                            //    m.Value.Id != 154 &&
+                            //    m.Value.Id != 5267 &&
+                            //    m.Value.Id != 5417 &&
+                            //    m.Value.Id != 5418 &&
+                            //    //m.Value.Id != 6227 &&
+                            //    m.Value.Id != 7149 &&
+                            //    m.Value.Id != 7151 &&
+                            //    //m.Value.Id != 8053 &&
+                            //    m.Value.Id != 8074 &&
+                            //    m.Value.Id != 8075 &&
+                            //    //m.Value.Id != 8078 &&
+                            //    m.Value.Id != 9221 &&
+                            //    m.Value.Id != 9401
+                            //    )
+                            //{
 
-                        //    continue;
-                        //}
-                        await Task.Delay(1);
+                            //    continue;
+                            //}
+                            await Task.Delay(1);
 
                             //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
@@ -1198,7 +1208,11 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
+                            if (int.TryParse(Instance.txt_filter.Text, out txt_id))
+                            {
+                                if (m.Value.Id != txt_id)
+                                    continue;
+                            }
                             //if (
                             //    //m.Value.Id != 103 &&
                             //    m.Value.Id != 154 &&
@@ -1463,7 +1477,11 @@ namespace zy_cutPicture
                         foreach (var m in config.Items)
                         {
                             int txt_id = 0;
-                            if (!int.TryParse(Instance.txt_filter.Text, out txt_id)|| m.Value.Id != txt_id) { continue; }
+                            if (int.TryParse(Instance.txt_filter.Text, out txt_id))
+                            {
+                                if (m.Value.Id != txt_id)
+                                    continue;
+                            }
                             index++;
 
                             //if (
