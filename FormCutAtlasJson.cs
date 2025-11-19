@@ -2258,7 +2258,7 @@ namespace zy_cutPicture
                 foreach (string filePath in files)
                 {
                     // 检查文件是否为JSON文件
-                    if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+                    if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase)|| Path.GetExtension(filePath).Equals(".fnt", StringComparison.OrdinalIgnoreCase))
                     {
                         if (iPro % 100 == 0)
                         {
@@ -2305,7 +2305,7 @@ namespace zy_cutPicture
 
         private static bool ProcessJsonFile(string jsonPath)
         {
-            if (!File.Exists(jsonPath.Replace(".json", ".png")))
+            if (!File.Exists(jsonPath.Replace(".json", ".png").Replace(".fnt",".png")))
             {
                 Instance.AddLog($"-----切图不存在路径:{jsonPath.Replace(".json", ".png")}", Color.Yellow);
                 return false;
@@ -2315,7 +2315,7 @@ namespace zy_cutPicture
                 //await Task.Delay(1);
                 string jsonText = File.ReadAllText(jsonPath, Encoding.UTF8);
                 Bitmap bitmap = null;
-                using (var tempImage = Image.FromFile(jsonPath.Replace(".json", ".png")))
+                using (var tempImage = Image.FromFile(jsonPath.Replace(".json", ".png").Replace(".fnt", ".png")))
                 {
                     bitmap = new Bitmap(tempImage);
                     if (bitmap == null)
@@ -2446,7 +2446,7 @@ namespace zy_cutPicture
                             {
                                 FrameData fr = data2.Frames[i];
                                 var d = Path.GetDirectoryName(jsonPath);
-                                d = jsonPath.Replace(".json", "");
+                                d = jsonPath.Replace(".json", "").Replace(".fnt", "");
                                 var path = Path.Combine(d, i.ToString("D2") + ".png");
 
                                 if (File.Exists(path))
@@ -2507,14 +2507,20 @@ namespace zy_cutPicture
                     }
                     else
                     {
+                        Rectangle rectNew = new Rectangle();
                         JsonDataUI data3 = JsonConvert.DeserializeObject<JsonDataUI>(jsonText);
+                        List<KeyValuePair<string, FrameData>> lsitNew = new List<KeyValuePair<string, FrameData>>();
                         if (data3 != null && data3.Frames != null && data3.Frames.Count > 0)
                         {
                             foreach (var v in data3.Frames)
                             {
                                 var d = Path.GetDirectoryName(jsonPath);
-                                d = jsonPath.Replace(".json", "");
+                                d = jsonPath.Replace(".json", "").Replace(".fnt", "");
                                 var path = Path.Combine(d, v.Key + ".png");
+
+                                rectNew.Width += v.Value.SourceW;
+                                rectNew.Height = v.Value.SourceH;
+                                lsitNew.Add(v);
                                 if (File.Exists(path))
                                 {
                                     return true;
@@ -2549,6 +2555,39 @@ namespace zy_cutPicture
                                 }
                                 croppedBitmap.Save(path);
                                 croppedBitmap.Dispose();
+                            }
+
+                            //字体重合图
+                            if (jsonPath.Contains(".fnt")) 
+                            {
+                                var d = Path.GetDirectoryName(jsonPath);
+                                d = jsonPath.Replace(".fnt", "").Replace("resource", "resource_cut");
+                                var path = Path.Combine(d, Path.GetFileNameWithoutExtension(jsonPath) + ".png");
+                                Bitmap croppedBitmap = new Bitmap(rectNew.Width, rectNew.Height);
+                                lsitNew.Sort((a,b) => 
+                                {
+                                    int ia = 100;
+                                    if (int.TryParse(a.Key, out ia)) 
+                                    {
+                                    }
+                                    int ib = 100;
+                                    if (int.TryParse(b.Key, out ib))
+                                    {
+                                    }
+                                    return ia - ib;
+                                });
+                                // 创建Graphics对象用于绘制裁剪的图像
+                                using (Graphics g = Graphics.FromImage(croppedBitmap))
+                                {
+                                    int lastX = 0;
+                                    foreach (var v in lsitNew)
+                                    {
+                                        // 将源Bitmap的指定区域绘制到新Bitmap中
+                                        g.DrawImage(bitmap, Math.Abs((int)v.Value.OffX)+ lastX, Math.Abs((int)v.Value.OffY), new Rectangle(v.Value.X , v.Value.Y, v.Value.W, v.Value.H), GraphicsUnit.Pixel);
+                                        lastX += v.Value.SourceW;
+                                    }
+                                }
+                                croppedBitmap.Save(path);                               
                             }
                             return true;
                         }
@@ -3139,6 +3178,7 @@ namespace zy_cutPicture
                 // 图集切割
                 var step6Start = DateTime.Now;
                 await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(this.txt_dir.Text, "resource")));
+                //await Task.Run(() => FormCutAtlasJson.ProcessDirectory(this.txt_dir.Text));
                 var step6End = DateTime.Now;
                 AddLog($"完成 图集切割，耗时：{(step6End - step6Start).TotalSeconds:F2}秒", Color.Green);
                 this.img_6.Visible = true;
