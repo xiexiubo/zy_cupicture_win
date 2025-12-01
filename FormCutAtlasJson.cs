@@ -734,11 +734,11 @@ namespace zy_cutPicture
                         int txt_id = 0;
                         if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                         {
-                            if (m.Value.Id != txt_id)
+                            if (m.Value.img != txt_id)
                                 continue;
                         }
                         //break;
-                        //if (m.Value.Id != 202)
+                        //if (m.Value.img != 202)
                         //{
                         //    downCount++;
                         //    continue;
@@ -749,7 +749,7 @@ namespace zy_cutPicture
 
                         string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/minimap/{m.Value.img}.jpg");
-                        string fileBig = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                        string fileBig = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
                         if (File.Exists(fileBig))
                         {
                             Instance.AddLog($"跳过已经有大图{fileBig}");
@@ -757,7 +757,7 @@ namespace zy_cutPicture
                         }
                         int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
                         Size size;
-                        if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                        if (dicConst.TryGetValue((int)m.Value.img, out size))
                         {
                             countTiles = size.Width * size.Height / 512 / 256;
                         }
@@ -768,7 +768,7 @@ namespace zy_cutPicture
 
 
 
-                        var dir2 = Path.Combine(directory, $"resource/map/{m.Value.Id}");
+                        var dir2 = Path.Combine(directory, $"resource/map/{m.Value.img}");
                         Instance.AddLog($"dir2 {dir2}", Color.Black);
                         // 创建保存目录（如果不存在）
                         if (Directory.Exists(dir2))
@@ -790,13 +790,13 @@ namespace zy_cutPicture
                                 if (i > ck_num && !success)
                                 {
                                     isContinue = true;
-                                    Instance.AddLog($"大于五个不存在地图跳过 {m.Value.Id}");
+                                    Instance.AddLog($"大于五个不存在地图跳过 {m.Value.img}");
                                     break;
                                 }
                                 //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/5286/114.jpg?ver=1.0.1
                                 //1.13085.4  //"model/91001": "1.9200.13",  //"map/5279": "1.3842.1",
-                                subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
-                                filePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                filePath = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
                                 if (!JpegChecker.IsLossyJpeg(filePath))
                                 {
                                     //Instance.AddLog($"碎图不存在 或者有损 删除后继续下载 {filePath}");
@@ -811,18 +811,18 @@ namespace zy_cutPicture
                                 }
 
                                 if (i % 1 == 1)
-                                    Instance.AddLog($"{i}/{countTiles} mapTile 下载 subUrl: {subUrl}  filePath:resource/map/{m.Value.Id}/{i}.jpg", Color.Black);
+                                    Instance.AddLog($"{i}/{countTiles} mapTile 下载 subUrl: {subUrl}  filePath:resource/map/{m.Value.img}/{i}.jpg", Color.Black);
 
                                 if (i <= ck_num)
                                 {
                                     bool b = await DownloadFileAsync(subUrl, filePath);
 
                                     JToken dValue = "";
-                                    if (!b && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.Id}", out dValue))
+                                    if (!b && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.img}", out dValue))
                                     {
                                         isVersion = true;
                                         Instance.AddLog($"======== {dValue}  {dValue.ToString()}");
-                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                         b = await DownloadFileAsync(subUrl, filePath);
                                     }
 
@@ -834,9 +834,9 @@ namespace zy_cutPicture
                                 {
 
                                     JToken dValue = "";
-                                    if (isVersion && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.Id}", out dValue))
+                                    if (isVersion && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.img}", out dValue))
                                     {
-                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                         DownloadFileAsync(subUrl, filePath);
                                     }
                                     else
@@ -858,13 +858,13 @@ namespace zy_cutPicture
                             bool isPNG = false;
                             if (isPNG)
                             {
-                                Instance.AddLog($"转换png: {m.Value.Id}", Color.Black);
+                                Instance.AddLog($"转换png: {m.Value.img}", Color.Black);
                                 await Task.Delay(1000);
                                 for (int i = 1; countTiles >= i; i++)
                                 {
 
-                                    string jpgFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
-                                    string pngFilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.png");
+                                    string jpgFilePath = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
+                                    string pngFilePath = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.png");
                                     if (File.Exists(pngFilePath))
                                     {
                                         if (File.Exists(jpgFilePath))
@@ -874,7 +874,7 @@ namespace zy_cutPicture
                                     }
                                     else if (!File.Exists(jpgFilePath))
                                     {
-                                        Instance.AddLog($"转换png: {m.Value.Id}   不存在 {jpgFilePath}  count:{countTiles}", Color.Red);
+                                        Instance.AddLog($"转换png: {m.Value.img}   不存在 {jpgFilePath}  count:{countTiles}", Color.Red);
                                         continue;
                                     }
 
@@ -1015,24 +1015,24 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.Id != txt_id)
+                                if (m.Value.img != txt_id)
                                     continue;
                             }
                             //if (
-                            //    //m.Value.Id != 103 &&
-                            //    m.Value.Id != 154 &&
-                            //    m.Value.Id != 5267 &&
-                            //    m.Value.Id != 5417 &&
-                            //    m.Value.Id != 5418 &&
-                            //    //m.Value.Id != 6227 &&
-                            //    m.Value.Id != 7149 &&
-                            //    m.Value.Id != 7151 &&
-                            //    //m.Value.Id != 8053 &&
-                            //    m.Value.Id != 8074 &&
-                            //    m.Value.Id != 8075 &&
-                            //    //m.Value.Id != 8078 &&
-                            //    m.Value.Id != 9221 &&
-                            //    m.Value.Id != 9401
+                            //    //m.Value.img != 103 &&
+                            //    m.Value.img != 154 &&
+                            //    m.Value.img != 5267 &&
+                            //    m.Value.img != 5417 &&
+                            //    m.Value.img != 5418 &&
+                            //    //m.Value.img != 6227 &&
+                            //    m.Value.img != 7149 &&
+                            //    m.Value.img != 7151 &&
+                            //    //m.Value.img != 8053 &&
+                            //    m.Value.img != 8074 &&
+                            //    m.Value.img != 8075 &&
+                            //    //m.Value.img != 8078 &&
+                            //    m.Value.img != 9221 &&
+                            //    m.Value.img != 9401
                             //    )
                             //{
 
@@ -1043,15 +1043,15 @@ namespace zy_cutPicture
                             //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
                             string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
-                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
-                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
                             int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
                             int newWidth = (int)(m.Value.width);
                             int newHeight = (int)(m.Value.height);
 
                             Size size;
-                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            if (dicConst.TryGetValue((int)m.Value.img, out size))
                             {
                                 countTiles = size.Width * size.Height / 512 / 256;
                                 newWidth = size.Width;
@@ -1100,13 +1100,13 @@ namespace zy_cutPicture
                                 // 有损资源下载
                                 for (int i = 1; i <= countTiles; i++)
                                 {
-                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
                                     try
                                     {
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -1153,7 +1153,7 @@ namespace zy_cutPicture
                                     // 处理每个文件
                                     for (int i = 1; i <= countTiles; i++)
                                     {
-                                        string tilePath = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                        string tilePath = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
                                         using (FileStream tileFs = new FileStream(tilePath, FileMode.Open, FileAccess.Read))
                                         using (Image imgagetile = Image.FromStream(tileFs))
@@ -1189,9 +1189,9 @@ namespace zy_cutPicture
                             catch (Exception e)
                             {
                                 errorCount++;
-                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.Id} ({newWidth},{newHeight})");
-                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})", Color.Red);
-                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})";
+                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.img} ({newWidth},{newHeight})");
+                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.img}  ({newWidth},{newHeight})", Color.Red);
+                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.img}  ({newWidth},{newHeight})";
                             }
                             //break;
                             Console.WriteLine($"--------合图---------------------");
@@ -1210,24 +1210,24 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.Id != txt_id)
+                                if (m.Value.img != txt_id)
                                     continue;
                             }
                             //if (
-                            //    //m.Value.Id != 103 &&
-                            //    m.Value.Id != 154 &&
-                            //    m.Value.Id != 5267 &&
-                            //    m.Value.Id != 5417 &&
-                            //    m.Value.Id != 5418 &&
-                            //    //m.Value.Id != 6227 &&
-                            //    m.Value.Id != 7149 &&
-                            //    m.Value.Id != 7151 &&
-                            //    //m.Value.Id != 8053 &&
-                            //    m.Value.Id != 8074 &&
-                            //    m.Value.Id != 8075 &&
-                            //    //m.Value.Id != 8078 &&
-                            //    m.Value.Id != 9221 &&
-                            //    m.Value.Id != 9401
+                            //    //m.Value.img != 103 &&
+                            //    m.Value.img != 154 &&
+                            //    m.Value.img != 5267 &&
+                            //    m.Value.img != 5417 &&
+                            //    m.Value.img != 5418 &&
+                            //    //m.Value.img != 6227 &&
+                            //    m.Value.img != 7149 &&
+                            //    m.Value.img != 7151 &&
+                            //    //m.Value.img != 8053 &&
+                            //    m.Value.img != 8074 &&
+                            //    m.Value.img != 8075 &&
+                            //    //m.Value.img != 8078 &&
+                            //    m.Value.img != 9221 &&
+                            //    m.Value.img != 9401
                             //    )
                             //{
 
@@ -1237,15 +1237,15 @@ namespace zy_cutPicture
                             await Task.Delay(1);
 
                             string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
-                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
-                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
                             int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
                             int newWidth = (int)(m.Value.width);
                             int newHeight = (int)(m.Value.height);
 
                             Size size;
-                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            if (dicConst.TryGetValue((int)m.Value.img, out size))
                             {
                                 countTiles = size.Width * size.Height / 512 / 256;
                                 newWidth = size.Width;
@@ -1284,14 +1284,14 @@ namespace zy_cutPicture
                                 // 有损资源下载
                                 for (int i = 1; i <= countTiles; i++)
                                 {
-                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
                                     try
                                     {
 
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -1362,7 +1362,7 @@ namespace zy_cutPicture
                                             // 处理每个切片
                                             for (int i = 1; i <= countTiles; i++)
                                             {
-                                                string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                                string file = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
                                                 // 计算切片位置
                                                 int srcX = ((i - 1) % xCount) * 512;
@@ -1459,9 +1459,9 @@ namespace zy_cutPicture
                             catch (Exception e)
                             {
                                 errorCount++;
-                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.Id} ({newWidth},{newHeight})");
-                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})", Color.Red);
-                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.Id}  ({newWidth},{newHeight})";
+                                Console.WriteLine($"{errorCount}合图发生错误: {e.Message} {m.Value.img} ({newWidth},{newHeight})");
+                                Instance.AddLog($"{errorCount}合图发生错误: {e.Message} {m.Value.img}  ({newWidth},{newHeight})", Color.Red);
+                                errorlist += "\n" + $"{errorCount}合图发生错误: {e.Message} {m.Value.img}  ({newWidth},{newHeight})";
                             }
 
                             Console.WriteLine($"--------合图完成---------------------");
@@ -1479,26 +1479,26 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.Id != txt_id)
+                                if (m.Value.img != txt_id)
                                     continue;
                             }
                             index++;
 
                             //if (
-                            //    //m.Value.Id != 103 &&
-                            //    m.Value.Id != 154 &&
-                            //    m.Value.Id != 5267 &&
-                            //    m.Value.Id != 5417 &&
-                            //    m.Value.Id != 5418 &&
-                            //    //m.Value.Id != 6227 &&
-                            //    m.Value.Id != 7149 &&
-                            //    m.Value.Id != 7151 &&
-                            //    //m.Value.Id != 8053 &&
-                            //    m.Value.Id != 8074 &&
-                            //    m.Value.Id != 8075 &&
-                            //    //m.Value.Id != 8078 &&
-                            //    m.Value.Id != 9221 &&
-                            //    m.Value.Id != 9401
+                            //    //m.Value.img != 103 &&
+                            //    m.Value.img != 154 &&
+                            //    m.Value.img != 5267 &&
+                            //    m.Value.img != 5417 &&
+                            //    m.Value.img != 5418 &&
+                            //    //m.Value.img != 6227 &&
+                            //    m.Value.img != 7149 &&
+                            //    m.Value.img != 7151 &&
+                            //    //m.Value.img != 8053 &&
+                            //    m.Value.img != 8074 &&
+                            //    m.Value.img != 8075 &&
+                            //    //m.Value.img != 8078 &&
+                            //    m.Value.img != 9221 &&
+                            //    m.Value.img != 9401
                             //    )
                             //{
 
@@ -1510,15 +1510,15 @@ namespace zy_cutPicture
                             //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
                             string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
-                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.Id}");
-                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                            string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
+                            string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
                             int countTiles = (int)(Math.Ceiling((double)m.Value.width / 512) * Math.Ceiling((double)m.Value.height / 256));
                             int newWidth = (int)(m.Value.width);
                             int newHeight = (int)(m.Value.height);
 
                             Size size;
-                            if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                            if (dicConst.TryGetValue((int)m.Value.img, out size))
                             {
                                 countTiles = size.Width * size.Height / 512 / 256;
                                 newWidth = size.Width;
@@ -1555,14 +1555,14 @@ namespace zy_cutPicture
                                 // 有损资源下载
                                 for (int i = 1; i <= countTiles; i++)
                                 {
-                                    string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                    string file = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
                                     try
                                     {
 
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.Id}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -1598,7 +1598,7 @@ namespace zy_cutPicture
                                 {
                                     for (int i = 1; i <= countTiles; i++)
                                     {
-                                        string file = Path.Combine(directory, $"resource/map/{m.Value.Id}/{i}.jpg");
+                                        string file = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
 
 
                                         using (var tile = new ImageMagick.MagickImage(file))
@@ -1646,16 +1646,16 @@ namespace zy_cutPicture
                     //    int newHeight = (int)(m.Value.height);
                     //    var cutSize = new Size(48, 32);                      
                     //    Size size;
-                    //    if (dicConst.TryGetValue((int)m.Value.Id, out size))
+                    //    if (dicConst.TryGetValue((int)m.Value.img, out size))
                     //    {
                     //        newWidth = size.Width;
                     //        newHeight = size.Height;
                     //    }
                     //    int colCount = (int)Math.Ceiling((double)newWidth / cutSize.Width); // 列数（横向切割数）
                     //    int rowCount = (int)Math.Ceiling((double)newHeight / cutSize.Height); // 行数（纵向切割数）
-                    //    if (m.Value.Id != 202) continue;
-                    //    string outDir = Path.Combine(directory, $"resource_cut/map/{m.Value.Id}");
-                    //    string imagePath = Path.Combine(directory, $"resource/map/{m.Value.Id}.jpg");
+                    //    if (m.Value.img != 202) continue;
+                    //    string outDir = Path.Combine(directory, $"resource_cut/map/{m.Value.img}");
+                    //    string imagePath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
                     //    Instance.AddLog($"重新切大图 ({colCount},{rowCount}) {imagePath}");
                     //    CutBigPix(imagePath, outDir, cutSize);
                     //}
