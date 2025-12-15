@@ -302,6 +302,12 @@ namespace zy_cutPicture
                     {
                         countM++;
                         int downCount = 1;
+                        string dir_cc = Path.Combine(directory, $"resource_cut/model/{v.Key}");
+                        if (Directory.Exists(dir_cc)) 
+                        {
+                            Instance.AddLog($"已经有的model切图就不下载了 {dir_cc}");
+                            continue; 
+                        }
                         foreach (var m in v.Value)
                         {
                             ////https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/fashion/121014.png?ver=1.0.1
