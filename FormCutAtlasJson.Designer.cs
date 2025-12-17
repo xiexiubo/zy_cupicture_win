@@ -36,6 +36,20 @@ namespace zy_cutPicture
         {
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.text_reFile = new System.Windows.Forms.TextBox();
+            this.btn_reMon = new System.Windows.Forms.Button();
+            this.btn_com3 = new System.Windows.Forms.Button();
+            this.btn_com2 = new System.Windows.Forms.Button();
+            this.btn_com1 = new System.Windows.Forms.Button();
+            this.btn_map = new System.Windows.Forms.Button();
+            this.btn_allmanifest = new System.Windows.Forms.Button();
+            this.btn_itemdown = new System.Windows.Forms.Button();
+            this.btn_model = new System.Windows.Forms.Button();
+            this.btn_resv = new System.Windows.Forms.Button();
+            this.btn_icon1 = new System.Windows.Forms.Button();
+            this.btn_cut1 = new System.Windows.Forms.Button();
+            this.btn_cut = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txt_filter = new System.Windows.Forms.TextBox();
             this.img_9 = new System.Windows.Forms.PictureBox();
@@ -59,18 +73,6 @@ namespace zy_cutPicture
             this.ck_3 = new System.Windows.Forms.CheckBox();
             this.ck_2 = new System.Windows.Forms.CheckBox();
             this.ck_1 = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btn_com3 = new System.Windows.Forms.Button();
-            this.btn_com2 = new System.Windows.Forms.Button();
-            this.btn_com1 = new System.Windows.Forms.Button();
-            this.btn_map = new System.Windows.Forms.Button();
-            this.btn_allmanifest = new System.Windows.Forms.Button();
-            this.btn_itemdown = new System.Windows.Forms.Button();
-            this.btn_model = new System.Windows.Forms.Button();
-            this.btn_resv = new System.Windows.Forms.Button();
-            this.btn_icon1 = new System.Windows.Forms.Button();
-            this.btn_cut1 = new System.Windows.Forms.Button();
-            this.btn_cut = new System.Windows.Forms.Button();
             this.previewPanel = new System.Windows.Forms.Panel();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.imagePreview = new System.Windows.Forms.PictureBox();
@@ -83,10 +85,12 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.img_9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_8)).BeginInit();
@@ -97,7 +101,6 @@ namespace zy_cutPicture
             ((System.ComponentModel.ISupportInitialize)(this.img_4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_6)).BeginInit();
-            this.groupBox2.SuspendLayout();
             this.previewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             this.SuspendLayout();
@@ -112,8 +115,8 @@ namespace zy_cutPicture
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.groupBox1);
             this.splitContainer.Panel1.Controls.Add(this.groupBox2);
+            this.splitContainer.Panel1.Controls.Add(this.groupBox1);
             // 
             // splitContainer.Panel2
             // 
@@ -122,6 +125,183 @@ namespace zy_cutPicture
             this.splitContainer.Size = new System.Drawing.Size(865, 442);
             this.splitContainer.SplitterDistance = 213;
             this.splitContainer.TabIndex = 2;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.text_reFile);
+            this.groupBox2.Controls.Add(this.btn_reMon);
+            this.groupBox2.Controls.Add(this.btn_com3);
+            this.groupBox2.Controls.Add(this.btn_com2);
+            this.groupBox2.Controls.Add(this.btn_com1);
+            this.groupBox2.Controls.Add(this.btn_map);
+            this.groupBox2.Controls.Add(this.btn_allmanifest);
+            this.groupBox2.Controls.Add(this.btn_itemdown);
+            this.groupBox2.Controls.Add(this.btn_model);
+            this.groupBox2.Controls.Add(this.btn_resv);
+            this.groupBox2.Controls.Add(this.btn_icon1);
+            this.groupBox2.Controls.Add(this.btn_cut1);
+            this.groupBox2.Controls.Add(this.btn_cut);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(213, 442);
+            this.groupBox2.TabIndex = 10;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Visible = false;
+            // 
+            // text_reFile
+            // 
+            this.text_reFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.text_reFile.Location = new System.Drawing.Point(24, 139);
+            this.text_reFile.Name = "text_reFile";
+            this.text_reFile.Size = new System.Drawing.Size(109, 21);
+            this.text_reFile.TabIndex = 20;
+            this.text_reFile.Text = "填入要重组的文件夹id";
+            // 
+            // btn_reMon
+            // 
+            this.btn_reMon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_reMon.Location = new System.Drawing.Point(136, 136);
+            this.btn_reMon.Name = "btn_reMon";
+            this.btn_reMon.Size = new System.Drawing.Size(20, 26);
+            this.btn_reMon.TabIndex = 19;
+            this.btn_reMon.Text = "怪";
+            this.btn_reMon.UseVisualStyleBackColor = true;
+            this.btn_reMon.Click += new System.EventHandler(this.btn_reFile_Click);
+            // 
+            // btn_com3
+            // 
+            this.btn_com3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com3.Location = new System.Drawing.Point(25, 345);
+            this.btn_com3.Name = "btn_com3";
+            this.btn_com3.Size = new System.Drawing.Size(170, 30);
+            this.btn_com3.TabIndex = 18;
+            this.btn_com3.Text = "   合地图方案三（默认）";
+            this.btn_com3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com3.UseVisualStyleBackColor = true;
+            this.btn_com3.Click += new System.EventHandler(this.btn_com3_Click);
+            // 
+            // btn_com2
+            // 
+            this.btn_com2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com2.Location = new System.Drawing.Point(25, 309);
+            this.btn_com2.Name = "btn_com2";
+            this.btn_com2.Size = new System.Drawing.Size(170, 30);
+            this.btn_com2.TabIndex = 17;
+            this.btn_com2.Text = "   合地图方案二";
+            this.btn_com2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com2.UseVisualStyleBackColor = true;
+            this.btn_com2.Click += new System.EventHandler(this.btn_com2_Click);
+            // 
+            // btn_com1
+            // 
+            this.btn_com1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_com1.Location = new System.Drawing.Point(25, 276);
+            this.btn_com1.Name = "btn_com1";
+            this.btn_com1.Size = new System.Drawing.Size(170, 30);
+            this.btn_com1.TabIndex = 16;
+            this.btn_com1.Text = "   合地图方案一(补)";
+            this.btn_com1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btn_com1.UseVisualStyleBackColor = true;
+            this.btn_com1.Click += new System.EventHandler(this.btn_com1_Click);
+            // 
+            // btn_map
+            // 
+            this.btn_map.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_map.Location = new System.Drawing.Point(8, 239);
+            this.btn_map.Name = "btn_map";
+            this.btn_map.Size = new System.Drawing.Size(187, 30);
+            this.btn_map.TabIndex = 15;
+            this.btn_map.Text = "下载地图";
+            this.btn_map.UseVisualStyleBackColor = true;
+            this.btn_map.Click += new System.EventHandler(this.btn_map_Click);
+            // 
+            // btn_allmanifest
+            // 
+            this.btn_allmanifest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_allmanifest.Location = new System.Drawing.Point(8, 20);
+            this.btn_allmanifest.Name = "btn_allmanifest";
+            this.btn_allmanifest.Size = new System.Drawing.Size(187, 30);
+            this.btn_allmanifest.TabIndex = 7;
+            this.btn_allmanifest.Text = "allmanifest";
+            this.btn_allmanifest.UseVisualStyleBackColor = true;
+            this.btn_allmanifest.Click += new System.EventHandler(this.btn_allmanifest_Click);
+            // 
+            // btn_itemdown
+            // 
+            this.btn_itemdown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_itemdown.Location = new System.Drawing.Point(8, 62);
+            this.btn_itemdown.Name = "btn_itemdown";
+            this.btn_itemdown.Size = new System.Drawing.Size(187, 30);
+            this.btn_itemdown.TabIndex = 8;
+            this.btn_itemdown.Text = "items";
+            this.btn_itemdown.UseVisualStyleBackColor = true;
+            this.btn_itemdown.Click += new System.EventHandler(this.btn_itemdown_Click);
+            // 
+            // btn_model
+            // 
+            this.btn_model.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_model.Location = new System.Drawing.Point(8, 98);
+            this.btn_model.Name = "btn_model";
+            this.btn_model.Size = new System.Drawing.Size(187, 30);
+            this.btn_model.TabIndex = 9;
+            this.btn_model.Text = "models";
+            this.btn_model.UseVisualStyleBackColor = true;
+            this.btn_model.Click += new System.EventHandler(this.btn_model_Click);
+            // 
+            // btn_resv
+            // 
+            this.btn_resv.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_resv.Location = new System.Drawing.Point(8, 170);
+            this.btn_resv.Name = "btn_resv";
+            this.btn_resv.Size = new System.Drawing.Size(187, 30);
+            this.btn_resv.TabIndex = 10;
+            this.btn_resv.Text = "res版本资源";
+            this.btn_resv.UseVisualStyleBackColor = true;
+            this.btn_resv.Click += new System.EventHandler(this.btn_resv_Click);
+            // 
+            // btn_icon1
+            // 
+            this.btn_icon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_icon1.Location = new System.Drawing.Point(8, 205);
+            this.btn_icon1.Name = "btn_icon1";
+            this.btn_icon1.Size = new System.Drawing.Size(187, 30);
+            this.btn_icon1.TabIndex = 14;
+            this.btn_icon1.Text = "怪头像";
+            this.btn_icon1.UseVisualStyleBackColor = true;
+            this.btn_icon1.Click += new System.EventHandler(this.btn_icon1_Click);
+            // 
+            // btn_cut1
+            // 
+            this.btn_cut1.Location = new System.Drawing.Point(8, 389);
+            this.btn_cut1.Name = "btn_cut1";
+            this.btn_cut1.Size = new System.Drawing.Size(73, 30);
+            this.btn_cut1.TabIndex = 13;
+            this.btn_cut1.Text = "切图(文件)";
+            this.btn_cut1.UseVisualStyleBackColor = true;
+            this.btn_cut1.Click += new System.EventHandler(this.btn_cut1_Click);
+            // 
+            // btn_cut
+            // 
+            this.btn_cut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_cut.Location = new System.Drawing.Point(118, 389);
+            this.btn_cut.Name = "btn_cut";
+            this.btn_cut.Size = new System.Drawing.Size(77, 30);
+            this.btn_cut.TabIndex = 11;
+            this.btn_cut.Text = "切图(目录)";
+            this.btn_cut.UseVisualStyleBackColor = true;
+            this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
             // 
             // groupBox1
             // 
@@ -397,159 +577,6 @@ namespace zy_cutPicture
             this.ck_1.Text = "下载Allmanifest配置图";
             this.ck_1.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.btn_com3);
-            this.groupBox2.Controls.Add(this.btn_com2);
-            this.groupBox2.Controls.Add(this.btn_com1);
-            this.groupBox2.Controls.Add(this.btn_map);
-            this.groupBox2.Controls.Add(this.btn_allmanifest);
-            this.groupBox2.Controls.Add(this.btn_itemdown);
-            this.groupBox2.Controls.Add(this.btn_model);
-            this.groupBox2.Controls.Add(this.btn_resv);
-            this.groupBox2.Controls.Add(this.btn_icon1);
-            this.groupBox2.Controls.Add(this.btn_cut1);
-            this.groupBox2.Controls.Add(this.btn_cut);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(213, 442);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Visible = false;
-            // 
-            // btn_com3
-            // 
-            this.btn_com3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_com3.Location = new System.Drawing.Point(25, 312);
-            this.btn_com3.Name = "btn_com3";
-            this.btn_com3.Size = new System.Drawing.Size(170, 30);
-            this.btn_com3.TabIndex = 18;
-            this.btn_com3.Text = "   合地图方案三（默认）";
-            this.btn_com3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btn_com3.UseVisualStyleBackColor = true;
-            this.btn_com3.Click += new System.EventHandler(this.btn_com3_Click);
-            // 
-            // btn_com2
-            // 
-            this.btn_com2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_com2.Location = new System.Drawing.Point(25, 276);
-            this.btn_com2.Name = "btn_com2";
-            this.btn_com2.Size = new System.Drawing.Size(170, 30);
-            this.btn_com2.TabIndex = 17;
-            this.btn_com2.Text = "   合地图方案二";
-            this.btn_com2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btn_com2.UseVisualStyleBackColor = true;
-            this.btn_com2.Click += new System.EventHandler(this.btn_com2_Click);
-            // 
-            // btn_com1
-            // 
-            this.btn_com1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_com1.Location = new System.Drawing.Point(25, 243);
-            this.btn_com1.Name = "btn_com1";
-            this.btn_com1.Size = new System.Drawing.Size(170, 30);
-            this.btn_com1.TabIndex = 16;
-            this.btn_com1.Text = "   合地图方案一(补)";
-            this.btn_com1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btn_com1.UseVisualStyleBackColor = true;
-            this.btn_com1.Click += new System.EventHandler(this.btn_com1_Click);
-            // 
-            // btn_map
-            // 
-            this.btn_map.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_map.Location = new System.Drawing.Point(8, 206);
-            this.btn_map.Name = "btn_map";
-            this.btn_map.Size = new System.Drawing.Size(187, 30);
-            this.btn_map.TabIndex = 15;
-            this.btn_map.Text = "下载地图";
-            this.btn_map.UseVisualStyleBackColor = true;
-            this.btn_map.Click += new System.EventHandler(this.btn_map_Click);
-            // 
-            // btn_allmanifest
-            // 
-            this.btn_allmanifest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_allmanifest.Location = new System.Drawing.Point(8, 20);
-            this.btn_allmanifest.Name = "btn_allmanifest";
-            this.btn_allmanifest.Size = new System.Drawing.Size(187, 30);
-            this.btn_allmanifest.TabIndex = 7;
-            this.btn_allmanifest.Text = "allmanifest";
-            this.btn_allmanifest.UseVisualStyleBackColor = true;
-            this.btn_allmanifest.Click += new System.EventHandler(this.btn_allmanifest_Click);
-            // 
-            // btn_itemdown
-            // 
-            this.btn_itemdown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_itemdown.Location = new System.Drawing.Point(8, 62);
-            this.btn_itemdown.Name = "btn_itemdown";
-            this.btn_itemdown.Size = new System.Drawing.Size(187, 30);
-            this.btn_itemdown.TabIndex = 8;
-            this.btn_itemdown.Text = "items";
-            this.btn_itemdown.UseVisualStyleBackColor = true;
-            this.btn_itemdown.Click += new System.EventHandler(this.btn_itemdown_Click);
-            // 
-            // btn_model
-            // 
-            this.btn_model.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_model.Location = new System.Drawing.Point(8, 98);
-            this.btn_model.Name = "btn_model";
-            this.btn_model.Size = new System.Drawing.Size(187, 30);
-            this.btn_model.TabIndex = 9;
-            this.btn_model.Text = "models";
-            this.btn_model.UseVisualStyleBackColor = true;
-            this.btn_model.Click += new System.EventHandler(this.btn_model_Click);
-            // 
-            // btn_resv
-            // 
-            this.btn_resv.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_resv.Location = new System.Drawing.Point(8, 137);
-            this.btn_resv.Name = "btn_resv";
-            this.btn_resv.Size = new System.Drawing.Size(187, 30);
-            this.btn_resv.TabIndex = 10;
-            this.btn_resv.Text = "res版本资源";
-            this.btn_resv.UseVisualStyleBackColor = true;
-            this.btn_resv.Click += new System.EventHandler(this.btn_resv_Click);
-            // 
-            // btn_icon1
-            // 
-            this.btn_icon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_icon1.Location = new System.Drawing.Point(8, 172);
-            this.btn_icon1.Name = "btn_icon1";
-            this.btn_icon1.Size = new System.Drawing.Size(187, 30);
-            this.btn_icon1.TabIndex = 14;
-            this.btn_icon1.Text = "怪头像";
-            this.btn_icon1.UseVisualStyleBackColor = true;
-            this.btn_icon1.Click += new System.EventHandler(this.btn_icon1_Click);
-            // 
-            // btn_cut1
-            // 
-            this.btn_cut1.Location = new System.Drawing.Point(8, 356);
-            this.btn_cut1.Name = "btn_cut1";
-            this.btn_cut1.Size = new System.Drawing.Size(73, 30);
-            this.btn_cut1.TabIndex = 13;
-            this.btn_cut1.Text = "切图(文件)";
-            this.btn_cut1.UseVisualStyleBackColor = true;
-            this.btn_cut1.Click += new System.EventHandler(this.btn_cut1_Click);
-            // 
-            // btn_cut
-            // 
-            this.btn_cut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_cut.Location = new System.Drawing.Point(118, 356);
-            this.btn_cut.Name = "btn_cut";
-            this.btn_cut.Size = new System.Drawing.Size(77, 30);
-            this.btn_cut.TabIndex = 11;
-            this.btn_cut.Text = "切图(目录)";
-            this.btn_cut.UseVisualStyleBackColor = true;
-            this.btn_cut.Click += new System.EventHandler(this.btn_cut_Click);
-            // 
             // previewPanel
             // 
             this.previewPanel.BackgroundImage = global::zy_cutPicture.Properties.Resources.方格;
@@ -669,6 +696,17 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(158, 136);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(37, 26);
+            this.button2.TabIndex = 21;
+            this.button2.Text = "玩家";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // FormCutAtlasJson
             // 
             this.ClientSize = new System.Drawing.Size(884, 581);
@@ -690,6 +728,8 @@ namespace zy_cutPicture
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.img_9)).EndInit();
@@ -701,7 +741,6 @@ namespace zy_cutPicture
             ((System.ComponentModel.ISupportInitialize)(this.img_4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.img_6)).EndInit();
-            this.groupBox2.ResumeLayout(false);
             this.previewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
             this.ResumeLayout(false);
@@ -759,5 +798,8 @@ namespace zy_cutPicture
         private PictureBox img_9;
         private CheckBox ck_9;
         private TextBox txt_filter;
+        private Button btn_reMon;
+        private TextBox text_reFile;
+        private Button button2;
     }
 }

@@ -234,7 +234,7 @@ namespace zy_cutPicture
                 Instance.AddLog($"发生错误2: {ex.Message}", Color.Red);
             }
         }
-
+        #region Model
 
         public class ModelInfoWrapper
         {
@@ -375,6 +375,180 @@ namespace zy_cutPicture
                 Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="id"></param>
+        /// <param name="type"> 1是玩家 2 是怪</param>
+        /// <returns></returns>
+        static async Task DoneRes_Model_ReName(string directory,string id,bool isPlayer=true) 
+        {
+            try
+            {
+
+
+                var dir = Path.Combine(directory, "resource_cut", "model", id);
+                if (!Directory.Exists(dir))
+                {
+                    Instance.AddLog($"目录不存在 {dir}");
+                    await Task.Delay(1);
+                    return;
+                }
+                var dirOut = Path.Combine(dir, id);
+                if (!Directory.Exists(dirOut))
+                {
+                    Directory.CreateDirectory(dirOut);
+                }
+                AnimationConfig outJson = new AnimationConfig();
+                outJson.gender_support = 0;//0男  1女   2男女共用
+                outJson.type_combobox = isPlayer?0:1;//0玩家 1怪
+                outJson.actions = new List<AnimationAction>();
+
+                //     
+                string[] actName = { "待机", "行走", "跑步", "预备攻击","物理攻击", "采矿", "魔法攻击", "采集", "被攻击", "死亡"};
+                int[] action = { 1, 2, 3, 4,4,4, 5,4,1, 10 }; //动作类型
+                int[] startIdx = { 0, 100, 200,  300, 400,500,600,700,800,900 };//动作起始帧
+                int[] fileCount = { 0, 0, 0, 0, 0, 0,0,0,0,0 };  //每个动作包含帧数
+
+                if (!isPlayer) 
+                {
+                    actName =new [] { "待机", "行走", "物理攻击",  "被攻击", "死亡", "展示" };
+                    action = new[] { 1, 2, 4, 4, 10,99 }; //动作类型
+                    startIdx = new[] { 0, 100, 200, 300, 400, 500 };//动作起始帧
+                    fileCount = new[] { 0, 0, 0, 0, 0, 0};  //每个动作包含帧数
+                }
+
+                int currIdx = 0;
+                for (int i = 0; i < action.Length; i++)
+                {
+                    int actId = action[i];
+                    //currIdx = startIdx[i];
+
+                    var dirF = Path.Combine(dir, id + actId.ToString("D2") + 0.ToString());
+                    bool isExists = true;
+                    if (!Directory.Exists(dirF))
+                    {
+                        //Instance.AddLog($"目录不存在dirF i {dirF}");
+                        if (isPlayer && actId == 3) 
+                        {
+                            Instance.AddLog($"目录不存在dirF i {dirF} {actId} 跑步没有用走代替");
+                            actId = 2;
+                        }
+                        else
+                        {
+                            isExists = false;
+                            Instance.AddLog($"目录不存在dirF i {dirF} {actId}");
+                            //continue;
+                        }
+                        
+                    }
+                    if (isExists)
+                    {
+                        startIdx[i] = currIdx;
+                        for (int j = 0; j < 5; j++)
+                        {
+                            dirF = Path.Combine(dir, id + actId.ToString("D2") + j.ToString());
+                            if (!Directory.Exists(dirF))
+                            {
+                                Instance.AddLog($"目录不存在dirF j {dirF}");
+                                continue;
+                            }
+                            var filses = Directory.GetFiles(dirF, "*.png");
+                            fileCount[i] = filses.Length;
+                            //还要for文件
+                            for (int k = 0; k < filses.Length; k++)
+                            {
+                                var pngFile = filses[k];
+                                int numName = 0;
+                                int.TryParse(Path.GetFileNameWithoutExtension(pngFile), out numName);
+                                numName = currIdx + numName;
+
+                                var distFile = Path.Combine(dirOut, numName.ToString() + ".png");
+                                File.Copy(pngFile, distFile, true);
+
+                            }
+                            currIdx += filses.Length;
+                        }
+                        currIdx = currIdx + 10;
+                        //currIdx = currIdx + (currIdx%100==0?1:currIdx % 100);
+                    }
+
+                    outJson.actions.Add(new AnimationAction 
+                    { 
+                        Start = fileCount[i]==0?0.ToString():startIdx[i].ToString(), 
+                        Frame = fileCount[i].ToString(), 
+                        Skip = 0.ToString(), 
+                        Output = actName[i].ToString(), 
+                        Dir = actName[i]=="展示"?1.ToString():5.ToString(), 
+                    });           
+
+                }
+
+                // 配置JSON序列化设置
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    StringEscapeHandling = StringEscapeHandling.Default
+                };
+
+                // 序列化到JSON字符串
+                string jsonString = JsonConvert.SerializeObject(outJson, jsonSettings);
+
+                // 输出到控制台
+                Console.WriteLine("生成的JSON内容：");
+                Console.WriteLine(jsonString);
+
+                // 保存到文件
+                string filePath = Path.Combine(dirOut, "act_config.json");
+                File.WriteAllText(filePath, jsonString);
+                Console.WriteLine($"\nJSON文件已保存到：{Path.GetFullPath(filePath)}");
+
+
+                string debugs = "";
+                for (int i = 0; i < action.Length; i++)
+                {
+                    debugs += $"{actName[i]}  起始:{startIdx[i]}  帧数:{fileCount[i]}  跳过:0  朝向:5 \n";
+                }
+                Instance.AddLog(debugs);
+                Console.WriteLine(debugs);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+                Instance.AddLog(e.Message);
+            }
+        }
+
+        public class AnimationAction
+        {
+            public string Start { get; set; }
+            public string Frame { get; set; }
+            public string Skip { get; set; }
+            public string Output { get; set; }
+            public string Dir { get; set; }
+        }
+
+        public class AnimationConfig
+        {
+            public int gender_support { get; set; }
+            public int type_combobox { get; set; }
+            public List<AnimationAction> actions { get; set; }
+        }
+
+        #endregion
+
+
+
         public class VersionInfo
         {
             [JsonProperty("version")]
@@ -3256,6 +3430,24 @@ namespace zy_cutPicture
             var stepEnd = DateTime.Now;
             AddLog($"完成 方案三全图，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
 
+        }
+
+        //怪模型  重组图序
+        private async void btn_reFile_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text,false));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
+        }
+
+        //玩家模型 重组图序
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text,true));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
         }
     }
 
