@@ -376,14 +376,207 @@ namespace zy_cutPicture
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="id"></param>
-        /// <param name="type"> 1是玩家 2 是怪</param>
-        /// <returns></returns>
-        static async Task DoneRes_Model_ReName(string directory,string id,bool isPlayer=true) 
+         enum modelType 
+        {
+            player =0,
+            monster =1,
+            effect =2,
+            equip =3,
+            hair =4,
+            wing =5,
+            shield =6,
+            npc =7,
+            All =8
+
+        }
+
+
+       
+        public class fashionWrapper
+        {
+            [JsonProperty("fashionlevel")]
+            public Dictionary<string, Dictionary<string, FashtionDetails>> fashionlevel { get; set; }
+        }
+
+        public class FashtionDetails
+        {
+            [JsonProperty("id")]
+            public long Id { get; set; }
+
+            [JsonProperty("fashion")]
+            public string Fashion { get; set; }
+
+            [JsonProperty("level")]
+            public int Level { get; set; }
+
+            [JsonProperty("attr")]
+            public string Attr { get; set; }
+
+            [JsonProperty("icon")]
+            public string Icon { get; set; }
+
+            [JsonProperty("cost", NullValueHandling = NullValueHandling.Ignore)]
+            public string Cost { get; set; }
+        }
+
+        static async Task DoneRes_Model_ReName(string directory, string id, modelType type = 0)
+        {
+            Console.WriteLine(type);
+            if (type != modelType.All) 
+            {
+               await Model_ReName(directory, id, type);
+                var dirOut = Path.Combine("G:\\霸业模型", type.ToString(), id);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
+                    UseShellExecute = true
+                });
+                return;
+            }
+
+            try
+            {
+                //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    //if (!response.IsSuccessStatusCode) 
+                    //{
+                    //    return;
+                    //}
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+                    Res_Custom config = JsonConvert.DeserializeObject<Res_Custom>(json);
+                    Console.WriteLine($"文件num: {config.Monsters.Count}");
+                    Instance.AddLog($"-----怪物:{config.Monsters.Count}", Color.Green);
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+
+                    int downCount = 0;
+                    string strCurr = "";
+                    foreach (var m in config.Monsters)
+                    {
+                        await  Model_ReName(directory, m.Value.model, modelType.monster);
+                    }
+                    foreach (var m in config.Npc)
+                    {
+                        await Model_ReName(directory, m.Value.model, modelType.npc);
+                    }
+                    foreach (var m in config.effect)
+                    {
+                        await  Model_ReName(directory, m.Value.model, modelType.effect);
+                    }
+                    var dirOut = Path.Combine("G:\\霸业模型");
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
+                        UseShellExecute = true
+                    });
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
+            }
+            //return;
+
+            try
+            {
+                
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/5config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    //if (!response.IsSuccessStatusCode) 
+                    //{
+                    //    return;
+                    //}
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+                    fashionWrapper config = JsonConvert.DeserializeObject<fashionWrapper>(json);
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+
+                    int downCount = 0;
+                    string strCurr = "";
+                    //foreach (var m in config.Monsters)
+                    //{
+                    //    await Model_ReName(directory, m.Value.model, modelType.monster);
+                    //}
+                    foreach (var m in config.fashionlevel)
+                    {
+                        //foreach (var v in m.Value)
+                        {
+                            //Instance.AddLog(v.Key + v.Value);
+                            await Model_ReName(directory, m.Key, modelType.player);
+                        }
+                    }
+                   
+                    var dirOut = Path.Combine("G:\\霸业模型");
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
+                        UseShellExecute = true
+                    });
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
+            }
+
+
+        }
+        static async Task Model_ReName(string directory,string id, modelType type =0) 
         {
             try
             {
@@ -396,29 +589,64 @@ namespace zy_cutPicture
                     await Task.Delay(1);
                     return;
                 }
-                var dirOut = Path.Combine(dir, id);
+                var dirOut = Path.Combine("G:\\霸业模型", type.ToString(), id);
                 if (!Directory.Exists(dirOut))
                 {
                     Directory.CreateDirectory(dirOut);
                 }
+                else 
+                {
+                    Instance.AddLog($"目录存在跳过 {dirOut}");
+                    return;
+                }
                 AnimationConfig outJson = new AnimationConfig();
                 outJson.gender_support = 0;//0男  1女   2男女共用
-                outJson.type_combobox = isPlayer?0:1;//0玩家 1怪
+                outJson.type_combobox = (int)type;//0玩家 1怪
                 outJson.actions = new List<AnimationAction>();
 
-                //     
+                //0玩家 3武器 4头发 5翅膀 6盾牌   
                 string[] actName = { "待机", "行走", "跑步", "预备攻击","物理攻击", "采矿", "魔法攻击", "采集", "被攻击", "死亡"};
                 int[] action = { 1, 2, 3, 4,4,4, 5,4,1, 10 }; //动作类型
                 int[] startIdx = { 0, 100, 200,  300, 400,500,600,700,800,900 };//动作起始帧
                 int[] fileCount = { 0, 0, 0, 0, 0, 0,0,0,0,0 };  //每个动作包含帧数
 
-                if (!isPlayer) 
+                //朝向对应
+                int[][] dirs = new[] {new[]{1,2,3,4,5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 } };  
+
+                bool isPlayer = true;
+                //怪
+                if (type == modelType.monster)
                 {
-                    actName =new [] { "待机", "行走", "物理攻击",  "被攻击", "死亡", "展示" };
-                    action = new[] { 1, 2, 4, 4, 10,99 }; //动作类型
+                    isPlayer = false;
+                    actName = new[] { "待机", "行走", "物理攻击", "被攻击", "死亡", "展示" };
+                    action = new[] { 1, 2, 4, 4, 10, 99 }; //动作类型
                     startIdx = new[] { 0, 100, 200, 300, 400, 500 };//动作起始帧
-                    fileCount = new[] { 0, 0, 0, 0, 0, 0};  //每个动作包含帧数
+                    fileCount = new[] { 0, 0, 0, 0, 0, 0 };  //每个动作包含帧数
+                    //朝向对应
+                    dirs = new[] { new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 } };
                 }
+                //特效 方向0 -霸业方向4
+                else if (type == modelType.effect) 
+                {
+                    isPlayer=false;
+                    actName = new[] { "特效" };
+                    action = new[] { 1 }; //动作类型
+                    startIdx = new[] { 0 };//动作起始帧
+                    fileCount = new[] { 0};  //每个动作包含帧数
+                    dirs = new[] { new[] { 4 } };
+                }
+                //npc 方向0 -霸业方向4
+                else if (type == modelType.npc)
+                {
+                    isPlayer = false;
+                    actName = new[] { "待机","物理攻击" };
+                    action = new[] { 1, 1,  }; //动作类型
+                    startIdx = new[] { 0, 100 };//动作起始帧
+                    fileCount = new[] { 0, 0};  //每个动作包含帧数
+                    dirs = new[] { new[] { 4 }, new[] { 4 } };
+
+                }
+               
 
                 int currIdx = 0;
                 for (int i = 0; i < action.Length; i++)
@@ -426,15 +654,20 @@ namespace zy_cutPicture
                     int actId = action[i];
                     //currIdx = startIdx[i];
 
-                    var dirF = Path.Combine(dir, id + actId.ToString("D2") + 0.ToString());
+                    var dirF = Path.Combine(dir, id + actId.ToString("D2") + dirs[i][0].ToString());
                     bool isExists = true;
                     if (!Directory.Exists(dirF))
                     {
                         //Instance.AddLog($"目录不存在dirF i {dirF}");
-                        if (isPlayer && actId == 3) 
+                        if (isPlayer && actId == 3)
                         {
                             Instance.AddLog($"目录不存在dirF i {dirF} {actId} 跑步没有用走代替");
                             actId = 2;
+                        }
+                        else if (type == modelType.effect) 
+                        {
+                            Instance.AddLog($"目录不存在dirF i {dirF} {actId} 特效没有动作1就找99");
+                            actId = 99;
                         }
                         else
                         {
@@ -444,19 +677,20 @@ namespace zy_cutPicture
                         }
                         
                     }
-                    if (isExists)
+                    //if (isExists)
                     {
                         startIdx[i] = currIdx;
-                        for (int j = 0; j < 5; j++)
+                        for (int j = 0; j < dirs[i].Length; j++)
                         {
-                            dirF = Path.Combine(dir, id + actId.ToString("D2") + j.ToString());
+                            dirF = Path.Combine(dir, id + actId.ToString("D2") + (dirs[i][j]).ToString());
                             if (!Directory.Exists(dirF))
                             {
                                 Instance.AddLog($"目录不存在dirF j {dirF}");
                                 continue;
                             }
                             var filses = Directory.GetFiles(dirF, "*.png");
-                            fileCount[i] = filses.Length;
+                            Instance.AddLog($"{dirF}  帧数 {filses.Length}");
+                            fileCount[i] = Math.Max( filses.Length, fileCount[i]);
                             //还要for文件
                             for (int k = 0; k < filses.Length; k++)
                             {
@@ -481,7 +715,7 @@ namespace zy_cutPicture
                         Frame = fileCount[i].ToString(), 
                         Skip = 0.ToString(), 
                         Output = actName[i].ToString(), 
-                        Dir = actName[i]=="展示"?1.ToString():5.ToString(), 
+                        Dir = dirs[i].Length.ToString(), 
                     });           
 
                 }
@@ -514,12 +748,7 @@ namespace zy_cutPicture
                 }
                 Instance.AddLog(debugs);
                 Console.WriteLine(debugs);
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "explorer.exe",
-                    Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
-                    UseShellExecute = true
-                });
+               
             }
             catch (Exception e)
             {
@@ -3432,22 +3661,21 @@ namespace zy_cutPicture
 
         }
 
-        //怪模型  重组图序
-        private async void btn_reFile_Click(object sender, EventArgs e)
+    
+        //玩家模型 重组图序
+        private async void button2_Click(object sender, EventArgs e)
         {
+            var dd = this.cbb_type;
+            string selectType = dd.SelectedItem == null ? "All" : dd.SelectedItem.ToString();
             var stepStart = DateTime.Now;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text,false));
+            await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text, (modelType)(Enum.Parse(typeof(modelType), selectType))));
             var stepEnd = DateTime.Now;
             AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
         }
 
-        //玩家模型 重组图序
-        private async void button2_Click(object sender, EventArgs e)
+        private void cbb_type_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var stepStart = DateTime.Now;
-            await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text,true));
-            var stepEnd = DateTime.Now;
-            AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
+            
         }
     }
 
@@ -3572,11 +3800,24 @@ namespace zy_cutPicture
     {
         [JsonProperty("monster")]
         public Dictionary<string, Res_Custom_sub> Monsters { get; set; }
+        [JsonProperty("npc")]
+        public Dictionary<string, Res_Custom_sub_npc> Npc { get; set; }
+
+        [JsonProperty("effect")]
+        public Dictionary<string, Res_Custom_sub_npc> effect { get; set; }
+    }
+    public class Res_Custom_sub_npc
+    {       
+        [JsonProperty("model")]
+        public string model { get; set; }
     }
     public class Res_Custom_sub
     {
         [JsonProperty("head")]
         public string Head { get; set; }
+
+        [JsonProperty("model")]
+        public string model { get; set; }
     }
 
     #endregion

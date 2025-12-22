@@ -37,8 +37,8 @@ namespace zy_cutPicture
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.text_reFile = new System.Windows.Forms.TextBox();
-            this.btn_reMon = new System.Windows.Forms.Button();
             this.btn_com3 = new System.Windows.Forms.Button();
             this.btn_com2 = new System.Windows.Forms.Button();
             this.btn_com1 = new System.Windows.Forms.Button();
@@ -85,7 +85,7 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.cbb_type = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -128,9 +128,9 @@ namespace zy_cutPicture
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cbb_type);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.text_reFile);
-            this.groupBox2.Controls.Add(this.btn_reMon);
             this.groupBox2.Controls.Add(this.btn_com3);
             this.groupBox2.Controls.Add(this.btn_com2);
             this.groupBox2.Controls.Add(this.btn_com1);
@@ -150,26 +150,28 @@ namespace zy_cutPicture
             this.groupBox2.TabStop = false;
             this.groupBox2.Visible = false;
             // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("宋体", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button2.Location = new System.Drawing.Point(107, 148);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(87, 20);
+            this.button2.TabIndex = 21;
+            this.button2.Text = "do";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // text_reFile
             // 
             this.text_reFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.text_reFile.Location = new System.Drawing.Point(24, 139);
+            this.text_reFile.Location = new System.Drawing.Point(11, 127);
             this.text_reFile.Name = "text_reFile";
-            this.text_reFile.Size = new System.Drawing.Size(109, 21);
+            this.text_reFile.Size = new System.Drawing.Size(90, 21);
             this.text_reFile.TabIndex = 20;
             this.text_reFile.Text = "填入要重组的文件夹id";
-            // 
-            // btn_reMon
-            // 
-            this.btn_reMon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_reMon.Location = new System.Drawing.Point(136, 136);
-            this.btn_reMon.Name = "btn_reMon";
-            this.btn_reMon.Size = new System.Drawing.Size(20, 26);
-            this.btn_reMon.TabIndex = 19;
-            this.btn_reMon.Text = "怪";
-            this.btn_reMon.UseVisualStyleBackColor = true;
-            this.btn_reMon.Click += new System.EventHandler(this.btn_reFile_Click);
             // 
             // btn_com3
             // 
@@ -696,16 +698,28 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
-            // button2
+            // cbb_type
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(158, 136);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(37, 26);
-            this.button2.TabIndex = 21;
-            this.button2.Text = "玩家";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.cbb_type.DisplayMember = "All";
+            this.cbb_type.FormattingEnabled = true;
+            this.cbb_type.Items.AddRange(new object[] {
+            "player",
+            "monster",
+            "effect",
+            "equip",
+            "hair",
+            "wing",
+            "shield",
+            "npc",
+            "All"});
+            this.cbb_type.Location = new System.Drawing.Point(106, 127);
+            this.cbb_type.Name = "cbb_type";
+            this.cbb_type.Size = new System.Drawing.Size(88, 20);
+            this.cbb_type.TabIndex = 22;
+            this.cbb_type.Text = "选择类型";
+            this.cbb_type.UseWaitCursor = true;
+            this.cbb_type.ValueMember = "All";
+            this.cbb_type.SelectedIndexChanged += new System.EventHandler(this.cbb_type_SelectedIndexChanged);
             // 
             // FormCutAtlasJson
             // 
@@ -798,8 +812,8 @@ namespace zy_cutPicture
         private PictureBox img_9;
         private CheckBox ck_9;
         private TextBox txt_filter;
-        private Button btn_reMon;
         private TextBox text_reFile;
         private Button button2;
+        private ComboBox cbb_type;
     }
 }
