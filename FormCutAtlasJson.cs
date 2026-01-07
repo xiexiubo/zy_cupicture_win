@@ -262,7 +262,7 @@ namespace zy_cutPicture
             [JsonProperty("standy")]
             public long StandY { get; set; }
         }
-        static async Task DoneRes_Model(string directory)
+        static async Task DoneRes_Model(string directory,string modelid="")
         {
             try
             {
@@ -300,6 +300,11 @@ namespace zy_cutPicture
                     int countM = 0;
                     foreach (var v in config.ModelInfo)
                     {
+                        if (!string.IsNullOrEmpty(modelid) && v.Key != modelid) 
+                        {
+                            //不是筛选 id 跳过
+                            continue;
+                        }
                         countM++;
                         int downCount = 1;
                         string dir_cc = Path.Combine(directory, $"resource_cut/model/{v.Key}");
@@ -425,7 +430,7 @@ namespace zy_cutPicture
             if (type != modelType.All) 
             {
                await Model_ReName(directory, id, type);
-                var dirOut = Path.Combine("G:\\霸业模型", type.ToString(), id);
+                var dirOut = Path.Combine("G:\\霸业模型序列图资源", type.ToString(), id);
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "explorer.exe",
@@ -480,7 +485,7 @@ namespace zy_cutPicture
                     {
                         await  Model_ReName(directory, m.Value.model, modelType.effect);
                     }
-                    var dirOut = Path.Combine("G:\\霸业模型");
+                    var dirOut = Path.Combine("G:\\霸业模型序列图资源");
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = "explorer.exe",
@@ -549,7 +554,7 @@ namespace zy_cutPicture
                         }
                     }
                    
-                    var dirOut = Path.Combine("G:\\霸业模型");
+                    var dirOut = Path.Combine("G:\\霸业模型序列图资源");
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = "explorer.exe",
@@ -589,7 +594,7 @@ namespace zy_cutPicture
                     await Task.Delay(1);
                     return;
                 }
-                var dirOut = Path.Combine("G:\\霸业模型", type.ToString(), id);
+                var dirOut = Path.Combine("G:\\霸业模型序列图资源", type.ToString(), id);
                 if (!Directory.Exists(dirOut))
                 {
                     Directory.CreateDirectory(dirOut);
@@ -3668,6 +3673,20 @@ namespace zy_cutPicture
             var dd = this.cbb_type;
             string selectType = dd.SelectedItem == null ? "All" : dd.SelectedItem.ToString();
             var stepStart = DateTime.Now;
+            if (selectType != "All") 
+            {
+                var dir = Path.Combine(this.txt_dir.Text, "resource_cut", "model", this.text_reFile.Text);
+                if (!Directory.Exists(dir))
+                {
+                    Instance.AddLog($"没有模型切图，开始下载 {dir}");
+                    await Task.Run(() => FormCutAtlasJson.DoneRes_Model(this.txt_dir.Text, this.text_reFile.Text));
+                    Instance.AddLog($"开始切  {dir}");
+                    await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(this.txt_dir.Text, "resource", "model", this.text_reFile.Text)));
+                }
+
+              
+            }
+            Instance.AddLog($"开始重组");
             await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text, (modelType)(Enum.Parse(typeof(modelType), selectType))));
             var stepEnd = DateTime.Now;
             AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
