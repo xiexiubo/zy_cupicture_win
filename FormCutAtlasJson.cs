@@ -699,7 +699,7 @@ namespace zy_cutPicture
                                 int.TryParse(Path.GetFileNameWithoutExtension(pngFile), out numName);
                                 numName = currIdx + numName;
 
-                                var distFile = Path.Combine(dirOut, numName.ToString() + ".png");
+                                var distFile = Path.Combine(dirOut, numName.ToString("D6") + ".png");
                                 File.Copy(pngFile, distFile, true);
 
                             }
