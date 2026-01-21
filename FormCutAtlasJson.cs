@@ -401,6 +401,8 @@ namespace zy_cutPicture
         {
             [JsonProperty("fashionlevel")]
             public Dictionary<string, Dictionary<string, FashtionDetails>> fashionlevel { get; set; }
+            [JsonProperty("buff")]
+            public Dictionary<string, buffDetails> buff { get; set; }
         }
 
         public class FashtionDetails
@@ -423,7 +425,100 @@ namespace zy_cutPicture
             [JsonProperty("cost", NullValueHandling = NullValueHandling.Ignore)]
             public string Cost { get; set; }
         }
+        public class buffDetails
+        {
+            [JsonProperty("id")]
+            public long Id { get; set; }
 
+            [JsonProperty("icon")]
+            public string icon { get; set; }
+
+           
+        }
+
+        static async Task DoneRes_BuffIcon(string directory) 
+        {
+            try
+            {
+
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20251017185057";
+                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/5config{Instance.txt_resVer.Text}.json?v=20251017185057";
+
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送HTTP请求并获取响应
+                    HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    //if (!response.IsSuccessStatusCode) 
+                    //{
+                    //    return;
+                    //}
+
+                    // 读取响应内容
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine($"文件num: {json}");
+                    fashionWrapper config = JsonConvert.DeserializeObject<fashionWrapper>(json);
+                    if (config == null)
+                    {
+                        throw new InvalidOperationException("配置文件内容为空或格式不正确");
+                    }
+
+                    int downCount = 0;
+                    string strCurr = "";
+                    //foreach (var m in config.Monsters)
+                    //{
+                    //    await Model_ReName(directory, m.Value.model, modelType.monster);
+                    //}
+                    foreach (var m in config.buff)
+                    {
+                        //foreach (var v in m.Value)
+                        {
+
+                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/skills/{m.Value.icon}.png";
+                            string filePath = Path.Combine(directory, $"resource/icon/skills/{m.Value.icon}.png");
+
+                            if (File.Exists(filePath))
+                            {
+                                Console.WriteLine($"版本 文件已经存在: {m.Key} ");
+                                downCount++;
+                                continue;
+                            }
+
+                           await DownloadFileAsync(subUrl, filePath, true);
+                            Instance.AddLog($"{downCount}/{config.buff.Count} buff资源 subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
+                           
+                        }
+                    }
+
+                    var dirOut = Path.Combine(directory, $"resource/icon/skills");
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "explorer.exe",
+                            Arguments = $"\"{dirOut}\"", // 使用引号包裹路径，处理包含空格的路径
+                            UseShellExecute = true
+                        });
+                    
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP请求错误: {ex.Message}");
+                Instance.AddLog($"HTTP请求错误: {ex.Message}", Color.Red);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"解析JSON配置文件时出错: {ex.Message}");
+                Instance.AddLog($"解析JSON配置文件时出错: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+                Instance.AddLog($"发生错误3: {ex.Message}", Color.Red);
+            }
+        }
         static async Task DoneRes_Model_ReName(string directory, string id, modelType type = 0)
         {
             Console.WriteLine(type);
@@ -3695,6 +3790,14 @@ namespace zy_cutPicture
         private void cbb_type_SelectedIndexChanged(object sender, EventArgs e)
         {
             
+        }
+
+        private async void btn_buff_Click(object sender, EventArgs e)
+        {
+            var stepStart = DateTime.Now;
+            await Task.Run(() => FormCutAtlasJson.DoneRes_BuffIcon(this.txt_dir.Text));
+            var stepEnd = DateTime.Now;
+            AddLog($"完成 Buff，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
         }
     }
 

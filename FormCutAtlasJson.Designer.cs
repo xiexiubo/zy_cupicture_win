@@ -37,6 +37,7 @@ namespace zy_cutPicture
             this.components = new System.ComponentModel.Container();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbb_type = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.text_reFile = new System.Windows.Forms.TextBox();
             this.btn_com3 = new System.Windows.Forms.Button();
@@ -85,7 +86,7 @@ namespace zy_cutPicture
             this.ck_01 = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btn_help = new System.Windows.Forms.Button();
-            this.cbb_type = new System.Windows.Forms.ComboBox();
+            this.btn_buff = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -128,6 +129,7 @@ namespace zy_cutPicture
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btn_buff);
             this.groupBox2.Controls.Add(this.cbb_type);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.text_reFile);
@@ -149,6 +151,29 @@ namespace zy_cutPicture
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Visible = false;
+            // 
+            // cbb_type
+            // 
+            this.cbb_type.DisplayMember = "All";
+            this.cbb_type.FormattingEnabled = true;
+            this.cbb_type.Items.AddRange(new object[] {
+            "player",
+            "monster",
+            "effect",
+            "equip",
+            "hair",
+            "wing",
+            "shield",
+            "npc",
+            "All"});
+            this.cbb_type.Location = new System.Drawing.Point(106, 127);
+            this.cbb_type.Name = "cbb_type";
+            this.cbb_type.Size = new System.Drawing.Size(88, 20);
+            this.cbb_type.TabIndex = 22;
+            this.cbb_type.Text = "选择类型";
+            this.cbb_type.UseWaitCursor = true;
+            this.cbb_type.ValueMember = "All";
+            this.cbb_type.SelectedIndexChanged += new System.EventHandler(this.cbb_type_SelectedIndexChanged);
             // 
             // button2
             // 
@@ -242,7 +267,7 @@ namespace zy_cutPicture
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_itemdown.Location = new System.Drawing.Point(8, 62);
             this.btn_itemdown.Name = "btn_itemdown";
-            this.btn_itemdown.Size = new System.Drawing.Size(187, 30);
+            this.btn_itemdown.Size = new System.Drawing.Size(73, 30);
             this.btn_itemdown.TabIndex = 8;
             this.btn_itemdown.Text = "items";
             this.btn_itemdown.UseVisualStyleBackColor = true;
@@ -698,28 +723,17 @@ namespace zy_cutPicture
             this.btn_help.UseVisualStyleBackColor = true;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
-            // cbb_type
+            // btn_buff
             // 
-            this.cbb_type.DisplayMember = "All";
-            this.cbb_type.FormattingEnabled = true;
-            this.cbb_type.Items.AddRange(new object[] {
-            "player",
-            "monster",
-            "effect",
-            "equip",
-            "hair",
-            "wing",
-            "shield",
-            "npc",
-            "All"});
-            this.cbb_type.Location = new System.Drawing.Point(106, 127);
-            this.cbb_type.Name = "cbb_type";
-            this.cbb_type.Size = new System.Drawing.Size(88, 20);
-            this.cbb_type.TabIndex = 22;
-            this.cbb_type.Text = "选择类型";
-            this.cbb_type.UseWaitCursor = true;
-            this.cbb_type.ValueMember = "All";
-            this.cbb_type.SelectedIndexChanged += new System.EventHandler(this.cbb_type_SelectedIndexChanged);
+            this.btn_buff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_buff.Location = new System.Drawing.Point(114, 60);
+            this.btn_buff.Name = "btn_buff";
+            this.btn_buff.Size = new System.Drawing.Size(73, 30);
+            this.btn_buff.TabIndex = 23;
+            this.btn_buff.Text = "buffIcon";
+            this.btn_buff.UseVisualStyleBackColor = true;
+            this.btn_buff.Click += new System.EventHandler(this.btn_buff_Click);
             // 
             // FormCutAtlasJson
             // 
@@ -815,5 +829,6 @@ namespace zy_cutPicture
         private TextBox text_reFile;
         private Button button2;
         private ComboBox cbb_type;
+        private Button btn_buff;
     }
 }
