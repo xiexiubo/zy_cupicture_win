@@ -3,3 +3,5 @@
 *.dll.so filter=lfs diff=lfs merge=lfs -text
 **/*.dll.so filter=lfs diff=lfs merge=lfs -text
 **/Magick.Native*.dll.so filter=lfs diff=lfs merge=lfs -text
+"packages/**/*.so filter=lfs diff=lfs merge=lfs -text" 
+"packages/**/*.nupkg filter=lfs diff=lfs merge=lfs -text" 
