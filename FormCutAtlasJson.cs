@@ -75,16 +75,17 @@ namespace zy_cutPicture
             public string v { get; set; }// 版本号或哈希值
             public int s { get; set; }// 大小（字节）
         }
-
+        //static string URL_head = "https://cdn.ascq.zlm4.com/aoshi_20240419/";
+        static string URL_head = "https://cdn.hlxy.db9x.com/hlxy_20220117/";
         //配置图片资源下载
         static async Task DoneRes_AllManifest(string directory)
         {
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.24591.2.json?v=20250530185809?qufu_version=20";
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.28929.3.json?v=20251017185057?qufu_version=30";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest{Instance.txt_resVer.Text}.json?v=20251017185057?qufu_version=30";
-
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/allmanifest1.28929.3.json?v=20260218114229?qufu_version=30";
+                url = $"{URL_head}allmanifest{Instance.txt_resVer.Text}.json?v=20260218114229?qufu_version=30";
+                
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -116,7 +117,7 @@ namespace zy_cutPicture
                         }
 
                         // 安全截取子串
-                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/resource/{kvp.Value.v.Substring(0, 2)}/{kvp.Value.v}_{kvp.Value.s}{Path.GetExtension(kvp.Key)}";
+                        string subUrl = $"{URL_head}resource/{kvp.Value.v.Substring(0, 2)}/{kvp.Value.v}_{kvp.Value.s}{Path.GetExtension(kvp.Key)}";
                         string filePath = Path.Combine(directory, kvp.Key);
                         //Console.WriteLine($"{downCount}/{config.Count} subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Count} ALLMan subUrl: {subUrl}  filePath:{kvp.Key}", Color.Black);
@@ -166,8 +167,8 @@ namespace zy_cutPicture
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.24591.2.json?v=20250530185809";
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/1config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/1config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}1config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -203,7 +204,7 @@ namespace zy_cutPicture
 
                         // //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/tool/334.png?ver=1.0.1
                         //Console.WriteLine($"文件名: {kvp.Key}   {kvp.Value.v}    {kvp.Value}");
-                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/tool/{v.Value.Prop19}.png";
+                        string subUrl = $"{URL_head}assets/resource/icon/tool/{v.Value.Prop19}.png";
                         string filePath = Path.Combine(directory, $"resource/icon/tool/{v.Value.Prop19}.png");
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Items.Count} Item subUrl: {subUrl}  filePath:icon/tool/{v.Value.Prop19}.png", Color.Black);
@@ -268,8 +269,8 @@ namespace zy_cutPicture
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -323,7 +324,7 @@ namespace zy_cutPicture
                             //四方向
                             for (int i = 0; i < 5; i++)
                             {
-                                string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
+                                string subUrl = $"{URL_head}assets/resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
                                 string filePath = Path.Combine(directory, $"resource/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}");
 
                                 if (File.Exists(filePath)) 
@@ -334,7 +335,7 @@ namespace zy_cutPicture
                                 if (Dic_Version_AdditionalData.TryGetValue($"model/{m.Value.Id}", out dValue))
                                 {
                                     //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/1.29542.1/model/120032/120032013.png
-                                    subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
+                                    subUrl = $"{URL_head}assets/resource/{dValue}/model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}";
                                     Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
 
                                 }
@@ -441,8 +442,8 @@ namespace zy_cutPicture
             try
             {
 
-                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/5config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}5config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -477,7 +478,7 @@ namespace zy_cutPicture
                         //foreach (var v in m.Value)
                         {
 
-                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/skills/{m.Value.icon}.png";
+                            string subUrl = $"{URL_head}assets/resource/icon/skills/{m.Value.icon}.png";
                             string filePath = Path.Combine(directory, $"resource/icon/skills/{m.Value.icon}.png");
 
                             if (File.Exists(filePath))
@@ -539,8 +540,8 @@ namespace zy_cutPicture
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -609,8 +610,8 @@ namespace zy_cutPicture
             try
             {
                 
-                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/5config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/5config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}5config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -896,7 +897,7 @@ namespace zy_cutPicture
             try
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
-                string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809";//modelinfo
+                string url = $"{URL_head}resourceVersion.json?v=?v=20250530185809";//modelinfo
 
                 using (var httpClient = new HttpClient())
                 {
@@ -934,7 +935,7 @@ namespace zy_cutPicture
                             continue;
                         }
 
-                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Key}";
+                        string subUrl = $"{URL_head}assets/resource/{m.Key}";
                         string filePath = Path.Combine(directory, $"resource/{m.Key}");
 
                         if (File.Exists(filePath))
@@ -949,7 +950,7 @@ namespace zy_cutPicture
                         //Instance.AddLog($"{downCount}/{config.AdditionalData.Count} subUrl: {subUrl}  filePath:{m.Key}", Color.Black);
                         DownloadFileAsync(subUrl, filePath, true);
 
-                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{m.Value}/{m.Key}";
+                        subUrl = $"{URL_head}assets/resource/{m.Value}/{m.Key}";
                         //filePath = Path.Combine(directory, $"resource/{m.Value}/{m.Key}");
 
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
@@ -998,7 +999,7 @@ namespace zy_cutPicture
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809";//modelinfo
                 //string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.25209.2.json?v=20250620170332";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20250620170332";
+                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20250620170332";
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -1046,7 +1047,7 @@ namespace zy_cutPicture
 
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/head_4274.png?ver=1.0.1
 
-                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/icon/head/{m.Value.Head}.png?ver=1.0.1";
+                        string subUrl = $"{URL_head}assets/resource/icon/head/{m.Value.Head}.png?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/icon/head/{m.Value.Head}.png");
                         //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                         Instance.AddLog($"{downCount}/{config.Monsters.Count} subUrl: {subUrl}  filePath:icon/head/{m.Value.Head}.png", Color.Black);
@@ -1205,9 +1206,10 @@ namespace zy_cutPicture
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
-
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
+                Console.WriteLine(url);
+                Instance.AddLog(url);
                 using (var httpClient = new HttpClient())
                 {
                     // 发送HTTP请求并获取响应
@@ -1256,7 +1258,7 @@ namespace zy_cutPicture
 
                         //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
-                        string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                        string subUrl = $"{URL_head}assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                         string filePath = Path.Combine(directory, $"resource/minimap/{m.Value.img}.jpg");
                         string fileBig = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
                         if (File.Exists(fileBig))
@@ -1304,7 +1306,7 @@ namespace zy_cutPicture
                                 }
                                 //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/5286/114.jpg?ver=1.0.1
                                 //1.13085.4  //"model/91001": "1.9200.13",  //"map/5279": "1.3842.1",
-                                subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                subUrl = $"{URL_head}assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                 filePath = Path.Combine(directory, $"resource/map/{m.Value.img}/{i}.jpg");
                                 if (!JpegChecker.IsLossyJpeg(filePath))
                                 {
@@ -1331,7 +1333,7 @@ namespace zy_cutPicture
                                     {
                                         isVersion = true;
                                         Instance.AddLog($"======== {dValue}  {dValue.ToString()}");
-                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                        subUrl = $"{URL_head}assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                         b = await DownloadFileAsync(subUrl, filePath);
                                     }
 
@@ -1345,7 +1347,7 @@ namespace zy_cutPicture
                                     JToken dValue = "";
                                     if (isVersion && Dic_Version_AdditionalData.TryGetValue($"map/{m.Value.img}", out dValue))
                                     {
-                                        subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                        subUrl = $"{URL_head}assets/resource/{dValue}/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                         DownloadFileAsync(subUrl, filePath);
                                     }
                                     else
@@ -1481,8 +1483,8 @@ namespace zy_cutPicture
             {
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
-                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20251017185057";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
+                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -1551,7 +1553,7 @@ namespace zy_cutPicture
 
                             //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
-                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string subUrl = $"{URL_head}assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                             string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
                             string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
@@ -1615,7 +1617,7 @@ namespace zy_cutPicture
                                     {
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"{URL_head}assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -1745,7 +1747,7 @@ namespace zy_cutPicture
 
                             await Task.Delay(1);
 
-                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string subUrl = $"{URL_head}assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                             string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
                             string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
@@ -1800,7 +1802,7 @@ namespace zy_cutPicture
 
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"{URL_head}assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -2018,7 +2020,7 @@ namespace zy_cutPicture
 
                             //https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/5286.jpg?ver=1.0.1
 
-                            string subUrl = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
+                            string subUrl = $"{URL_head}assets/resource/minimap/{m.Value.img}.jpg?ver=1.0.1";
                             string mapDir = Path.Combine(directory, $"resource/map/{m.Value.img}");
                             string outputPath = Path.Combine(directory, $"resource/map/{m.Value.img}.jpg");
 
@@ -2071,7 +2073,7 @@ namespace zy_cutPicture
 
                                         if (!JpegChecker.IsLossyJpeg(file))
                                         {
-                                            string urlFile2 = $"https://cdn.ascq.zlm4.com/aoshi_20240419/assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
+                                            string urlFile2 = $"{URL_head}assets/resource/map/{m.Value.img}/{i}.jpg?ver=1.0.1";
                                             Instance.AddLog($"{i}/{countTiles} 重下有损资源: {urlFile2} ", Color.Black);
                                             Console.WriteLine($"{i}/{countTiles} 重下有损资源: {urlFile2}");
 
@@ -2280,7 +2282,7 @@ namespace zy_cutPicture
             Root_map config = null;
             using (var httpClient = new HttpClient())
             {
-                var url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/0config{Instance.txt_resVer.Text}.json?v=20251017185057";
+                var url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
                 // 发送HTTP请求并获取响应
                 HttpResponseMessage response = await httpClient.GetAsync(url);
 
@@ -2310,7 +2312,7 @@ namespace zy_cutPicture
             try
             {
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/map1.29318.3.dat?ver=1.0.1";
-                url = $"https://cdn.ascq.zlm4.com/aoshi_20240419/map{Instance.txt_resVer.Text}.dat?ver=1.0.1";
+                url = $"{URL_head}map{Instance.txt_resVer.Text}.dat?ver=1.0.1";
                 Instance.AddLog($"下载map.data");
                 using (var httpClient = new HttpClient())
                 {
