@@ -1245,7 +1245,7 @@ namespace zy_cutPicture
                         int txt_id = 0;
                         if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                         {
-                            if (m.Value.img != txt_id)
+                            if (m.Value.img != txt_id&& m.Key != txt_id.ToString())
                                 continue;
                         }
                         //break;
@@ -1526,9 +1526,10 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.img != txt_id)
+                                if (m.Value.img != txt_id&& m.Key != txt_id.ToString())
                                     continue;
                             }
+                            Instance.AddLog($"合图方案一 key:{m.Key}  img:{m.Value.img}");
                             //if (
                             //    //m.Value.img != 103 &&
                             //    m.Value.img != 154 &&
@@ -1721,9 +1722,10 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.img != txt_id)
+                                if (m.Value.img != txt_id && m.Key != txt_id.ToString())
                                     continue;
                             }
+                            Instance.AddLog($"合图方案二 key:{m.Key}  img:{m.Value.img}");
                             //if (
                             //    //m.Value.img != 103 &&
                             //    m.Value.img != 154 &&
@@ -1990,9 +1992,10 @@ namespace zy_cutPicture
                             int txt_id = 0;
                             if (int.TryParse(Instance.txt_filter.Text, out txt_id))
                             {
-                                if (m.Value.img != txt_id)
+                                if (m.Value.img != txt_id && m.Key != txt_id.ToString())
                                     continue;
                             }
+                            Instance.AddLog($"合图方案三 key:{m.Key}  img:{m.Value.img}");
                             index++;
 
                             //if (
