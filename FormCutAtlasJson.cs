@@ -75,8 +75,8 @@ namespace zy_cutPicture
             public string v { get; set; }// 版本号或哈希值
             public int s { get; set; }// 大小（字节）
         }
-        //static string URL_head = "https://cdn.ascq.zlm4.com/aoshi_20240419/";
-        static string URL_head = "https://cdn.hlxy.db9x.com/hlxy_20220117/";
+        static string URL_head = "https://cdn.ascq.zlm4.com/aoshi_20240419/";//霸业
+        //static string URL_head = "https://cdn.hlxy.db9x.com/hlxy_20220117/";//遮天
         //配置图片资源下载
         static async Task DoneRes_AllManifest(string directory)
         {
