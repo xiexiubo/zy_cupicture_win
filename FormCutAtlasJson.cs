@@ -712,7 +712,7 @@ namespace zy_cutPicture
                 int[] fileCount = { 0, 0, 0, 0, 0, 0,0,0,0,0 };  //每个动作包含帧数
 
                 //朝向对应
-                int[][] dirs = new[] {new[]{1,2,3,4,5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 } };  
+                int[][] dirs = new[] {new[]{0,1,2,3,4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 } };  
 
                 bool isPlayer = true;
                 //怪
@@ -724,7 +724,7 @@ namespace zy_cutPicture
                     startIdx = new[] { 0, 100, 200, 300, 400, 500 };//动作起始帧
                     fileCount = new[] { 0, 0, 0, 0, 0, 0 };  //每个动作包含帧数
                     //朝向对应
-                    dirs = new[] { new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5 } };
+                    dirs = new[] { new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 }, new[] { 0, 1, 2, 3, 4 } };
                 }
                 //特效 方向0 -霸业方向4
                 else if (type == modelType.effect) 
@@ -786,7 +786,7 @@ namespace zy_cutPicture
                             dirF = Path.Combine(dir, id + actId.ToString("D2") + (dirs[i][j]).ToString());
                             if (!Directory.Exists(dirF))
                             {
-                                Instance.AddLog($"目录不存在dirF j {dirF}");
+                                Instance   .AddLog($"目录不存在dirF j {dirF}");
                                 continue;
                             }
                             var filses = Directory.GetFiles(dirF, "*.png");
