@@ -9,10 +9,6 @@ using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -48,22 +44,43 @@ namespace zy_cutPicture
             this.logTextBox.Clear();
         }
         List<string> listStr = new List<string>();
+        
+        private const int MAX_LOG_COUNT = 500; // 最大日志条数
+
         public void AddLog(string message)
         {
             AddLog(message, Color.Black);
         }
+
         public void AddLog(string message, Color color)
         {
+            // 如果超过最大限制，移除最早的一条
+            if (listStr.Count >= MAX_LOG_COUNT)
+            {
+                listStr.RemoveAt(0); // 移除第一条（最早的）
+            }
+
             listStr.Add(message);
             logTextBox.Invoke(new Action(() =>
             {
+                // 如果文本框内容太多，也需要处理
+                if (logTextBox.Lines.Length >= MAX_LOG_COUNT)
+                {
+                    // 获取当前所有行
+                    string[] lines = logTextBox.Lines;
+                    // 保留最新的 MAX_LOG_COUNT-1 条
+                    Array.Copy(lines, 1, lines, 0, lines.Length - 1);
+                    Array.Resize(ref lines, lines.Length - 1);
+                    logTextBox.Lines = lines;
+                }
+
                 logTextBox.SelectionStart = logTextBox.TextLength;
                 logTextBox.SelectionColor = color;
                 logTextBox.AppendText(message + Environment.NewLine);
                 logTextBox.ScrollToCaret();
             }));
-
         }
+
         public void listClear()
         {
             listStr.Clear();
@@ -263,41 +280,56 @@ namespace zy_cutPicture
             [JsonProperty("standy")]
             public long StandY { get; set; }
         }
+        static ModelInfoWrapper _ModelInfoWrapper = null;
         static async Task DoneRes_Model(string directory,string modelid="")
         {
             try
             {
+
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
                 url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
                 url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
-
-                using (var httpClient = new HttpClient())
+                HttpClient httpClient = null;
+                if (_ModelInfoWrapper == null)
+                    httpClient = new HttpClient();
+               
                 {
-                    // 发送HTTP请求并获取响应
-                    HttpResponseMessage response = await httpClient.GetAsync(url);
+                    if (httpClient != null)
+                    {
+                        // 发送HTTP请求并获取响应
+                        HttpResponseMessage response = await httpClient.GetAsync(url);
 
-                    // 确保请求成功
-                    response.EnsureSuccessStatusCode();
-                    //if (!response.IsSuccessStatusCode) 
-                    //{
-                    //    return;
-                    //}
+                        // 确保请求成功
+                        response.EnsureSuccessStatusCode();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Instance.AddLog($"模型表下载失败:{modelid} url: {url}", Color.Red);
+                            if (httpClient != null)
+                                httpClient.Dispose();
+                            return;
+                        }
 
-                    // 读取响应内容
-                    string json = await response.Content.ReadAsStringAsync();
+                        // 读取响应内容
+                        string json = await response.Content.ReadAsStringAsync();
 
-                    Console.WriteLine($"文件num: {json}");
+                        Console.WriteLine($"文件num: {json}");
 
-                    // 反序列化为配置对象
-                    ModelInfoWrapper config = JsonConvert.DeserializeObject<ModelInfoWrapper>(json);
+                        // 反序列化为配置对象
+                        _ModelInfoWrapper = JsonConvert.DeserializeObject<ModelInfoWrapper>(json);
+
+                    }
+                    var config = _ModelInfoWrapper;
                     Console.WriteLine($"文件num: {config.ModelInfo.Count}");
-                    Instance.AddLog($"-----模型资源下载:{config.ModelInfo.Count}", Color.Green);
+                    //Instance.AddLog($"-----模型资源下载:{config.ModelInfo.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
                     }
-
+                    if (!string.IsNullOrEmpty(modelid)&&!config.ModelInfo.ContainsKey(modelid)) {
+                        Instance.AddLog($"-----模型表中没有Key:{modelid}", Color.Red);
+                        return;
+                    }
                     int countM = 0;
                     foreach (var v in config.ModelInfo)
                     {
@@ -306,6 +338,7 @@ namespace zy_cutPicture
                             //不是筛选 id 跳过
                             continue;
                         }
+                        //Instance.AddLog($"-----模型Key:{modelid}", Color.Green);
                         countM++;
                         int downCount = 1;
                         string dir_cc = Path.Combine(directory, $"resource_cut/model/{v.Key}");
@@ -342,9 +375,9 @@ namespace zy_cutPicture
 
                                 //Console.WriteLine($"subUrl: {subUrl}  filePath:{filePath}");
                                 //if (i == 0)
-                                //Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:model/{m.Value.Id}/{m.Value.Id}{(m.Value.Action).ToString("D2")}{i}.json", Color.Black);
-                                DownloadFileAsync(subUrl + ".png", filePath + ".png");
-                                DownloadFileAsync(subUrl + ".json", filePath + ".json");
+                                //Instance.AddLog($"{downCount}/{v.Value.Count} Model {countM}/{config.ModelInfo.Count} subUrl: {subUrl}  filePath:{filePath}", Color.Black);
+                               await DownloadFileAsync(subUrl + ".png", filePath + ".png");
+                                await  DownloadFileAsync(subUrl + ".json", filePath + ".json");
 
 
                             }
@@ -541,7 +574,7 @@ namespace zy_cutPicture
                 //https://cdn.ascq.zlm4.com/aoshi_20240419/resourceVersion.json?v=?v=20250530185809//resourceveresion
                 string url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.24591.2.json?v=20250530185809";//modelinfo
                 url = "https://cdn.ascq.zlm4.com/aoshi_20240419/0config1.28929.3.json?v=20260218114229";
-                url = $"{URL_head}0config{Instance.txt_resVer.Text}.json?v=20260218114229";
+                url = $"{URL_head}4config{Instance.txt_resVer.Text}.json?v=20260218114229";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -560,8 +593,8 @@ namespace zy_cutPicture
 
                     Console.WriteLine($"文件num: {json}");
                     Res_Custom config = JsonConvert.DeserializeObject<Res_Custom>(json);
-                    Console.WriteLine($"文件num: {config.Monsters.Count}");
-                    Instance.AddLog($"-----怪物:{config.Monsters.Count}", Color.Green);
+                    //Console.WriteLine($"文件num: {config.Monsters.Count}");
+                    //Instance.AddLog($"-----怪物:{config.Monsters.Count}", Color.Green);
                     if (config == null)
                     {
                         throw new InvalidOperationException("配置文件内容为空或格式不正确");
@@ -569,16 +602,34 @@ namespace zy_cutPicture
 
                     int downCount = 0;
                     string strCurr = "";
-                    foreach (var m in config.Monsters)
+                    //foreach (var m in config.Monsters)
+                    //{
+                    //    await  Model_ReName(directory, m.Value.model, modelType.monster);
+                    //}
+                    //foreach (var m in config.Npc)
+                    //{
+                    //    await Model_ReName(directory, m.Value.model, modelType.npc);
+                    //}
+                    foreach (var m in config.title)
                     {
-                        await  Model_ReName(directory, m.Value.model, modelType.monster);
-                    }
-                    foreach (var m in config.Npc)
-                    {
-                        await Model_ReName(directory, m.Value.model, modelType.npc);
-                    }
-                    foreach (var m in config.effect)
-                    {
+                        if (m.Value.type != 3) {
+                            continue;
+                        }
+                        id = m.Value.model;
+                        var dir = Path.Combine(directory, "resource", "model", id);
+                        var dir_cut = Path.Combine(directory, "resource_cut", "model", id);
+                        if (!Directory.Exists(dir_cut))
+                        {
+                            if (!Directory.Exists(dir))
+                            {
+                                Instance.AddLog($"1原图{id}，开始下载 {dir}");
+                                await Task.Run(() => FormCutAtlasJson.DoneRes_Model(directory, id));                               
+                            }                        
+                            Instance.AddLog($"2开始切  {dir_cut}");
+                            await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(directory, "resource", "model", id)));
+                        }                       
+
+                        Instance.AddLog($"3重组 m.key: {m.Value.model}");
                         await  Model_ReName(directory, m.Value.model, modelType.effect);
                     }
                     var dirOut = Path.Combine("G:\\霸业模型序列图资源");
@@ -686,7 +737,7 @@ namespace zy_cutPicture
                 var dir = Path.Combine(directory, "resource_cut", "model", id);
                 if (!Directory.Exists(dir))
                 {
-                    Instance.AddLog($"目录不存在 {dir}");
+                    Instance.AddLog($"Model_ReName cut id目录不存在 {dir}");
                     await Task.Delay(1);
                     return;
                 }
@@ -2756,6 +2807,7 @@ namespace zy_cutPicture
             // 检查目录是否存在
             if (!Directory.Exists(directoryPath))
             {
+                Instance.AddLog($"目录不存在: {directoryPath}");
                 Console.WriteLine($"目录不存在: {directoryPath}");
                 return;
             }
@@ -3133,7 +3185,7 @@ namespace zy_cutPicture
         {
             try
             {
-
+                //Instance.AddLog($" DownloadFileAsync url:{url}  savePath:{savePath} isDeletExists：{isDeletExists}");
                 if (File.Exists(savePath))
                 {
                     if (isDeletExists)
@@ -3142,6 +3194,7 @@ namespace zy_cutPicture
                     }
                     else
                     {
+                       // Instance.AddLog($"已存在 DownloadFileAsync url:{url}  savePath:{savePath}"); 
                         return true;
                     }
                 }
@@ -3778,18 +3831,18 @@ namespace zy_cutPicture
                 var dir = Path.Combine(this.txt_dir.Text, "resource_cut", "model", this.text_reFile.Text);
                 if (!Directory.Exists(dir))
                 {
-                    Instance.AddLog($"没有模型切图，开始下载 {dir}");
+                    Instance.AddLog($"1没有模型切图，开始下载 {dir}");
                     await Task.Run(() => FormCutAtlasJson.DoneRes_Model(this.txt_dir.Text, this.text_reFile.Text));
-                    Instance.AddLog($"开始切  {dir}");
+                    Instance.AddLog($"2开始切  {dir}");
                     await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(this.txt_dir.Text, "resource", "model", this.text_reFile.Text)));
                 }
 
               
             }
-            Instance.AddLog($"开始重组");
+            Instance.AddLog($"3开始重组");
             await Task.Run(() => FormCutAtlasJson.DoneRes_Model_ReName(this.txt_dir.Text, this.text_reFile.Text, (modelType)(Enum.Parse(typeof(modelType), selectType))));
             var stepEnd = DateTime.Now;
-            AddLog($"完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
+            AddLog($"4完成 重组图序，耗时：{(stepEnd - stepStart).TotalSeconds:F2}秒", Color.Green);
         }
 
         private void cbb_type_SelectedIndexChanged(object sender, EventArgs e)
@@ -3932,12 +3985,18 @@ namespace zy_cutPicture
 
         [JsonProperty("effect")]
         public Dictionary<string, Res_Custom_sub_npc> effect { get; set; }
+
+        [JsonProperty("title")]
+        public Dictionary<string, Res_Custom_sub_npc> title { get; set; }
     }
     public class Res_Custom_sub_npc
     {       
         [JsonProperty("model")]
         public string model { get; set; }
+        [JsonProperty("type")]
+        public int type { get; set; }
     }
+
     public class Res_Custom_sub
     {
         [JsonProperty("head")]
