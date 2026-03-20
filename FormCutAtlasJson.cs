@@ -612,25 +612,29 @@ namespace zy_cutPicture
                     //}
                     foreach (var m in config.title)
                     {
-                        if (m.Value.type != 3) {
+                        if (m.Value.type != 21) {
                             continue;
                         }
-                        id = m.Value.model;
-                        var dir = Path.Combine(directory, "resource", "model", id);
-                        var dir_cut = Path.Combine(directory, "resource_cut", "model", id);
-                        if (!Directory.Exists(dir_cut))
-                        {
-                            if (!Directory.Exists(dir))
+                        var array = m.Value.model.Split('/');
+                        for (int i = 0; i < array.Length; i++) {
+                            id = array[i];
+                            var dir = Path.Combine(directory, "resource", "model", id);
+                            var dir_cut = Path.Combine(directory, "resource_cut", "model", id);
+                            if (!Directory.Exists(dir_cut))
                             {
-                                Instance.AddLog($"1原图{id}，开始下载 {dir}");
-                                await Task.Run(() => FormCutAtlasJson.DoneRes_Model(directory, id));                               
-                            }                        
-                            Instance.AddLog($"2开始切  {dir_cut}");
-                            await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(directory, "resource", "model", id)));
-                        }                       
+                                if (!Directory.Exists(dir))
+                                {
+                                    Instance.AddLog($"1原图{id}，开始下载 {dir}");
+                                    await Task.Run(() => FormCutAtlasJson.DoneRes_Model(directory, id));
+                                }
+                                Instance.AddLog($"2开始切  {dir_cut}");
+                                await Task.Run(() => FormCutAtlasJson.ProcessDirectory(Path.Combine(directory, "resource", "model", id)));
+                            }
 
-                        Instance.AddLog($"3重组 m.key: {m.Value.model}");
-                        await  Model_ReName(directory, m.Value.model, modelType.effect);
+                            Instance.AddLog($"3重组 m.key: {id}");
+                            await Model_ReName(directory, id, modelType.effect);
+                        }
+                        
                     }
                     var dirOut = Path.Combine("G:\\霸业模型序列图资源");
                     Process.Start(new ProcessStartInfo
